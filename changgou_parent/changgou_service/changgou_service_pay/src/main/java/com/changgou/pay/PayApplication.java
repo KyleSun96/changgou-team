@@ -12,16 +12,16 @@ import org.springframework.context.annotation.Bean;
 public class PayApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(PayApplication.class,args);
+        SpringApplication.run(PayApplication.class, args);
     }
 
     @Bean
-    public WXPay wxPay(){
+    public WXPay wxPay() {
         try {
             return new WXPay(new MyConfig());
         } catch (Exception e) {
             e.printStackTrace();
-            return  null;
+            return null;
         }
     }
 }

@@ -20,11 +20,12 @@ public class GoodsApplication {
     private Integer datacenterId;
 
     public static void main(String[] args) {
-        SpringApplication.run( GoodsApplication.class);
+        SpringApplication.run(GoodsApplication.class);
     }
 
     @Bean
-    public IdWorker idWorker(){
-        return new IdWorker(workerId,datacenterId);
+    public IdWorker idWorker() {
+        return new IdWorker(workerId, datacenterId);
     }
+
 }

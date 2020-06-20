@@ -11,6 +11,7 @@ import tk.mybatis.spring.annotation.MapperScan;
 public class OrderConsumeApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(OrderConsumeApplication.class,args);
+        SpringApplication.run(OrderConsumeApplication.class, args);
     }
+
 }

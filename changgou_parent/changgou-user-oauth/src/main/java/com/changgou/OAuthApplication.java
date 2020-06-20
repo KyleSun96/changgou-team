@@ -10,16 +10,17 @@ import tk.mybatis.spring.annotation.MapperScan;
 
 @SpringBootApplication
 @EnableDiscoveryClient
-@MapperScan(basePackages = "com.changgou.auth.dao")
 @EnableFeignClients(basePackages = {"com.changgou.user.feign"})
+@MapperScan(basePackages = "com.changgou.auth.dao")
 public class OAuthApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(OAuthApplication.class,args);
+        SpringApplication.run(OAuthApplication.class, args);
     }
 
     @Bean
-    public RestTemplate restTemplate(){
+    public RestTemplate restTemplate() {
         return new RestTemplate();
     }
+
 }

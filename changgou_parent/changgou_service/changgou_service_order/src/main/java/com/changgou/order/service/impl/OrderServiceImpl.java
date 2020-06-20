@@ -1,7 +1,7 @@
 package com.changgou.order.service.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fescar.spring.annotation.GlobalTransactional;
+//import com.alibaba.fescar.spring.annotation.GlobalTransactional;
 import com.changgou.goods.feign.SkuFeign;
 import com.changgou.order.config.RabbitMQConfig;
 import com.changgou.order.dao.*;
