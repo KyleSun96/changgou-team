@@ -1,7 +1,11 @@
 package com.changgou.pay;
 
+import com.alipay.api.AlipayClient;
+import com.alipay.api.DefaultAlipayClient;
+import com.changgou.pay.config.AlipayConfig;
 import com.github.wxpay.sdk.MyConfig;
 import com.github.wxpay.sdk.WXPay;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
@@ -24,4 +28,20 @@ public class PayApplication {
             return null;
         }
     }
+
+    @Autowired
+    private AlipayConfig alipayConfig;
+
+    //将支付宝请求的对象转换Bean
+    @Bean
+    public AlipayClient alipayClient() {
+        return new DefaultAlipayClient(alipayConfig.getServerUrl()
+                ,alipayConfig.getAppId()
+                ,alipayConfig.getPrivateKey()
+                ,"json"
+                ,"utf-8"
+                ,alipayConfig.getAlipayPublicKey()
+                ,"RSA2");
+    }
+
 }
