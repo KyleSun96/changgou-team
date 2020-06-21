@@ -40,8 +40,6 @@ public class AuthController {
         model.addAttribute("from",from);
         return "login";
     }
-
-
     @RequestMapping("/login")
     @ResponseBody
     public Result login(String username, String password, HttpServletResponse response){

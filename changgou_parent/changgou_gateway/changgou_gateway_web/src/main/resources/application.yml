@@ -16,7 +16,7 @@ spring:
         - id: changgou_goods_route
           uri: lb://goods
           predicates:
-            - Path=/api/album/**,/api/brand/**,/api/cache/**,/api/categoryBrand/**,/api/category/**,/api/para/**,/api/pref/**,/api/sku/**,/api/spec/**,/api/spu/**,/api/stockBack/**,/api/template/**
+            - Path=/api/album/**,/api/brand/**,/api/cache/**,/api/categoryBrand/**,/api/category/**,/api/para/**,/api/pref/**,/api/sku/**,/api/spec/**,/api/spu/**,/api/stockBack/**,/api/templates/**
           filters:
             #- PrefixPath=/brand
             - StripPrefix=1
@@ -60,6 +60,13 @@ spring:
           uri: lb://seckill-web
           predicates:
             - Path=/api/wseckillgoods/**,/api/wseckillorder/**
+          filters:
+            - StripPrefix=1
+       #个人中心渲染微服务
+        - id: changgou_center_web_route
+          uri: lb://order-center
+          predicates:
+            - Path=/api/wcenter/**
           filters:
             - StripPrefix=1
   redis:

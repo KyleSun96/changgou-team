@@ -33,6 +33,9 @@ hystrix:
   command:
     default:
       execution:
+        isoltion:
+          thread:
+            timeoutInMilliseconds: 6000
         timeout:
           #如果enabled设置为false，则请求超时交给ribbon控制
           enabled: false
