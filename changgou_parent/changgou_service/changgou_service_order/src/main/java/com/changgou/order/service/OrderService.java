@@ -21,6 +21,12 @@ public interface OrderService {
      */
     Order findById(String id);
 
+    //查询待收货的订单
+    List<Order> findPayOrder(String username);
+
+    //查询带评价订单
+    List<Order> findBuyerRateByOrder(String username);
+
     /***
      * 新增
      * @param order
@@ -72,6 +78,9 @@ public interface OrderService {
 
     //手动确认收货
     void confirmTask(String orderId,String operator);
+
+    //确认收货
+    public void define(String username);
 
     void autoTack();
 }

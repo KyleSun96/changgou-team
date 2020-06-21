@@ -19,8 +19,34 @@ public class OrderController {
     @Autowired
     private OrderService orderService;
 
+    //手动确定收货
+    @RequestMapping("/define")
+    public Result define(){
+        String username = tokenDecode.getUserInfo().get("username");
+        orderService.define(username);
+        return new Result(true,StatusCode.OK,"确定收货");
+    }
+
+    //查询待收货的订单
+    @RequestMapping("/findPayOrder")
+    public Result<List<Order>> findPayOrder(){
+        String username = tokenDecode.getUserInfo().get("username");
+        List<Order> orderList = orderService.findPayOrder(username);
+        return new Result<List<Order>>(true,StatusCode.OK,"查询待收货订单成功",orderList);
+    }
+
+    //查询待评价订单
+    @RequestMapping("/findBuyerRate")
+    public Result<List<Order>> findBuyerRateByOrder(){
+        String username = tokenDecode.getUserInfo().get("username");
+        List<Order> orderList = orderService.findBuyerRateByOrder(username);
+        return new Result<List<Order>>(true,StatusCode.OK,"查询待评价订单成功",orderList);
+    }
+
+
+
     /**
-     * 查询全部数据
+     * 查询全部订单数据
      * @return
      */
     @GetMapping

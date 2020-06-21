@@ -27,6 +27,17 @@ public class OrderItemServiceImpl implements OrderItemService {
         return orderItemMapper.selectAll();
     }
 
+    //根据订单查询商品名称
+    @Override
+    public OrderItem findByOrderId(String orderId) {
+        OrderItem orderItem = orderItemMapper.findByOrderId(orderId);
+        if (orderItem==null){
+            throw new RuntimeException("商品不存在");
+        }
+        return orderItem;
+
+    }
+
     /**
      * 根据ID查询
      * @param id
