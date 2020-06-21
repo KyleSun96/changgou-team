@@ -25,6 +25,9 @@
         <module>changgou_service_consume</module>
         <module>changgou-logistic</module>
         <module>changgou_service_page</module>
+
+        <module>changgou_service_center</module>
+
     </modules>
 
 

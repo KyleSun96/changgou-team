@@ -458,7 +458,7 @@
 			</div>
 		</div>
 	<!--list-content-->
-	<div class="main">
+	<div class="main" id="app">
 		<div class="py-container">
 			<!--bread-->
 			<div class="bread">
@@ -622,7 +622,7 @@
 								</div>
 								<div class="operate">
 									<a href="success-cart.html" target="_blank" class="sui-btn btn-bordered btn-danger">加入购物车</a>
-									<a href="javascript:void(0);" class="sui-btn btn-bordered">收藏</a>
+									<a href="javascript:void(0);" th:@click="|add('${sku.id}')|" class="sui-btn btn-bordered">收藏</a>
 								</div>
 							</div>
 						</li>
@@ -989,7 +989,29 @@
 </div>
 
 
-<script type="text/javascript" src="./js/all.js"></script>
+<script type="text/javascript" src="/js/all.js"></script>
+<script type="text/javascript" src="/js/plugins/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="/js/vue.js"></script>
+<script type="text/javascript" src="/js/axios.js"></script>
+<script th:inline="javascript">
+    var app = new Vue({
+        el:"#app",
+        data:{},
+        methods:{
+            add:function (skuId) {
+                axios.get('/api/wfavorites/add/'+skuId).then(function (response) {
+                    if (response.data.flag){
+                        //添加收藏成功
+                        alert("添加收藏成功");
+                    } else{
+                        alert("添加收藏失败");
+                    }
+                })
+            }
+        }
+    })
+</script>
 </body>
+
 
 </html>

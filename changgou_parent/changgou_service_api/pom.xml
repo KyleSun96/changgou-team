@@ -22,6 +22,8 @@
         <module>changgou_service_pay_api</module>
         <module>changgou_service_seckill_api</module>
         <module>changgou_service_logistic_api</module>
+        <module>changgou_service_center_api</module>
+
     </modules>
 
     <dependencies>

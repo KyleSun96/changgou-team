@@ -18,6 +18,14 @@ public class OrderItemController {
     @Autowired
     private OrderItemService orderItemService;
 
+
+    //根据订单查询商品名称
+    @GetMapping("/findName/{orderId}")
+    public Result findByOrderId(@PathVariable("orderId") String orderId) {
+        OrderItem orderItem = orderItemService.findByOrderId(orderId);
+            System.out.println(orderItem.getName());
+        return new Result(true,StatusCode.OK,"查询成功",orderItem.getName());
+    }
     /**
      * 查询全部数据
      * @return
