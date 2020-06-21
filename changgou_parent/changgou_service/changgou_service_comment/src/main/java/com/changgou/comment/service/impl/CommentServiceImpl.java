@@ -131,7 +131,7 @@ public class CommentServiceImpl implements CommentService {
             Sku sku = skuFeign.findById(comment.getSkuId()).getData();
 
             // 规格为空，传入空集合
-            if (StringUtils.isEmpty(sku.getSpec())) {
+           /* if (StringUtils.isEmpty(sku.getSpec())) {
                 commentInfo.setSpecList(new ArrayList<>());
             }
 
@@ -139,7 +139,7 @@ public class CommentServiceImpl implements CommentService {
             for (String value : specMap.values()) {
                 specList.add(value);
             }
-            commentInfo.setSpecList(specList);
+            commentInfo.setSpecList(specList);*/
 
             // 封装用户头像信息
             User user = userFeign.findUserInfo(comment.getUsername());
