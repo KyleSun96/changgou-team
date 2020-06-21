@@ -13,14 +13,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-mongodb</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.changgou</groupId>
             <artifactId>changgou_common_db</artifactId>
             <version>1.0-SNAPSHOT</version>
@@ -31,14 +23,6 @@
             <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-oauth2</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.amqp</groupId>
-            <artifactId>spring-rabbit</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.changgou</groupId>
             <artifactId>changgou_service_goods_api</artifactId>
             <version>1.0-SNAPSHOT</version>
@@ -47,6 +31,22 @@
             <groupId>com.changgou</groupId>
             <artifactId>changgou_service_user_api</artifactId>
             <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-mongodb</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-oauth2</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.amqp</groupId>
+            <artifactId>spring-rabbit</artifactId>
         </dependency>
     </dependencies>
 

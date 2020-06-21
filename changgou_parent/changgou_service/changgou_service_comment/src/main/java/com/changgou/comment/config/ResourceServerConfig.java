@@ -74,7 +74,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
         http.authorizeRequests()
                 //下边的路径放行
                 .antMatchers(
-                        "/comment/list/**", "/comment/findBySkuId/**", "/comment/getAllComment/**", "/comment/getCommentInfoList/**"). //配置地址放行
+                        "/comment/getCommentCountBySpuId/**", "/comment/getCommentInfoList/**", "/comment/findBySkuId/**"). //配置地址放行
                 permitAll()
                 .anyRequest().
                 authenticated();    //其他地址需要认证授权

@@ -85,4 +85,5 @@ public class Comment implements Serializable {
     public void setLevel(String level) {
         this.level = level;
     }
+
 }

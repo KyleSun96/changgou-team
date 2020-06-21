@@ -6,12 +6,12 @@ import java.io.Serializable;
 
 /**
  * @Program: changgou_parent
- * @ClassName: CommentSort
+ * @ClassName: CommentCount
  * @Description: 商品评价分类
  * @Author: KyleSun
  **/
-@Document(collection = "tb_comment_sort")
-public class CommentSort implements Serializable {
+@Document(collection = "tb_comment_count")
+public class CommentCount implements Serializable {
 
     private Long allComment;
 
