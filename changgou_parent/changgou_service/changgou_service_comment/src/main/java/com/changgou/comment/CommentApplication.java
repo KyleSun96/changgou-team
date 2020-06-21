@@ -22,10 +22,10 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication(exclude = DataSourceAutoConfiguration.class)
 @EnableEurekaClient
-//@EnableScheduling
+@EnableScheduling
 @EnableFeignClients(basePackages = {"com.changgou.goods.feign","com.changgou.user.feign"})
 @EnableDiscoveryClient
-//@EntityScan("com.changgou.comment.pojo.comment")
+@EntityScan("com.changgou.comment.pojo.comment")
 public class CommentApplication {
 
     public static void main(String[] args) {

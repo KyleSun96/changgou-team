@@ -7,7 +7,7 @@ import java.io.Serializable;
 /**
  * @Program: changgou_parent
  * @ClassName: CommentCount
- * @Description: 商品评价分类
+ * @Description: 商品分类评价数量
  * @Author: KyleSun
  **/
 @Document(collection = "tb_comment_count")

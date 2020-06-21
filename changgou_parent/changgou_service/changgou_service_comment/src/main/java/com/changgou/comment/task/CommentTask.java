@@ -29,8 +29,8 @@ public class CommentTask {
     @Autowired
     private CommentRepository commentRepository;
 
-    // 一分钟更新一次
-    @Scheduled(cron = "0 * * * * ?")
+    // 两分钟更新一次
+    @Scheduled(cron = "0 0/2 * * * ?")
     public void updateCommentCount() {
 
         // 更新获取spu最新评价数量
