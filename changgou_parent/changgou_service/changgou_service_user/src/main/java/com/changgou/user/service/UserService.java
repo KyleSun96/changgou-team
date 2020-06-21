@@ -9,6 +9,21 @@ import java.util.Map;
 
 public interface UserService {
 
+
+    /**
+     * 修改数据
+     * @param userInfoMap
+     * @param userInfo
+     */
+    void updateInfo(Map userInfoMap, User userInfo);
+
+    /**
+     * 根据地区
+     *
+     * @return
+     */
+    String findAreaId(Map userInfoMap);
+
     /***
      * 查询所有
      * @return
@@ -17,6 +32,7 @@ public interface UserService {
 
     /**
      * 根据ID查询
+     *
      * @param username
      * @return
      */
@@ -36,7 +52,7 @@ public interface UserService {
 
     /***
      * 删除
-     * @param id
+     * @param username
      */
     void delete(String username);
 

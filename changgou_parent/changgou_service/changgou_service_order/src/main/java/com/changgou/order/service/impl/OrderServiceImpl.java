@@ -20,10 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import java.time.LocalDate;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -38,7 +35,8 @@ public class OrderServiceImpl implements OrderService {
      */
     @Override
     public List<Order> findAll() {
-        return orderMapper.selectAll();
+        List<Order> orderList = orderMapper.selectAll();
+        return orderList;
     }
 
     /**
@@ -50,6 +48,75 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Order findById(String id) {
         return orderMapper.selectByPrimaryKey(id);
+    }
+
+    /**
+     * 查询待收货的订单
+     *
+     * @return
+     */
+    @Override
+    public List<Order> findPayOrder(String username) {
+        List<Order> list = new ArrayList<>();
+
+        //List<Order> orderList = orderMapper.findOrderByUsername(username);
+        Example example=new Example(Order.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo(username);
+        List<Order> orderList = orderMapper.selectByExample(example);
+        for (Order order : orderList) {
+
+            if (order == null) {
+                throw new RuntimeException("订单不存在");
+            }
+            if ("1".equals(order.getPayStatus()) && "1".equals(order.getConsignStatus())) {
+                list.add(order);
+            }
+        }
+        return list;
+    }
+
+    //确认收货
+    public void define(String username){
+        Example example=new Example(Order.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo(username);
+        List<Order> orderList = orderMapper.selectByExample(example);
+
+
+        for (Order order : orderList) {
+            if (order == null) {
+                throw new RuntimeException("订单不存在");
+            }
+            if ("1".equals(order.getPayStatus()) && "1".equals(order.getConsignStatus())) {
+                order.setConsignStatus("2");
+                 order.setEndTime(new Date());
+                 order.setCloseTime(new Date());
+                orderMapper.updateByPrimaryKeySelective(order);
+            }
+        }
+    }
+
+    //查询待评价订单
+    @Override
+    public List<Order> findBuyerRateByOrder(String username) {
+        Example example=new Example(Order.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo(username);
+        List<Order> orderList = orderMapper.selectByExample(example);
+
+        List<Order> list=new ArrayList<>();
+        for (Order order : orderList) {
+            if (order == null) {
+                throw new RuntimeException("订单不存在");
+            }
+
+            if (!"1".equals(order.getBuyerRate())&&"1".equals(order.getPayStatus())&&"2".equals(order.getConsignStatus())){
+                list.add(order);
+            }
+        }
+
+        return list;
     }
 
     @Autowired
@@ -339,6 +406,7 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
+    //手动确定收货
     @Override
     @Transactional
     public void confirmTask(String orderId, String operator) {
