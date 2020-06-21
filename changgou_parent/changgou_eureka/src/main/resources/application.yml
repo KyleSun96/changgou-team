@@ -6,3 +6,4 @@ eureka:
     fetch-registry: false #是否从eureka中获取信息
     service-url:
       defaultZone: http://127.0.0.1:${server.port}/eureka/
+

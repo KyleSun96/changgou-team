@@ -18,7 +18,7 @@ import tk.mybatis.spring.annotation.MapperScan;
 @EnableFeignClients(basePackages = {"com.changgou.goods.feign", "com.changgou.pay.feign"})
 public class OrderApplication {
     public static void main(String[] args) {
-        SpringApplication.run(OrderApplication.class);
+        SpringApplication.run(OrderApplication.class,args);
     }
 
     @Bean

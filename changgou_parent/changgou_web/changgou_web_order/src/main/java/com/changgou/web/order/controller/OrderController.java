@@ -7,7 +7,6 @@ import com.changgou.order.pojo.Order;
 import com.changgou.order.pojo.OrderItem;
 import com.changgou.user.feign.AddressFeign;
 import com.changgou.user.pojo.Address;
-import com.netflix.discovery.converters.Auto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -70,5 +69,17 @@ public class OrderController {
         model.addAttribute("orderId",orderId);
         model.addAttribute("payMoney",order.getPayMoney());
         return "pay";
+    }
+
+
+
+    @RequestMapping("/address")
+    public String Address(){
+        return "address";
+    }
+
+    @RequestMapping("/index")
+    public String Address2(){
+        return "index";
     }
 }
