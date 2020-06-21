@@ -90,7 +90,7 @@ public class AlipayController {
         return new Result(true, StatusCode.OK, "查询订单成功", map);
     }
 
-    //基于微信关闭订单
+    //基于支付宝关闭订单
     @PutMapping("/close/{orderId}")
     public Result closeOrder(@PathVariable("orderId") String orderId) {
         Map map = alipayService.closeOrder(orderId);

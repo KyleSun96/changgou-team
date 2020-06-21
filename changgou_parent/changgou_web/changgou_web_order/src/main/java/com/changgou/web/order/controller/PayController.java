@@ -64,4 +64,5 @@ public class PayController {
         model.addAttribute("payMoney",payMoney);
         return "paysuccess";
     }
+
 }

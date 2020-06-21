@@ -4,7 +4,7 @@ import com.changgou.entity.Result;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
-@FeignClient(name = "ppay")
+@FeignClient(name = "pay")
 public interface AlipayFeign {
 
     //下单
@@ -15,7 +15,7 @@ public interface AlipayFeign {
     @GetMapping("/alipay/query/{orderId}")
     public Result queryOrder(@PathVariable("orderId") String orderId);
 
-    //基于微信关闭订单
+    //基于支付宝关闭订单
     @PutMapping("/alipay/close/{orderId}")
     public Result closeOrder(@PathVariable("orderId") String orderId);
 
