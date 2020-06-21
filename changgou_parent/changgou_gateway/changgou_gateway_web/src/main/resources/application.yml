@@ -62,6 +62,13 @@ spring:
             - Path=/api/wseckillgoods/**,/api/wseckillorder/**
           filters:
             - StripPrefix=1
+       #个人中心渲染微服务
+        - id: changgou_center_web_route
+          uri: lb://order-center
+          predicates:
+            - Path=/api/wcenter/**
+          filters:
+            - StripPrefix=1
   redis:
     host: 192.168.200.128
 server:
