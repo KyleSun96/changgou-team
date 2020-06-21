@@ -62,6 +62,20 @@ spring:
             - Path=/api/wseckillgoods/**,/api/wseckillorder/**
           filters:
             - StripPrefix=1
+      #物流微服务
+        - id: changgou_logistic
+          uri: lb://logistic
+          predicates:
+            - Path=/api/logisitic/**
+          filters:
+            - StripPrefix=1
+     #物流渲染微服务
+        - id: changgou_logistic_web
+          uri: lb://logistic-web
+          predicates:
+            - Path=/api/wlogisitic/**
+          filters:
+            - StripPrefix=1
   redis:
     host: 192.168.200.128
 server:
