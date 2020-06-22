@@ -23,6 +23,21 @@ public interface OrderFeign {
     @RequestMapping("/order/findBuyerRate")
     public Result<List<Order>> findBuyerRateByOrder();
 
-    @RequestMapping("/order/define")
-    public Result define();
+
+    @RequestMapping ("/order/task/id")
+    public Result confirmTask(@RequestParam("id") String Id);
+
+    @RequestMapping("/order/findOrderByUsername")
+    public Result<List<Order>> findOrderByUsername();
+
+    //查询所有待收货订单
+    @RequestMapping("/order/findAllOrder")
+    public Result<List<Order>> findAllOrder();
+
+    @RequestMapping("/order/findNoPayByUsername")
+    public Result<List<Order>> findNoPayByUsername();
+
+    //代发货
+    @RequestMapping("/order/findNoConsignByUsername")
+    public Result<List<Order>> findNoConsignByUsername();
 }

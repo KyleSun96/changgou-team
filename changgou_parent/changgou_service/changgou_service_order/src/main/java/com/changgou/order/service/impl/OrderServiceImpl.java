@@ -39,15 +39,65 @@ public class OrderServiceImpl implements OrderService {
         return orderList;
     }
 
-    /**
-     * 根据ID查询
-     *
-     * @param id
-     * @return
-     */
+
+
+    //根据用户名查询所有订单
     @Override
-    public Order findById(String id) {
-        return orderMapper.selectByPrimaryKey(id);
+    public List<Order> findOrderByUsername(String username) {
+
+        Example example=new Example(Order.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("username",username);
+        List<Order> orderList = orderMapper.selectByExample(example);
+        for (Order order : orderList) {
+            if (order==null){
+                throw new RuntimeException("订单不存在");
+            }
+        }
+        return orderList;
+    }
+
+    //代付款
+    @Override
+    public List<Order> findNoPayByUsername(String username) {
+        Example example=new Example(Order.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("username",username);
+        List<Order> orderList = orderMapper.selectByExample(example);
+
+        List<Order> list = new ArrayList<>();
+        for (Order order : orderList) {
+            if (order==null){
+                throw new RuntimeException("订单不存在");
+            }
+            if ("1".equals(order.getOrderStatus()) && "0".equals(order.getPayStatus())){
+                list.add(order);
+            }
+        }
+
+        return list;
+    }
+
+    //代发货
+    @Override
+    public List<Order> findNoConsignByUsername(String username) {
+
+        Example example=new Example(Order.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("username",username);
+        List<Order> orderList = orderMapper.selectByExample(example);
+
+        List<Order> list = new ArrayList<>();
+        for (Order order : orderList) {
+            if (order==null){
+                throw new RuntimeException("订单不存在");
+            }
+            if ("1".equals(order.getOrderStatus()) && "1".equals(order.getPayStatus()) && "0".equals(order.getConsignStatus())){
+                list.add(order);
+            }
+        }
+
+        return list;
     }
 
     /**
@@ -75,27 +125,25 @@ public class OrderServiceImpl implements OrderService {
         }
         return list;
     }
-
-    //确认收货
-    public void define(String username){
-        Example example=new Example(Order.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo(username);
-        List<Order> orderList = orderMapper.selectByExample(example);
+    //根据id查询所有待收货订单
+    @Override
+    public List<Order> findAllOrder( ) {
 
 
+        List<Order> orderList = orderMapper.selectAll();
+
+        List<Order> list=new ArrayList<>();
         for (Order order : orderList) {
             if (order == null) {
                 throw new RuntimeException("订单不存在");
             }
             if ("1".equals(order.getPayStatus()) && "1".equals(order.getConsignStatus())) {
-                order.setConsignStatus("2");
-                 order.setEndTime(new Date());
-                 order.setCloseTime(new Date());
-                orderMapper.updateByPrimaryKeySelective(order);
+                list.add(order);
             }
         }
+        return list;
     }
+
 
     //查询待评价订单
     @Override
@@ -119,6 +167,9 @@ public class OrderServiceImpl implements OrderService {
         return list;
     }
 
+
+
+
     @Autowired
     private CartService cartService;
 
@@ -140,6 +191,7 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
+
     /**
      * 增加
      *
@@ -152,6 +204,7 @@ public class OrderServiceImpl implements OrderService {
         //1.获取购物车的相关数据(redis)
         Map cartMap = cartService.list(order.getUsername());
         List<OrderItem> orderItemList = (List<OrderItem>) cartMap.get("orderItemList");
+
 
         //2.统计计算:总金额,总数量
         //3.填充订单数据并保存到tb_order
@@ -411,6 +464,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public void confirmTask(String orderId, String operator) {
 
+        //127 290 920 888 657 9200
         Order order = orderMapper.selectByPrimaryKey(orderId);
         if (order == null) {
             throw new RuntimeException("订单不存在");
@@ -435,6 +489,8 @@ public class OrderServiceImpl implements OrderService {
         orderLog.setOrderId(order.getId());
         orderLogMapper.insertSelective(orderLog);
     }
+
+
 
     @Autowired
     private OrderConfigMapper orderConfigMapper;

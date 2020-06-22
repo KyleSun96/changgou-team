@@ -15,35 +15,7 @@ public class User implements Serializable {
     @Id
     private String username;//用户名
 
-    private String profession;//职业
 
-    private String imageUrl;//头像地址
-
-    public String getImageUrl() {
-        return imageUrl;
-    }
-
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
-
-    public String getProfession() {
-        return profession;
-    }
-
-    public void setProfession(String profession) {
-        this.profession = profession;
-    }
-
-    public String getAreaId() {
-        return areaId;
-    }
-
-    public void setAreaId(String areaId) {
-        this.areaId = areaId;
-    }
-
-    private String areaId; //所在地Id
     private String password;//密码，加密存储
     private String phone;//注册手机号
     private String email;//注册邮箱

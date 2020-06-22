@@ -2,6 +2,7 @@ package com.changgou.order.controller;
 import com.changgou.entity.PageResult;
 import com.changgou.entity.Result;
 import com.changgou.entity.StatusCode;
+import com.changgou.order.pojo.Order;
 import com.changgou.order.service.OrderItemService;
 import com.changgou.order.pojo.OrderItem;
 import com.github.pagehelper.Page;
@@ -22,9 +23,11 @@ public class OrderItemController {
     //根据订单查询商品名称
     @GetMapping("/findName/{orderId}")
     public Result findByOrderId(@PathVariable("orderId") String orderId) {
-        OrderItem orderItem = orderItemService.findByOrderId(orderId);
-            System.out.println(orderItem.getName());
-        return new Result(true,StatusCode.OK,"查询成功",orderItem.getName());
+       /* OrderItem orderItem = orderItemService.findByOrderId(orderId);
+            System.out.println(orderItem.getName());*/
+        List<OrderItem> orderItemList = orderItemService.findByOrderId(orderId);
+
+        return new Result(true,StatusCode.OK,"查询成功",orderItemList);
     }
     /**
      * 查询全部数据
