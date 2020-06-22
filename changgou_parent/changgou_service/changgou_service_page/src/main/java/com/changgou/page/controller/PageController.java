@@ -37,24 +37,26 @@ public class PageController {
     public String toGoodsPage(@PathVariable("spuId") String spuId, Model model) {
         Map<String, Object> resultMap = pageService.getItemData(spuId);
 
-        // 测试
-        System.out.println("商品的spuId为：" + spuId);
-
-        CommentCount commentCount = commentFeign.getCommentCountBySpuId(spuId).getData();
-
-        List<CommentInfo> commentInfoList = commentFeign.getCommentInfoList(spuId, "all").getData();
-
-        if (commentCount != null){
-            model.addAttribute("commentCount",commentCount);
-        }
-
-        if (commentInfoList!=null){
-            model.addAttribute("commentInfoList",commentInfoList);
-        }
-
         model.addAttribute("spuId", spuId);
         model.addAllAttributes(resultMap);
 
+        // 测试
+        System.out.println("商品的spuId为：" + spuId);
+
+        // 返回商品数量数据
+        CommentCount commentCount = commentFeign.getCommentCountBySpuId(spuId).getData();
+        model.addAttribute("commentCount", commentCount);
+
+        //返回商品分级评论
+//        List<CommentInfo> commentInfoList = commentFeign.getCommentInfoList(spuId, "all").getData();
+//        List<CommentInfo> highCommentInfoList = commentFeign.getCommentInfoList(spuId, "high").getData();
+//        List<CommentInfo> mediumCommentInfoList = commentFeign.getCommentInfoList(spuId, "medium").getData();
+//        List<CommentInfo> lowCommentInfoList = commentFeign.getCommentInfoList(spuId, "low").getData();
+//
+//        model.addAttribute("commentInfoList", commentInfoList);
+//        model.addAttribute("highCommentInfoList", highCommentInfoList);
+//        model.addAttribute("mediumCommentInfoList", mediumCommentInfoList);
+//        model.addAttribute("lowCommentInfoList", lowCommentInfoList);
 
         return "item";
     }

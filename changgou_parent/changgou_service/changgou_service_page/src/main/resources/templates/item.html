@@ -821,10 +821,10 @@
 									</div>
 									<div class="com-tab-type">
 										<ul class="type">
-											<li class="current"><a href="javascript:;">全部评价<span th:text="${commentCount.allComment}"/></a></li>
-											<li><a href="javascript:;" >好评<span th:text="${commentCount.highComment}"/></a></li>
-											<li><a href="javascript:;">中评<span th:text="${commentCount.mediumComment}"/></a></li>
-											<li><a href="javascript:;">差评<span th:text="${commentCount.lowComment}"/></a></li>
+											<li class="current"><a href="javascript:;">全部评价(<span th:text="${commentCount.allComment}"/>)</a></li>
+											<li><a href="javascript:;" >好评(<span th:text="${commentCount.highComment}"/>)</a></li>
+											<li><a href="javascript:;">中评(<span th:text="${commentCount.mediumComment}"/>)</a></li>
+											<li><a href="javascript:;">差评(<span th:text="${commentCount.lowComment}"/>)</a></li>
 										</ul>
 										<div class="content" th:each="comm:${commentInfoList}">
 											<div class="com-item">
@@ -1321,6 +1321,17 @@
 
                 }
             },
+
+            // 获取该spu的评论列表
+            getCommentInfoList:function (spuId,level) {
+                let that = this;
+                axios.get("http://localhost:8001/api/comment/getCommentInfoList/"+spuId+"/"+level).then(function (response) {
+                    if (response.data.flag){
+                        that.commentInfoList=response.data.data;
+                    }
+                })
+            },
+
             created:function () {
                 //默认选中第1个SKU,深克隆
                 this.sku=JSON.parse(JSON.stringify(this.skuList[0]));
