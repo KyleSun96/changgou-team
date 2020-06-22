@@ -65,7 +65,7 @@ spring:
         - id: changgou_search_route
           uri: lb://search
           predicates:
-            - Path=/api/wfavorites/**,/api/search/**
+            - Path=/api/wfavorites/**,/api/search/**,/api/wfootmark/**
           filters:
             - StripPrefix=1
         #个人中心渲染微服务
