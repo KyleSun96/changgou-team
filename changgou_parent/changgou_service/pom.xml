@@ -23,7 +23,11 @@
         <module>changgou_service_pay</module>
         <module>changgou_service_seckill</module>
         <module>changgou_service_consume</module>
+        <module>changgou-logistic</module>
+        <module>changgou_service_page</module>
+
         <module>changgou_service_center</module>
+
     </modules>
 
 

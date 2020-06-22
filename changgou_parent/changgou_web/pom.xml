@@ -14,7 +14,10 @@
     <modules>
         <module>changgou_web_order</module>
         <module>changgou_web_seckill</module>
+        <module>changgou_web_myorder</module>
+        <module>changgou_web_backend</module>
         <module>changgou_web_center</module>
+
     </modules>
 
 

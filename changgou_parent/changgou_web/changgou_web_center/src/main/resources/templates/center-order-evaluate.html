@@ -130,7 +130,7 @@
                             </tr>
                         </table>
                     </div>
-                    <div class="order-detail">
+                    <div class="order-detail" >
                         <div class="orders" th:each="order:${orderList}">
                             <div class="choose-order">
                                 <div class="sui-pagination pagination-large top-pages">
@@ -153,13 +153,16 @@
                                 <a class="sui-btn btn-info share-btn">分享</a>
                             </div>
                             <table class="sui-table table-bordered order-datatable">
-                                <tbody>
+                                <tbody >
                                 <tr>
                                     <td width="35%">
-                                        <div class="typographic"><img src="/img/goods.png" />
-                                            <a href="#" class="block-text">包邮 <em th:text="${order.orderItemName}"></em></a>
-                                            <!--<span class="guige">规格：温泉喷雾150ml</span>-->
+                                        <div th:each="orderItem:${order.orderItemList}">
+                                            <div class="typographic"><img th:src="${orderItem.image}" />
+                                                <a href="#" class="block-text">包邮 <em th:text="${orderItem.name}"></em></a>
+                                                <!--<span class="guige">规格：温泉喷雾150ml</span>-->
+                                            </div>
                                         </div>
+
                                     </td>
                                     <td width="5%" class="center">
                                         <ul class="unstyled">

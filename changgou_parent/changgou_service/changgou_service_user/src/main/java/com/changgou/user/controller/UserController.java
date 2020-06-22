@@ -64,7 +64,6 @@ public class UserController {
                 User user = new User();
                 String username = tokenDecode.getUserInfo().get("username");
                 user.setUsername(username);
-                user.setImageUrl(url);
                 userService.update(user);
             }
             return new Result(true,StatusCode.OK,"文件上传成功",url);

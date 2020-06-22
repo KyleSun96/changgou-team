@@ -37,7 +37,7 @@
 							<li class="f-item"><span>关注畅购</span></li>
 							<li class="f-item"><span><a href="cooperation.html" target="_blank">合作招商</a></span></li>
 							<li class="f-item"><span><a href="shoplogin.html" target="_blank">商家后台</a></span></li>				
-							<li class="f-item"><span>网站导航</li>
+                            <li class="f-item"><span>网站导航</span></li>
 						</ul>
 					</div>
 					
@@ -130,7 +130,7 @@
                                 </tr>
                             </table>
                         </div>
-                        <div class="order-detail">
+                        <div class="order-detail" id="app">
                             <div class="orders" th:each="order:${orderList}">
                                 
                                 <!--order1-->
@@ -144,10 +144,12 @@
                                     <tbody>
                                         <tr>
                                             <td width="35%">
-                                                <div class="typographic"><img src="/img/goods.png" />
-                                                    <a href="#" class="block-text">包邮 <em th:text="${order.orderItemName}"></em></a>
-                                               
-                                                </div>
+												<div th:each="orderItem:${order.orderItemList}">
+													<div class="typographic"><img th:src="${orderItem.image}" th:height="82" th:width="82"/>
+														<a href="#" class="block-text">包邮 <em th:text="${orderItem.name}"></em></a>
+
+													</div>
+												</div>
                                             </td>
                                             <td width="5%" class="center">
                                                 <ul class="unstyled">
@@ -176,7 +178,7 @@
                                                   
                                                     <li>
 
-														<a onclick="linkclick()" class="sui-btn btn-info">确认收货</a>
+														<a    th:@click="|linkclick(${#strings.substring(order.id,0,11)},${#strings.substring(order.id,11)})|" class="sui-btn btn-info">确认收货</a>
 													</li>
 
                                                 </ul>
@@ -257,7 +259,7 @@
                                 <li class="yui3-u-1-4">
                                     <div class="list-wrap">
                                         <div class="p-img">
-                                            <img src="./img/_/itemlike04.png" />
+                                            <img src="/img/_/itemlike04.png" />
                                         </div>
                                         <div class="attr">
                                             <em>DELL戴尔Ins 15MR-7528SS 15英寸 银色 笔记本</em>
@@ -390,7 +392,7 @@
 					</div>
 					<div class="yui3-u-1-6">
 						<h4>帮助中心</h4>
-						<img src="./img/wx_cz.jpg">
+						<img src="/img/wx_cz.jpg">
 					</div>
 				</div>
 			</div>
@@ -418,19 +420,27 @@
 <script type="text/javascript" src="/js/vue.js"></script>
 <script type="text/javascript" src="/js/axios.js"></script>
 
-<script>
-    function linkclick(){
-        axios.get("/worder/define").then((resp)=>{
-            if(res.data.flag){
+<script th:inline="javascript">
+    var app = new Vue({
+        el:"#app",
+        data:{
+        },
+        methods:{
+            linkclick:function (preId,perId) {
+                var id = preId+''+perId;
+                axios.get("/api/wcenter/task?id="+id).then(function (response) {
 
-                alert("成功")
-            }else{
-
-               alert("失败")
+                    if (response.data.flag){
+                        alert("成功");
+                        location.href="http://localhost:8001/api/wcenter/order/findPayOrder";
+                    } else{
+                        alert("失败");
+                    }
+                })
             }
-		})
+        }
+    })
 
-	}
 
 
 </script>
