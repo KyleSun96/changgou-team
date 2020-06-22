@@ -1,13 +1,15 @@
 package com.changgou.web.order.controller;
 
 import com.changgou.entity.Result;
+import com.changgou.goods.feign.SkuFeign;
 import com.changgou.order.feign.CartFeign;
 import com.changgou.order.feign.OrderFeign;
+import com.changgou.order.feign.OrderItemFeign;
 import com.changgou.order.pojo.Order;
 import com.changgou.order.pojo.OrderItem;
 import com.changgou.user.feign.AddressFeign;
 import com.changgou.user.pojo.Address;
-import com.netflix.discovery.converters.Auto;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,6 +27,12 @@ public class OrderController {
 
     @Autowired
     private CartFeign cartFeign;
+
+    @Autowired
+    private OrderFeign orderFeign;
+
+
+
 
     @RequestMapping("/ready/order")
     public String readyOrder(Model model) {
@@ -53,8 +61,6 @@ public class OrderController {
         return "order";
     }
 
-    @Autowired
-    private OrderFeign orderFeign;
 
     @PostMapping("/add")
     @ResponseBody
@@ -71,4 +77,16 @@ public class OrderController {
         model.addAttribute("payMoney", order.getPayMoney());
         return "pay";
     }
+
+
+    @RequestMapping("/address")
+    public String Address() {
+        return "address";
+    }
+
+    @RequestMapping("/index")
+    public String Address2() {
+        return "index";
+    }
+
 }

@@ -1,5 +1,6 @@
 package com.changgou;
 
+import com.changgou.goods.config.TokenDecode;
 import com.changgou.util.IdWorker;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
@@ -26,6 +27,12 @@ public class GoodsApplication {
     @Bean
     public IdWorker idWorker() {
         return new IdWorker(workerId, datacenterId);
+    }
+
+
+    @Bean
+    public TokenDecode tokenDecode(){
+        return new TokenDecode();
     }
 
 }

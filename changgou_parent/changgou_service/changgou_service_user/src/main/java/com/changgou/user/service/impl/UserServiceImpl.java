@@ -2,11 +2,10 @@ package com.changgou.user.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.changgou.order.pojo.Task;
-import com.changgou.user.dao.PointLogMapper;
-import com.changgou.user.dao.UserMapper;
-import com.changgou.user.pojo.PointLog;
+import com.changgou.user.config.TokenDecode;
+import com.changgou.user.dao.*;
+import com.changgou.user.pojo.*;
 import com.changgou.user.service.UserService;
-import com.changgou.user.pojo.User;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -23,10 +23,92 @@ import java.util.concurrent.TimeUnit;
 public class UserServiceImpl implements UserService {
 
     @Autowired
+    private PointLogMapper pointLogMapper;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
+
+    @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private AreasMapper areasMapper;
+
+    @Autowired
+    private CitiesMapper citiesMapper;
+
+    @Autowired
+    private ProvincesMapper provincesMapper;
+
+    @Autowired
+    private TokenDecode tokenDecode;
+
+    @Override
+    @Transactional
+    public void updateInfo(Map userInfoMap, User userInfo) {
+        String areaId = findAreaId(userInfoMap);
+        if (areaId != null){
+            String username = tokenDecode.getUserInfo().get("username");
+            userInfo.setAreaId(areaId);
+            //查询主键usernmae
+            userInfo.setUsername(username);
+            userInfo.setUpdated(new Date());
+
+            userMapper.updateByPrimaryKeySelective(userInfo);
+        }
+
+    }
+
+    /**
+     * 根据地址查询地区Id
+     *
+     * @param userInfoMap
+     * @return
+     */
+    @Override
+    public String findAreaId(Map userInfoMap) {
+
+
+        //根据省份名称查询省份Id
+        String province = (String) userInfoMap.get("province");
+        Provinces provinces = new Provinces();
+        provinces.setProvince(province);
+        Provinces resultProvinces = provincesMapper.selectOne(provinces);
+
+        if (resultProvinces != null) {
+            //存在省份,根据省份Id和城市名称查询城市Id
+            String city = (String) userInfoMap.get("city");
+            Cities cities = new Cities();
+            cities.setProvinceid(resultProvinces.getProvinceid());
+            cities.setCity(city);
+            List<Cities> citiesList = citiesMapper.select(cities);
+            //存在城市查询区Id
+            if (citiesList != null && citiesList.size()>0){
+                Cities cities1 = citiesList.get(0);
+                String area = (String) userInfoMap.get("district");
+                Example example = new Example(Areas.class);
+                Example.Criteria criteria = example.createCriteria();
+                criteria.andEqualTo("area",area);
+                criteria.andEqualTo("cityid",cities1.getCityid());
+
+                List<Areas> areas = areasMapper.selectByExample(example);
+
+                //如果区不为空修改用户信息
+                if (areas!=null && areas.size() >0){
+                    String areaid = areas.get(0).getAreaid();
+                    //返回地区areaId
+                    return areaid;
+                }
+            }
+
+        }
+
+        return null;
+    }
 
     /**
      * 查询全部列表
+     *
      * @return
      */
     @Override
@@ -36,86 +118,89 @@ public class UserServiceImpl implements UserService {
 
     /**
      * 根据ID查询
+     *
      * @param username
      * @return
      */
     @Override
-    public User findById(String username){
-        return  userMapper.selectByPrimaryKey(username);
+    public User findById(String username) {
+        return userMapper.selectByPrimaryKey(username);
     }
 
 
     /**
      * 增加
+     *
      * @param user
      */
     @Override
-    public void add(User user){
+    public void add(User user) {
         userMapper.insert(user);
     }
 
 
     /**
      * 修改
+     *
      * @param user
      */
     @Override
-    public void update(User user){
-        userMapper.updateByPrimaryKey(user);
+    public void update(User user) {
+        userMapper.updateByPrimaryKeySelective(user);
     }
 
     /**
      * 删除
+     *
      * @param username
      */
     @Override
-    public void delete(String username){
+    public void delete(String username) {
         userMapper.deleteByPrimaryKey(username);
     }
 
 
     /**
      * 条件查询
+     *
      * @param searchMap
      * @return
      */
     @Override
-    public List<User> findList(Map<String, Object> searchMap){
+    public List<User> findList(Map<String, Object> searchMap) {
         Example example = createExample(searchMap);
         return userMapper.selectByExample(example);
     }
 
     /**
      * 分页查询
+     *
      * @param page
      * @param size
      * @return
      */
     @Override
-    public Page<User> findPage(int page, int size){
-        PageHelper.startPage(page,size);
-        return (Page<User>)userMapper.selectAll();
+    public Page<User> findPage(int page, int size) {
+        PageHelper.startPage(page, size);
+        return (Page<User>) userMapper.selectAll();
     }
 
     /**
      * 条件+分页查询
+     *
      * @param searchMap 查询条件
-     * @param page 页码
-     * @param size 页大小
+     * @param page      页码
+     * @param size      页大小
      * @return 分页结果
      */
     @Override
-    public Page<User> findPage(Map<String,Object> searchMap, int page, int size){
-        PageHelper.startPage(page,size);
+    public Page<User> findPage(Map<String, Object> searchMap, int page, int size) {
+        PageHelper.startPage(page, size);
         Example example = createExample(searchMap);
-        return (Page<User>)userMapper.selectByExample(example);
+        return (Page<User>) userMapper.selectByExample(example);
     }
 
-    @Autowired
-    private PointLogMapper pointLogMapper;
 
-    @Autowired
-    private RedisTemplate redisTemplate;
 
     @Override
     @Transactional
@@ -129,16 +214,16 @@ public class UserServiceImpl implements UserService {
 
         //2.判断当前的任务是否操作过
         PointLog pointLog = pointLogMapper.findPointLogByOrderId(orderId);
-        if (pointLog != null){
+        if (pointLog != null) {
             return 0;
         }
 
         //3.将任务存入到redis中
-        redisTemplate.boundValueOps(task.getId()).set("exist",30, TimeUnit.SECONDS);
+        redisTemplate.boundValueOps(task.getId()).set("exist", 30, TimeUnit.SECONDS);
 
         //4.修改用户积分
-        int result = userMapper.updateUserPoint(username,point);
-        if (result<=0){
+        int result = userMapper.updateUserPoint(username, point);
+        if (result <= 0) {
             return 0;
         }
 
@@ -148,7 +233,7 @@ public class UserServiceImpl implements UserService {
         pointLog.setOrderId(orderId);
         pointLog.setPoint(point);
         result = pointLogMapper.insertSelective(pointLog);
-        if (result <= 0){
+        if (result <= 0) {
             return 0;
         }
 
@@ -160,77 +245,78 @@ public class UserServiceImpl implements UserService {
 
     /**
      * 构建查询对象
+     *
      * @param searchMap
      * @return
      */
-    private Example createExample(Map<String, Object> searchMap){
-        Example example=new Example(User.class);
+    private Example createExample(Map<String, Object> searchMap) {
+        Example example = new Example(User.class);
         Example.Criteria criteria = example.createCriteria();
-        if(searchMap!=null){
+        if (searchMap != null) {
             // 用户名
-            if(searchMap.get("username")!=null && !"".equals(searchMap.get("username"))){
-                criteria.andEqualTo("username",searchMap.get("username"));
-           	}
+            if (searchMap.get("username") != null && !"".equals(searchMap.get("username"))) {
+                criteria.andEqualTo("username", searchMap.get("username"));
+            }
             // 密码，加密存储
-            if(searchMap.get("password")!=null && !"".equals(searchMap.get("password"))){
-                criteria.andEqualTo("password",searchMap.get("password"));
-           	}
+            if (searchMap.get("password") != null && !"".equals(searchMap.get("password"))) {
+                criteria.andEqualTo("password", searchMap.get("password"));
+            }
             // 注册手机号
-            if(searchMap.get("phone")!=null && !"".equals(searchMap.get("phone"))){
-                criteria.andLike("phone","%"+searchMap.get("phone")+"%");
-           	}
+            if (searchMap.get("phone") != null && !"".equals(searchMap.get("phone"))) {
+                criteria.andLike("phone", "%" + searchMap.get("phone") + "%");
+            }
             // 注册邮箱
-            if(searchMap.get("email")!=null && !"".equals(searchMap.get("email"))){
-                criteria.andLike("email","%"+searchMap.get("email")+"%");
-           	}
+            if (searchMap.get("email") != null && !"".equals(searchMap.get("email"))) {
+                criteria.andLike("email", "%" + searchMap.get("email") + "%");
+            }
             // 会员来源：1:PC，2：H5，3：Android，4：IOS
-            if(searchMap.get("sourceType")!=null && !"".equals(searchMap.get("sourceType"))){
-                criteria.andEqualTo("sourceType",searchMap.get("sourceType"));
-           	}
+            if (searchMap.get("sourceType") != null && !"".equals(searchMap.get("sourceType"))) {
+                criteria.andEqualTo("sourceType", searchMap.get("sourceType"));
+            }
             // 昵称
-            if(searchMap.get("nickName")!=null && !"".equals(searchMap.get("nickName"))){
-                criteria.andLike("nickName","%"+searchMap.get("nickName")+"%");
-           	}
+            if (searchMap.get("nickName") != null && !"".equals(searchMap.get("nickName"))) {
+                criteria.andLike("nickName", "%" + searchMap.get("nickName") + "%");
+            }
             // 真实姓名
-            if(searchMap.get("name")!=null && !"".equals(searchMap.get("name"))){
-                criteria.andLike("name","%"+searchMap.get("name")+"%");
-           	}
+            if (searchMap.get("name") != null && !"".equals(searchMap.get("name"))) {
+                criteria.andLike("name", "%" + searchMap.get("name") + "%");
+            }
             // 使用状态（1正常 0非正常）
-            if(searchMap.get("status")!=null && !"".equals(searchMap.get("status"))){
-                criteria.andEqualTo("status",searchMap.get("status"));
-           	}
+            if (searchMap.get("status") != null && !"".equals(searchMap.get("status"))) {
+                criteria.andEqualTo("status", searchMap.get("status"));
+            }
             // 头像地址
-            if(searchMap.get("headPic")!=null && !"".equals(searchMap.get("headPic"))){
-                criteria.andLike("headPic","%"+searchMap.get("headPic")+"%");
-           	}
+            if (searchMap.get("headPic") != null && !"".equals(searchMap.get("headPic"))) {
+                criteria.andLike("headPic", "%" + searchMap.get("headPic") + "%");
+            }
             // QQ号码
-            if(searchMap.get("qq")!=null && !"".equals(searchMap.get("qq"))){
-                criteria.andLike("qq","%"+searchMap.get("qq")+"%");
-           	}
+            if (searchMap.get("qq") != null && !"".equals(searchMap.get("qq"))) {
+                criteria.andLike("qq", "%" + searchMap.get("qq") + "%");
+            }
             // 手机是否验证 （0否  1是）
-            if(searchMap.get("isMobileCheck")!=null && !"".equals(searchMap.get("isMobileCheck"))){
-                criteria.andEqualTo("isMobileCheck",searchMap.get("isMobileCheck"));
-           	}
+            if (searchMap.get("isMobileCheck") != null && !"".equals(searchMap.get("isMobileCheck"))) {
+                criteria.andEqualTo("isMobileCheck", searchMap.get("isMobileCheck"));
+            }
             // 邮箱是否检测（0否  1是）
-            if(searchMap.get("isEmailCheck")!=null && !"".equals(searchMap.get("isEmailCheck"))){
-                criteria.andEqualTo("isEmailCheck",searchMap.get("isEmailCheck"));
-           	}
+            if (searchMap.get("isEmailCheck") != null && !"".equals(searchMap.get("isEmailCheck"))) {
+                criteria.andEqualTo("isEmailCheck", searchMap.get("isEmailCheck"));
+            }
             // 性别，1男，0女
-            if(searchMap.get("sex")!=null && !"".equals(searchMap.get("sex"))){
-                criteria.andEqualTo("sex",searchMap.get("sex"));
-           	}
+            if (searchMap.get("sex") != null && !"".equals(searchMap.get("sex"))) {
+                criteria.andEqualTo("sex", searchMap.get("sex"));
+            }
 
             // 会员等级
-            if(searchMap.get("userLevel")!=null ){
-                criteria.andEqualTo("userLevel",searchMap.get("userLevel"));
+            if (searchMap.get("userLevel") != null) {
+                criteria.andEqualTo("userLevel", searchMap.get("userLevel"));
             }
             // 积分
-            if(searchMap.get("points")!=null ){
-                criteria.andEqualTo("points",searchMap.get("points"));
+            if (searchMap.get("points") != null) {
+                criteria.andEqualTo("points", searchMap.get("points"));
             }
             // 经验值
-            if(searchMap.get("experienceValue")!=null ){
-                criteria.andEqualTo("experienceValue",searchMap.get("experienceValue"));
+            if (searchMap.get("experienceValue") != null) {
+                criteria.andEqualTo("experienceValue", searchMap.get("experienceValue"));
             }
 
         }
