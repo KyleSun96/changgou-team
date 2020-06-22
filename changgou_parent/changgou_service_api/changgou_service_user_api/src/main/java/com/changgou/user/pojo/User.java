@@ -224,5 +224,4 @@ public class User implements Serializable {
         this.lastLoginTime = lastLoginTime;
     }
 
-
 }
