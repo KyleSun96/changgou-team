@@ -5,6 +5,7 @@ import javax.persistence.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * @Program: changgou_parent
@@ -29,6 +30,16 @@ public class Comment implements Serializable {
     private String content;     //评论内容
 
     private String level;       //评论等级
+
+    private String date;          // 评论时间
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
 
     public String getId() {
         return id;

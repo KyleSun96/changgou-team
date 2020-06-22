@@ -3,6 +3,7 @@ package com.changgou.comment.pojo;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 /**
