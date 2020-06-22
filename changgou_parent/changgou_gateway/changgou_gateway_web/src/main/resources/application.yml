@@ -69,6 +69,13 @@ spring:
             - Path=/api/comment/**
           filters:
             - StripPrefix=1
+        # 商品详情微服务
+        - id: changgou_page
+          uri: lb://page
+          predicates:
+            - Path=/api/page/**
+          filters:
+            - StripPrefix=1
   redis:
     host: 192.168.200.128
 server:

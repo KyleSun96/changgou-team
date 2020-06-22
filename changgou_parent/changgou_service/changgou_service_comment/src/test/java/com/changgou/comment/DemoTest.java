@@ -13,6 +13,8 @@ import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -42,6 +44,12 @@ public class DemoTest {
         comment.setSkuId("002");
         comment.setContent("很好");
         comment.setLevel("high");
+        Date now = new Date();
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        String dateString = simpleDateFormat.format(now);
+        comment.setDate(dateString);
+
         commentRepository.save(comment);
 
     }

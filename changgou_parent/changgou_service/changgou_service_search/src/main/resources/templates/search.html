@@ -6,7 +6,7 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
 	<title>产品列表页</title>
 	 <link rel="icon" href="/img/favicon.ico">
-	
+
     <link rel="stylesheet" type="text/css" href="/css/all.css" />
     <link rel="stylesheet" type="text/css" href="/css/pages-list.css" />
 </head>
@@ -27,18 +27,18 @@
 					<div class="fr typelist">
 						<ul class="types">
 							<li class="f-item"><span>我的订单</span></li>
-							
+
 							<li class="f-item"><span><a href="cart.html" target="_blank">我的购物车</a></span></li>
-							<li class="f-item"><span><a href="home.html" target="_blank">我的畅购</a></span></li>			
-							<li class="f-item"><span>畅购会员</span></li>						
-							<li class="f-item"><span>企业采购</span></li>						
+							<li class="f-item"><span><a href="home.html" target="_blank">我的畅购</a></span></li>
+							<li class="f-item"><span>畅购会员</span></li>
+							<li class="f-item"><span>企业采购</span></li>
 							<li class="f-item"><span>关注畅购</span></li>
 							<li class="f-item"><span><a href="cooperation.html" target="_blank">合作招商</a></span></li>
-							<li class="f-item"><span><a href="shoplogin.html" target="_blank">商家后台</a></span></li>				
+							<li class="f-item"><span><a href="shoplogin.html" target="_blank">商家后台</a></span></li>
 							<li class="f-item"><span>网站导航</span></li>
 						</ul>
 					</div>
-					
+
 				</div>
 			</div>
 		</div>
@@ -60,7 +60,7 @@
 							</form>
 						</div>
 					</div>
-					
+
 				</div>
 
 			</div>
@@ -606,7 +606,8 @@
 							<div class="list-wrap">
 								<div class="p-img">
 									<!--<a th:href="'http://192.168.200.128:8081/'+${sku.spuId}+'.html'"  target="_blank"><img th:src="${sku.image}" /></a>-->
-                                    <a th:href="'http://192.168.200.128:8081/10000000616300.html'"  target="_blank"><img th:src="${sku.image}" /></a>
+                                    <!--<a th:href="'http://192.168.200.128:8081/10000000616300.html'"  target="_blank"><img th:src="${sku.image}" /></a>-->
+                                    <a th:href="'http://localhost:8001/api/page/toItem/'+${sku.spuId}"  target="_blank"><img th:src="${sku.image}" /></a>
 								</div>
 								<div class="price">
 									<strong>
@@ -615,7 +616,8 @@
 										</strong>
 								</div>
 								<div class="attr">
-									<a target="_blank" th:href="'http://192.168.200.128:8081/10000000616300.html'" th:title="${sku.spec}" th:utext="${sku.name}"></a>
+                                    <!--<a target="_blank" th:href="'http://192.168.200.128:8081/10000000616300.html'" th:title="${sku.spec}" th:utext="${sku.name}"></a>-->
+									<a target="_blank" th:href="'http://localhost:8001/api/page/toItem/'+${sku.spuId}" th:title="${sku.spec}" th:utext="${sku.name}"></a>
 								</div>
 								<div class="commit">
 									<i class="command">已有<span>2000</span>人评价</i>
@@ -867,7 +869,7 @@
 	</div>
 </div>
 <!--页面底部END-->
-	
+
 	<!-- 基础js库 -->
 
 	<!--侧栏面板开始-->
