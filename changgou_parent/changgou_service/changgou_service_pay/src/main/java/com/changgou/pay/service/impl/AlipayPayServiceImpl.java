@@ -9,7 +9,7 @@ import com.alipay.api.request.AlipayTradeQueryRequest;
 import com.alipay.api.response.AlipayTradeCloseResponse;
 import com.alipay.api.response.AlipayTradePrecreateResponse;
 import com.alipay.api.response.AlipayTradeQueryResponse;
-import com.changgou.pay.service.AlipayService;
+import com.changgou.pay.service.AlipayPayService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,9 +17,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-public class AlipayServiceImpl implements AlipayService {
+public class AlipayPayServiceImpl implements AlipayPayService {
     @Autowired
     private AlipayClient alipayClient;
+
+/*    @Value("$(alipay.notify_url)")
+    private String notify_url;*/
 
     //下单
     @Override
@@ -35,7 +38,9 @@ public class AlipayServiceImpl implements AlipayService {
         map.put("out_trade_no", orderId);//订单
         map.put("total_amount", money + "");//当前订单总金额
         map.put("subject", "畅购商城");//当前订单描述
+        map.put("timeout_express", "1m");
 
+        request.setNotifyUrl("http://kylesun.cross.echosite.cn/alipay/notify");
         request.setBizContent(JSON.toJSONString(map));
 
         //4.使用支付宝接口调用的对象发起预下单发起请求
@@ -82,7 +87,7 @@ public class AlipayServiceImpl implements AlipayService {
         res.put("trade_status", response.getTradeStatus());//交易状态码
         res.put("orderId", response.getOutTradeNo());//订单编号
         res.put("total", response.getTotalAmount());//总金额
-        return null;
+        return res;
     }
 
     //关闭订单
@@ -94,7 +99,6 @@ public class AlipayServiceImpl implements AlipayService {
         HashMap<String, String> map = new HashMap<>();
         map.put("out_trade_no", orderId);
         request.setBizContent(JSON.toJSONString(map));
-
         try {
             AlipayTradeCloseResponse response = alipayClient.execute(request);
             //判断订单有没有关闭成功

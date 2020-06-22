@@ -3,7 +3,7 @@ package com.changgou.pay.service;
 import java.util.Map;
 
 
-public interface AlipayService {
+public interface AlipayPayService {
 
     Map nativePay(String orderId, Integer money);
 

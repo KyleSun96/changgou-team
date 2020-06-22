@@ -8,6 +8,7 @@ import com.changgou.order.dao.*;
 import com.changgou.order.pojo.*;
 import com.changgou.order.service.CartService;
 import com.changgou.order.service.OrderService;
+import com.changgou.pay.feign.AlipayFeign;
 import com.changgou.pay.feign.PayFeign;
 import com.changgou.util.IdWorker;
 import com.github.pagehelper.Page;
@@ -235,6 +236,9 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private PayFeign payFeign;
 
+    @Autowired
+    private AlipayFeign alipayFeign;
+
     @Override
     @Transactional
     public void closeOrder(String orderId) {
@@ -244,29 +248,38 @@ public class OrderServiceImpl implements OrderService {
          * 2.1)如果当前订单的支付状态为已支付,则进行数据补偿(mysql)
          * 2.2)如果当前订单的支付状态为未支付,则修改mysql中的订单信息,新增订单日志,恢复商品的库存,基于微信关闭订单
          */
-        System.out.println("关闭订单业务开启:" + orderId);
+        System.out.println("关闭订单业务开启:"+orderId);
         Order order = orderMapper.selectByPrimaryKey(orderId);
-        if (order == null) {
+        if (order == null){
             throw new RuntimeException("订单不存在!");
         }
-        if (!"0".equals(order.getPayStatus())) {
+        if (!"0".equals(order.getPayStatus())){
             System.out.println("当前订单不需要关闭");
             return;
         }
-        System.out.println("关闭订单校验通过:" + orderId);
+        System.out.println("关闭订单校验通过:"+orderId);
 
         //基于微信查询订单信息
         Map wxQueryMap = (Map) payFeign.queryOrder(orderId).getData();
-        System.out.println("查询微信支付订单:" + wxQueryMap);
+        System.out.println("查询微信支付订单:"+wxQueryMap);
 
-        //如果订单的支付状态为已支付,进行数据补偿(mysql)
-        if ("SUCCESS".equals(wxQueryMap.get("trade_state"))) {
-            this.updatePayStatus(orderId, (String) wxQueryMap.get("transaction_id"));
+        //基于支付宝查询订单信息
+        Map aliQueryMap = (Map) alipayFeign.queryOrder(orderId).getData();
+        System.out.println("查询支付宝支付订单:"+aliQueryMap);
+
+        //如果微信订单的支付状态为已支付,进行数据补偿(mysql)
+        if ("SUCCESS".equals(wxQueryMap.get("trade_state"))){
+            this.updatePayStatus(orderId,(String) wxQueryMap.get("transaction_id"));
+            System.out.println("完成数据补偿");
+        }
+        //如果支付宝订单的支付状态为已支付,进行数据补偿(mysql)
+        if ("SUCCESS".equals(aliQueryMap.get("trade_state"))){
+            this.updatePayStatus(orderId,(String) aliQueryMap.get("transaction_id"));
             System.out.println("完成数据补偿");
         }
 
-        //如果订单的支付状态为未支付,则修改mysql中的订单信息,新增订单日志,恢复商品的库存,基于微信关闭订单
-        if ("NOTPAY".equals(wxQueryMap.get("trade_state"))) {
+        //如果微信订单的支付状态为未支付,则修改mysql中的订单信息,新增订单日志,恢复商品的库存,基于微信关闭订单
+        if ("NOTPAY".equals(wxQueryMap.get("trade_state"))){
             System.out.println("执行关闭");
             order.setUpdateTime(new Date());
             order.setOrderStatus("4"); //订单已关闭
@@ -274,7 +287,7 @@ public class OrderServiceImpl implements OrderService {
 
             //新增订单日志
             OrderLog orderLog = new OrderLog();
-            orderLog.setId(idWorker.nextId() + "");
+            orderLog.setId(idWorker.nextId()+"");
             orderLog.setOperater("system");
             orderLog.setOperateTime(new Date());
             orderLog.setOrderStatus("4");
@@ -287,11 +300,40 @@ public class OrderServiceImpl implements OrderService {
             List<OrderItem> orderItemList = orderItemMapper.select(_orderItem);
 
             for (OrderItem orderItem : orderItemList) {
-                skuFeign.resumeStockNum(orderItem.getSkuId(), orderItem.getNum());
+                skuFeign.resumeStockNum(orderItem.getSkuId(),orderItem.getNum());
             }
 
             //基于微信关闭订单
             payFeign.closeOrder(orderId);
+
+        }
+        //如果支付宝订单的支付状态为未支付,则修改mysql中的订单信息,新增订单日志,恢复商品的库存,基于微信关闭订单
+        if ("NOTPAY".equals(aliQueryMap.get("trade_state"))){
+            System.out.println("执行关闭");
+            order.setUpdateTime(new Date());
+            order.setOrderStatus("4"); //订单已关闭
+            orderMapper.updateByPrimaryKeySelective(order);
+
+            //新增订单日志
+            OrderLog orderLog = new OrderLog();
+            orderLog.setId(idWorker.nextId()+"");
+            orderLog.setOperater("system");
+            orderLog.setOperateTime(new Date());
+            orderLog.setOrderStatus("4");
+            orderLog.setOrderId(order.getId());
+            orderLogMapper.insert(orderLog);
+
+            //恢复商品的库存
+            OrderItem _orderItem = new OrderItem();
+            _orderItem.setOrderId(orderId);
+            List<OrderItem> orderItemList = orderItemMapper.select(_orderItem);
+
+            for (OrderItem orderItem : orderItemList) {
+                skuFeign.resumeStockNum(orderItem.getSkuId(),orderItem.getNum());
+            }
+
+            //基于支付宝关闭订单
+            alipayFeign.closeOrder(orderId);
 
         }
 
