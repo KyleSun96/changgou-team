@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=9; IE=8; IE=7; IE=EDGE">
+    <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7"/>
+    <title>物流消息</title>
+    <link rel="icon" href="./img/favicon.ico">
+
+    <link rel="stylesheet" type="text/css" href="../static/css/all.css"/>
+    <link rel="stylesheet" type="text/css" href="../static/css/pages-seckillOrder.css"/>
+    <script src="../static/js/plugins/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="../static/js/plugins/sui/sui.min.js"></script>
+
+    <!-- 引入组件库 -->
+    <script src="//unpkg.com/vue/dist/vue.js"></script>
+    <!--引入样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <!--引入组件库 -->
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+</head>
+
+<body>
+
+<div id="app">
+    <div class="block">
+        <el-timeline :reverse= true>
+            <el-timeline-item
+                    v-for="trace in Traces"
+                    type="info"
+                    :AcceptTime="trace.AcceptTime">
+                <h4><font color="#228b22">{{trace.AcceptTime}}</font></h4>
+                <font color="#5f9ea0">{{trace.AcceptStation}}</font>
+            </el-timeline-item>
+        </el-timeline>
+    </div>
+</div>
+
+</body>
+
+<script type="module">
+    var vue = new Vue({
+        el: '#app',
+        data: {
+            Traces: [
+                {
+                    "AcceptTime": "2014/06/25 08:05:37",
+                    "AcceptStation": "正在派件..(派件人:邓裕富,电话:18718866310)[深圳市]",
+
+                },
+                {
+                    AcceptTime: "2014/06/25 04:01:28",
+                    AcceptStation: "快件在 深圳集散中心 ,准备送往下一站 深圳 [深圳市]",
+
+                },
+                {
+                    AcceptTime: "2014/06/25 01:41:06",
+                    AcceptStation: "快件在 深圳集散中心 [深圳市]",
+
+                },
+                {
+                    AcceptTime: "2014/06/24 20:55:28",
+                    AcceptStation: "快件在 深圳 ,准备送往下一站 深圳集散中心 [深圳市]",
+                },
+                {
+                    AcceptTime: "2014/06/24 20:18:58",
+                    AcceptStation: "已收件[深圳市]",
+
+                }
+            ]
+        }
+    })
+
+
+</script>
+
+</html>
