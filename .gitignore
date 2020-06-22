@@ -42,6 +42,7 @@ dependency-reduced-pom.xml
 release.properties
 buildNumber.properties
 .mvn/timing.properties
+**/test
 
 
 

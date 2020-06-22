@@ -1,6 +1,8 @@
 package com.changgou.order.service.impl;
 
 import com.changgou.order.dao.OrderItemMapper;
+import com.changgou.order.dao.OrderMapper;
+import com.changgou.order.pojo.Order;
 import com.changgou.order.service.OrderItemService;
 import com.changgou.order.pojo.OrderItem;
 import com.github.pagehelper.Page;
@@ -18,6 +20,7 @@ public class OrderItemServiceImpl implements OrderItemService {
     @Autowired
     private OrderItemMapper orderItemMapper;
 
+
     /**
      * 查询全部列表
      * @return
@@ -25,6 +28,20 @@ public class OrderItemServiceImpl implements OrderItemService {
     @Override
     public List<OrderItem> findAll() {
         return orderItemMapper.selectAll();
+    }
+
+
+    //根据订单查询商品名称
+    @Override
+    public List<OrderItem> findByOrderId(String orderId) {
+        List<OrderItem> orderItemList = orderItemMapper.findByOrderId(orderId);
+        for (OrderItem orderItem : orderItemList) {
+            if (orderItem==null){
+                throw new RuntimeException("订单不存在");
+            }
+        }
+        return orderItemList;
+
     }
 
     /**

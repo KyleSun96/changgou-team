@@ -13,7 +13,7 @@ public interface PayFeign {
     @GetMapping("/wxpay/nativePay")
     public Result nativePay(@RequestParam("orderId") String orderId, @RequestParam("money")Integer money);
 
-    @GetMapping("/wxpay/query/{orderId}")
+    @GetMapping(value = "/wxpay/query/{orderId}" )
     public Result queryOrder(@PathVariable("orderId") String orderId);
 
     @PutMapping("/wxpay/close/{orderId}")
