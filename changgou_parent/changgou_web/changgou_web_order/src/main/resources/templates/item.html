@@ -18,7 +18,6 @@
 
 <body>
 
-
 <!--页面顶部-->
 <div id="nav-bottom">
 	<!--顶部-->
@@ -69,6 +68,8 @@
 					</div>
 
 				</div>
+
+
 
 			</div>
 		</div>
@@ -518,7 +519,7 @@
 								<span>降价通知</span>
 							</div>
 							<div class="fr remark">
-								<i>累计评价</i><em th:text="${commentCount.allComment}"></em>
+								<i>累计评价</i><em>{{commentCountResult.allCommentCount}}</em>
 							</div>
 						</div>
 						<div class="summary-wrap">
@@ -821,30 +822,29 @@
 									</div>
 									<div class="com-tab-type">
 										<ul class="type">
-											<li class="current"><a href="javascript:;">全部评价<span th:text="${commentCount.allComment}"/></a></li>
-											<li><a href="javascript:;" >好评<span th:text="${commentCount.highComment}"/></a></li>
-											<li><a href="javascript:;">中评<span th:text="${commentCount.mediumComment}"/></a></li>
-											<li><a href="javascript:;">差评<span th:text="${commentCount.lowComment}"/></a></li>
+											<li class="current"><a href="javascript:void(0)" th:@click="|getCommentInfoList('${spu.id}','all')|">全部评价({{commentCountResult.allCommentCount}})</a></li>
+											<li><a href="javascript:void(0)" th:@click="|getCommentInfoList('${spu.id}','high')|">好评({{commentCountResult.highCommentCount}})</a></li>
+											<li><a href="javascript:void(0)" th:@click="|getCommentInfoList('${spu.id}','medium')|">中评({{commentCountResult.mediumCommentCount}})</a></li>
+											<li><a href="javascript:void(0)" th:@click="|getCommentInfoList('${spu.id}','low')|">差评({{commentCountResult.lowCommentCount}})</a></li>
 										</ul>
-										<div class="content" th:each="comm:${commentInfoList}">
-											<div class="com-item">
+										<div class="content">
+                                            <!--评价列表-->
+											<div class="com-item" v-for="CommentInfo in commentInfoList">
 												<div class="user-column">
-													<div class="username">
-                                                        <img src="/img/_/photo.jpg"/>****<span th:text="${#strings.substring(comm,#strings.length(comm)-1)}">
-                                                    </div>
+													<div class="username"><img :src="CommentInfo.userPhoto"/>{{CommentInfo.username}}</div>
 													<div class="usernum">品享值258698</div>
 												</div>
 												<div class="user-info">
 													<div class="stars star4"></div>
-													<p>手机还不错，可以的可以的</p>
+													<p>{{CommentInfo.content}}</p>
 													<div class="guige">
 														<ul class="mini">
-															<li>玫瑰金</li>
-															<li>标配版</li>
-															<li>2017-11-02 13:23</li>
+															<li v-for="spec in CommentInfo.specList">
+                                                                {{spec}}
+                                                            </li>
 														</ul>
 														<div class="operate">
-															<span id="collect"><i class="sui-icon icon-tb-like" ></i> 325</span>
+															<span id="collect"><i class="sui-icon icon-tb-like"></i> 325</span>
 															<span id="comment"><i class="sui-icon icon-tb-wang"></i> 256</span>
 														</div>
 														<div class="clearfix"></div>
@@ -1236,7 +1236,6 @@
 		<div id="J-toolbar-load-hook"></div>
 
 
-
 	</div>
 </div>
 <script src="/js/axios.js"></script>
@@ -1248,7 +1247,7 @@
                 sku:{},                     //当前选中的sku
                 spec:{},                    //选中的sku的规格
                 num:1,
-                commentCount:{},
+                commentCountResult:{},
                 commentInfoList:[]
             },
             methods:{
@@ -1319,13 +1318,37 @@
                         this.num--;
                     }
 
+                },
+
+                // 获取该spu的评价量
+                getCommentCountBySpuId:function (spuId) {
+                    let that = this;
+                    axios.get("http://localhost:8001/api/comment/getCommentCountBySpuId/"+spuId).then(function (response) {
+                        if (response.data.flag){
+                            that.commentCountResult=response.data.data;
+                        }
+                    })
+                },
+                // 获取该spu的评论列表
+                getCommentInfoList:function (spuId,level) {
+                    let that = this;
+                    axios.get("http://localhost:8001/api/comment/getCommentInfoList/"+spuId+"/"+level).then(function (response) {
+                        if (response.data.flag){
+                            that.commentInfoList=response.data.data;
+                        }
+                    })
                 }
             },
+
             created:function () {
-                //默认选中第1个SKU,深克隆
+                // 默认选中第1个SKU,深克隆
                 this.sku=JSON.parse(JSON.stringify(this.skuList[0]));
-                //第1个SKU的规格,深克隆
+                // 第1个SKU的规格,深克隆
                 this.spec=JSON.parse(this.skuList[0].spec);
+                // 查询当前spu的所有评论量
+                this.getCommentCountBySpuId(this.sku.spuId);
+                // 查询当前spu所有的评论
+                this.getCommentInfoList(this.sku.spuId,"all");
             }
         })
     </script>

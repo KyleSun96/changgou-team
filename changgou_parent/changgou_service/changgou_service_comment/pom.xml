@@ -9,21 +9,18 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>changgou_service_page</artifactId>
+    <artifactId>changgou_service_comment</artifactId>
 
     <dependencies>
         <dependency>
             <groupId>com.changgou</groupId>
-            <artifactId>changgou_common</artifactId>
+            <artifactId>changgou_common_db</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-thymeleaf</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-amqp</artifactId>
+            <groupId>com.changgou</groupId>
+            <artifactId>changgou_service_comment_api</artifactId>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.changgou</groupId>
@@ -32,8 +29,25 @@
         </dependency>
         <dependency>
             <groupId>com.changgou</groupId>
-            <artifactId>changgou_service_comment_api</artifactId>
+            <artifactId>changgou_service_user_api</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-mongodb</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-oauth2</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.amqp</groupId>
+            <artifactId>spring-rabbit</artifactId>
+        </dependency>
     </dependencies>
+
 </project>
