@@ -116,6 +116,8 @@ public class CommentServiceImpl implements CommentService {
         } else {
             // 选择了好评，中评，差评
             commentList = commentRepository.findBySpuIdAndLevel(spuId, level);
+
+
         }
 
         // 如果没有评价则返回空集合

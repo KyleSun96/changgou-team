@@ -31,7 +31,7 @@ public interface CommentFeign {
     @GetMapping("/findBySkuId/{skuId}")
     public Result<List<Comment>> findBySkuId(@PathVariable("skuId") String skuId);
 
-    // 根据spuId查询评论集合
+   // 根据spuId查询评论集合
     @GetMapping("/getCommentInfoList/{spuId}/{level}")
     public Result<List<CommentInfo>> getCommentInfoList(@PathVariable("spuId") String spuId, @PathVariable("level") String level);
 }

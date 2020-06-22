@@ -33,8 +33,15 @@ public class PageController {
     @Autowired
     private CommentFeign commentFeign;
 
+    @ResponseBody
+    @GetMapping("/getCommentInfoList/{spuId}/{level}")
+    public Result<List<CommentInfo>> getCommentInfoList(@PathVariable("spuId") String spuId, @PathVariable("level") String level) {
+       return commentFeign.getCommentInfoList(spuId, level);
+    }
+
     @GetMapping("/toItem/{spuId}")
     public String toGoodsPage(@PathVariable("spuId") String spuId, Model model) {
+
         Map<String, Object> resultMap = pageService.getItemData(spuId);
 
         model.addAttribute("spuId", spuId);
