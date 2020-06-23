@@ -20,8 +20,13 @@ public interface OrderFeign {
     @GetMapping("/order/{id}")
     public Result<Order> findById(@PathVariable("id") String id);
 
+
     @PostMapping(value = "/orderbcakend/search" )
-    public Result<PageResult> findPage(@RequestBody Map searchMap);
+    public Result<PageResult> findPageBackend(@RequestBody Map searchMap);
+
+    @PostMapping(value = "/order/search" )
+    public Result<Page<Order>> findPage(@RequestBody Map searchMap);
+
 
     //查询待收货的订单
     @RequestMapping("/order/findPayOrder")
@@ -36,5 +41,31 @@ public interface OrderFeign {
 
     @GetMapping("/orderbcakend/findAll")
     public List<Order> findAll();
+
+    @RequestMapping ("/order/task/id")
+    public Result confirmTask(@RequestParam("id") String Id);
+
+    @RequestMapping("/order/findOrderByUsername")
+    public Result<List<Order>> findOrderByUsername();
+
+    //查询所有待收货订单
+    @RequestMapping("/order/findAllOrder")
+    public Result<List<Order>> findAllOrder();
+
+    @RequestMapping("/order/findNoPayByUsername")
+    public Result<List<Order>> findNoPayByUsername();
+
+    //代发货
+    @RequestMapping("/order/findNoConsignByUsername")
+    public Result<List<Order>> findNoConsignByUsername();
+
+    //立即支付
+    @RequestMapping("/order/findtoPay")
+    public Result findtoPayByUsername(@RequestParam("id") String id);
+
+    //取消订单
+    @RequestMapping("/order/findtoNoPay")
+    public Result findtoNoPayById(@RequestParam("id") String id);
+
 
 }

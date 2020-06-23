@@ -19,75 +19,88 @@ spring:
             - Path=/api/album/**,/api/brand/**,/api/cache/**,/api/categoryBrand/**,/api/category/**,/api/para/**,/api/pref/**,/api/sku/**,/api/spec/**,/api/spu/**,/api/stockBack/**,/api/template/**,/api/favorites/**
           filters:
             - StripPrefix=1
-          #用户微服务
+        # 用户微服务
         - id: changgou_user_route
           uri: lb://user
           predicates:
             - Path=/api/user/**,/api/address/**,/api/areas/**,/api/cities/**,/api/provinces/**
           filters:
             - StripPrefix=1
-        #认证微服务
+        # 认证微服务
         - id: changgou_oauth_user
           uri: lb://user-auth
           predicates:
             - Path=/api/oauth/**
           filters:
             - StripPrefix=1
-        #订单微服务
+        # 订单微服务
         - id: changgou_order_route
           uri: lb://order
           predicates:
             - Path=/api/cart/**,/api/categoryReport/**,/api/orderConfig/**,/api/order/**,/api/orderItem/**,/api/orderLog/**,/api/preferential/**,/api/returnCause/**,/api/returnOrder/**,/api/returnOrderItem/**
           filters:
             - StripPrefix=1
-        #购物车订单渲染微服务
+        # 购物车订单渲染微服务
         - id: changgou_order_web_route
           uri: lb://order-web
           predicates:
             - Path=/api/wcart/**,/api/worder/**,/api/wxpay/**
           filters:
             - StripPrefix=1
-        #秒杀微服务
+        # 秒杀微服务
         - id: changgou_seckill_route
           uri: lb://seckill
           predicates:
             - Path=/api/seckillgoods/**,/api/seckillorder/**
           filters:
             - StripPrefix=1
-        #秒杀渲染微服务
+        # 秒杀渲染微服务
         - id: changgou_seckill_web_route
           uri: lb://seckill-web
           predicates:
             - Path=/api/wseckillgoods/**,/api/wseckillorder/**
           filters:
             - StripPrefix=1
-<<<<<<< HEAD
-      #物流微服务
+        # 评论微服务
+        - id: changgou_comment
+          uri: lb://comment
+          predicates:
+            - Path=/api/comment/**
+          filters:
+            - StripPrefix=1
+        # 商品详情微服务
+        - id: changgou_page
+          uri: lb://page
+          predicates:
+            - Path=/api/page/**
+          filters:
+            - StripPrefix=1
+        # 物流微服务
         - id: changgou_logistic
           uri: lb://logistic
           predicates:
             - Path=/api/logisitic/**
           filters:
             - StripPrefix=1
-     #物流渲染微服务
+        # 物流渲染微服务
         - id: changgou_logistic_web
           uri: lb://logistic-web
           predicates:
             - Path=/api/wlogisitic/**
-=======
-        #搜索微服务
+          filters:
+            - StripPrefix=1
+        # 搜索微服务
         - id: changgou_search_route
           uri: lb://search
           predicates:
-            - Path=/api/wfavorites/**,/api/search/**
+            - Path=/api/wfavorites/**,/api/search/**,/api/wfootmark/**
           filters:
             - StripPrefix=1
-        #个人中心渲染微服务
+        # 个人中心渲染微服务
         - id: changgou_center_web_route
           uri: lb://order-center
           predicates:
             - Path=/api/wcenter/**
->>>>>>> 43e18470db3776e9af434631026f0f8d817695a4
           filters:
             - StripPrefix=1
   redis:

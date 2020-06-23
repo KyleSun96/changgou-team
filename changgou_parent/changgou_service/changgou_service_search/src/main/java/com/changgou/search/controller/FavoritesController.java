@@ -21,7 +21,7 @@ public class FavoritesController {
     private SkuFeign skuFeign;
 
     //新增收藏
-    @GetMapping("/add/{skuId}")
+    @PostMapping("/add/{skuId}")
     public Result add(@PathVariable("skuId") String skuId) {
         Sku sku = skuFeign.findById(skuId).getData();
         Favorites favorites = new Favorites();

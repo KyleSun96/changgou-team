@@ -19,12 +19,27 @@ public class OrderController {
     @Autowired
     private OrderService orderService;
 
+
     //手动确定收货
-    @RequestMapping("/define")
-    public Result define(){
+    @RequestMapping ("/task/id")
+    public Result confirmTask(@RequestParam("id") String Id){
+        //1272865248067588096
+        //1272909208886579200
+        try {
+            String username = tokenDecode.getUserInfo().get("username");
+            orderService.confirmTask(Id,username);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Result(false,StatusCode.ERROR,e.getMessage());
+        }
+        return new Result(true,StatusCode.OK,"");
+    }
+    //根据用户名查询所有订单
+    @RequestMapping("/findOrderByUsername")
+    public Result<List<Order>> findOrderByUsername(){
         String username = tokenDecode.getUserInfo().get("username");
-        orderService.define(username);
-        return new Result(true,StatusCode.OK,"确定收货");
+        List<Order> orderList = orderService.findOrderByUsername(username);
+        return new Result<List<Order>>(true,StatusCode.OK,"查询所有订单成功",orderList);
     }
 
     //查询待收货的订单
@@ -32,7 +47,44 @@ public class OrderController {
     public Result<List<Order>> findPayOrder(){
         String username = tokenDecode.getUserInfo().get("username");
         List<Order> orderList = orderService.findPayOrder(username);
+
         return new Result<List<Order>>(true,StatusCode.OK,"查询待收货订单成功",orderList);
+    }
+
+    //代付款
+    @RequestMapping("/findNoPayByUsername")
+    public Result<List<Order>> findNoPayByUsername(){
+        String username = tokenDecode.getUserInfo().get("username");
+        List<Order> orderList = orderService.findNoPayByUsername(username);
+        return new Result<List<Order>>(true,StatusCode.OK,"查询代付款订单成功",orderList);
+    }
+
+    //立即支付
+    @RequestMapping("/findtoPay")
+    public Result findtoPayByUsername(@RequestParam("id") String id){
+
+        orderService.findtoPayByUsername(id);
+        return new Result(true,StatusCode.OK,"支付成功");
+    }
+    //取消订单
+    @RequestMapping("/findtoNoPay")
+    public Result findtoNoPayById(@RequestParam("id") String id){
+        orderService.findtoNoPayById(id);
+        return new Result(true,StatusCode.OK,"取消订单成功");
+    }
+    //代发货
+    @RequestMapping("/findNoConsignByUsername")
+    public Result<List<Order>> findNoConsignByUsername(){
+        String username = tokenDecode.getUserInfo().get("username");
+        List<Order> orderList = orderService.findNoConsignByUsername(username);
+        return new Result<List<Order>>(true,StatusCode.OK,"查询代付款订单成功",orderList);
+    }
+
+    //查询所有待收货订单
+    @RequestMapping("/findAllOrder")
+    public Result<List<Order>> findAllOrder(){
+        List<Order> orderList = orderService.findAllOrder();
+        return new Result<List<Order>>(true,StatusCode.OK,"根据id查询所有待收货订单成功",orderList);
     }
 
     //查询待评价订单
@@ -55,16 +107,7 @@ public class OrderController {
         return new Result(true, StatusCode.OK,"查询成功",orderList) ;
     }
 
-    /***
-     * 根据ID查询数据
-     * @param id
-     * @return
-     */
-    @GetMapping("/{id}")
-    public Result<Order> findById(@PathVariable("id") String id){
-        Order order = orderService.findById(id);
-        return new Result(true,StatusCode.OK,"查询成功",order);
-    }
+
 
     @Autowired
     private TokenDecode tokenDecode;

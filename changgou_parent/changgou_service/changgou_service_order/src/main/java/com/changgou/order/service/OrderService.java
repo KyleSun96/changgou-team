@@ -1,6 +1,7 @@
 package com.changgou.order.service;
 
 import com.changgou.order.pojo.Order;
+import com.changgou.order.pojo.OrderItem;
 import com.github.pagehelper.Page;
 
 import java.util.List;
@@ -14,18 +15,35 @@ public interface OrderService {
      */
     List<Order> findAll();
 
-    /**
-     * 根据ID查询
-     * @param id
-     * @return
-     */
-    Order findById(String id);
+
+
+    //根据用户名查询所有订单
+    List<Order> findOrderByUsername(String username);
+
+    //代付款
+    List<Order> findNoPayByUsername(String username);
+
+    //立即支付
+    void findtoPayByUsername(String id);
+
+    //取消订单
+    void findtoNoPayById(String id);
+
+    //代发货
+    List<Order> findNoConsignByUsername(String username);
+
+
 
     //查询待收货的订单
     List<Order> findPayOrder(String username);
 
+    //查询所有待收货订单
+    List<Order> findAllOrder();
+
     //查询带评价订单
     List<Order> findBuyerRateByOrder(String username);
+
+
 
     /***
      * 新增
@@ -77,8 +95,7 @@ public interface OrderService {
     //手动确认收货
     void confirmTask(String orderId,String operator);
 
-    //确认收货
-    public void define(String username);
+
 
     void autoTack();
 }

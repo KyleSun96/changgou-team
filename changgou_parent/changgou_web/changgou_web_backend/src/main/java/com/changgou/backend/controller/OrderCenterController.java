@@ -44,7 +44,7 @@ public class OrderCenterController {
     @PostMapping("/findPage")
     @ResponseBody
     public Result findPage(@RequestBody Map searchMap) {
-        Result<PageResult> result = orderFeign.findPage(searchMap);
+        Result<PageResult> result = orderFeign.findPageBackend(searchMap);
         PageResult data = result.getData();
         return new Result(true, StatusCode.OK, "", data);
     }

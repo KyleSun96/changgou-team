@@ -64,7 +64,6 @@ public class UserController {
                 User user = new User();
                 String username = tokenDecode.getUserInfo().get("username");
                 user.setUsername(username);
-                user.setImageUrl(url);
                 userService.update(user);
             }
             return new Result(true,StatusCode.OK,"文件上传成功",url);
@@ -136,8 +135,8 @@ public class UserController {
      * @param user
      * @return
      */
-    @PostMapping
-    public Result add(@RequestBody User user) {
+    @PostMapping("/add")
+    public Result add(@RequestBody User user){
         userService.add(user);
         return new Result(true, StatusCode.OK, "添加成功");
     }
