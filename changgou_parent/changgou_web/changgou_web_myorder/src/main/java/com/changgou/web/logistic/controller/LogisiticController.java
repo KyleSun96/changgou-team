@@ -45,7 +45,7 @@ public class LogisiticController {
 
             //封装数据模型
             model.addAttribute("Traces", traces);
-//            model.addAttribute(map);
+//            model.addAttributes(map);
         }
 
         //渲染
