@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.nio.channels.SelectionKey;
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Map;
 
@@ -36,7 +36,7 @@ public class PageController {
     @ResponseBody
     @GetMapping("/getCommentInfoList/{spuId}/{level}")
     public Result<List<CommentInfo>> getCommentInfoList(@PathVariable("spuId") String spuId, @PathVariable("level") String level) {
-       return commentFeign.getCommentInfoList(spuId, level);
+        return commentFeign.getCommentInfoList(spuId, level);
     }
 
     @GetMapping("/toItem/{spuId}")
@@ -54,16 +54,17 @@ public class PageController {
         CommentCount commentCount = commentFeign.getCommentCountBySpuId(spuId).getData();
         model.addAttribute("commentCount", commentCount);
 
-        //返回商品分级评论
-//        List<CommentInfo> commentInfoList = commentFeign.getCommentInfoList(spuId, "all").getData();
-//        List<CommentInfo> highCommentInfoList = commentFeign.getCommentInfoList(spuId, "high").getData();
-//        List<CommentInfo> mediumCommentInfoList = commentFeign.getCommentInfoList(spuId, "medium").getData();
-//        List<CommentInfo> lowCommentInfoList = commentFeign.getCommentInfoList(spuId, "low").getData();
-//
-//        model.addAttribute("commentInfoList", commentInfoList);
-//        model.addAttribute("highCommentInfoList", highCommentInfoList);
-//        model.addAttribute("mediumCommentInfoList", mediumCommentInfoList);
-//        model.addAttribute("lowCommentInfoList", lowCommentInfoList);
+        // 添加好评概率，好评率 = (好评 + 中评 )/全部评价
+        long l1 = commentCount.getHighComment() + commentCount.getMediumComment();
+        long l2 = commentCount.getAllComment();
+        double d1 = l1 / (l2 * (1.0)) * 100;
+
+        DecimalFormat df = new DecimalFormat("0.00");
+        String rate = df.format(d1);
+        System.out.println(rate);
+
+        model.addAttribute("rate", rate);
+        System.out.println(rate);
 
         return "item";
     }

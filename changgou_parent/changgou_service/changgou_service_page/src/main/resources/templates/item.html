@@ -532,7 +532,6 @@
 						</div>
 					</div>
 
-
 					<div class="support">
 						<div class="summary-wrap">
 							<div class="fl title">
@@ -813,11 +812,11 @@
 							<div id="three" class="tab-pane" v-show="currentIndex==2" th:utext="${spu.saleService}">
 
 							</div>
-							<div id="four" class="tab-pane active">
+							<div id="four" class="tab-pane" v-show="currentIndex==3">
 								<div class="comment">
 									<div class="com-tit">商品评价</div>
 									<div class="com-percent">
-										<p>好评度 <span class="percent">96%</span></p>
+										<p>好评度 <span class="percent"><em th:text="${rate}"></em><span>%</span></span></p>
 									</div>
 									<div class="com-tab-type">
 										<ul class="type">
@@ -853,7 +852,7 @@
 									</div>
 								</div>
 							</div>
-							<div id="five" class="tab-pane">
+							<div id="five" class="tab-pane" v-show="currentIndex==4">
 								<p>手机社区</p>
 							</div>
 						</div>
