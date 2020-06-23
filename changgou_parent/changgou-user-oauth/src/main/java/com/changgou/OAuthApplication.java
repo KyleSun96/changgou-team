@@ -6,6 +6,7 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.client.RestTemplate;
+import redis.clients.jedis.JedisPool;
 import tk.mybatis.spring.annotation.MapperScan;
 
 @SpringBootApplication
@@ -21,6 +22,11 @@ public class OAuthApplication {
     @Bean
     public RestTemplate restTemplate() {
         return new RestTemplate();
+    }
+
+    @Bean
+    public JedisPool jedisPool(){
+        return new JedisPool();
     }
 
 }

@@ -89,11 +89,11 @@
                 <div class="list-items">
                     <dl>
                         <dt><i>·</i> 订单中心</dt>
-                        <dd ><a href="center-index.html" >我的订单</a></dd>
-                        <dd><a href="center-order-pay.html" >待付款</a></dd>
-                        <dd><a href="center-order-send.html"  >待发货</a></dd>
-                        <dd><a href="center-order-receive.html" class="list-active">待收货</a></dd>
-                        <dd><a href="center-order-evaluate.html"  >待评价</a></dd>
+                        <dd ><a href="http://localhost:8001/api/wcenter/order/allOrder"   >我的订单</a></dd>
+                        <dd><a href="http://localhost:8001/api/wcenter/order/noPayOrder" >待付款</a></dd>
+                        <dd><a href="http://localhost:8001/api/wcenter/order/noConsignOrder"  >待发货</a></dd>
+                        <dd><a href="http://localhost:8001/api/wcenter/order/findPayOrder" >待收货</a></dd>
+                        <dd><a href="http://localhost:8001/api/wcenter/order/findBuyerRate" class="list-active" >待评价</a></dd>
                     </dl>
                     <dl>
                         <dt><i>·</i> 我的中心</dt>
@@ -157,7 +157,7 @@
                                 <tr>
                                     <td width="35%">
 
-                                            <div class="typographic"><img th:src="${orderItem.image}" th:height="82" th:width="82"/>
+                                            <div class="typographic"><img th:src="${orderItem.image}" th:width="82"  th:height="82" />
                                                 <a href="#" class="block-text">包邮 <em th:text="${orderItem.name}"></em></a>
                                                 <!--<span class="guige">规格：温泉喷雾150ml</span>-->
                                             </div>
@@ -253,9 +253,7 @@
                                 </ul>
                                 <div><span>共10页&nbsp;</span><span>
                                             到
-                                            <input type="text" class="page-num"><button class="page-confirm"
-                                                                                        onclick="alert(1)">确定</button>
-                                            页</span></div>
+                                           <input type="text" class="page-num"><button class="page-confirm" onclick="alert(1)">确定</button>页</span></div>
                             </div>
                         </div>
 
@@ -329,7 +327,7 @@
                             <li class="yui3-u-1-4">
                                 <div class="list-wrap">
                                     <div class="p-img">
-                                        <img src="./img/_/itemlike04.png" />
+                                        <img src="/img/_/itemlike04.png" />
                                     </div>
                                     <div class="attr">
                                         <em>DELL戴尔Ins 15MR-7528SS 15英寸 银色 笔记本</em>

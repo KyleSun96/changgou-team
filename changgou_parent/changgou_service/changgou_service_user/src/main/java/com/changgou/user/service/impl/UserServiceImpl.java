@@ -17,10 +17,12 @@ import tk.mybatis.mapper.entity.Example;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 @Service
 public class UserServiceImpl implements UserService {
+
     @Autowired
     private PointLogMapper pointLogMapper;
 
@@ -48,6 +50,7 @@ public class UserServiceImpl implements UserService {
         String areaId = findAreaId(userInfoMap);
         if (areaId != null){
             String username = tokenDecode.getUserInfo().get("username");
+
             //查询主键usernmae
             userInfo.setUsername(username);
             userInfo.setUpdated(new Date());
