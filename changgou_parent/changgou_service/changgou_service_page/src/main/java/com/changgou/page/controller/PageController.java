@@ -30,8 +30,8 @@ public class PageController {
     @Autowired
     private PageServiceImpl pageService;
 
-    /*@Autowired
-    private CommentFeign commentFeign;*/
+    @Autowired
+    private CommentFeign commentFeign;
 
     @GetMapping("/toItem/{spuId}")
     public String toGoodsPage(@PathVariable("spuId") String spuId, Model model) {
@@ -40,7 +40,7 @@ public class PageController {
         // 测试
         System.out.println("商品的spuId为：" + spuId);
 
-        /*CommentCount commentCount = commentFeign.getCommentCountBySpuId(spuId).getData();
+        CommentCount commentCount = commentFeign.getCommentCountBySpuId(spuId).getData();
 
         List<CommentInfo> commentInfoList = commentFeign.getCommentInfoList(spuId, "all").getData();
 
@@ -50,7 +50,7 @@ public class PageController {
 
         if (commentInfoList!=null){
             model.addAttribute("commentInfoList",commentInfoList);
-        }*/
+        }
 
         model.addAttribute("spuId", spuId);
         model.addAllAttributes(resultMap);
