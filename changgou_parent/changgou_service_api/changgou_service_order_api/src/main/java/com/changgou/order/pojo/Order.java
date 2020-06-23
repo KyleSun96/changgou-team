@@ -43,15 +43,7 @@ public class Order implements Serializable {
 	private String payStatus;//支付状态
 	private String consignStatus;//发货状态
 	private String isDelete;//是否删除
-	private String orderItemName;
 
-	public String getOrderItemName() {
-		return orderItemName;
-	}
-
-	public void setOrderItemName(String orderItemName) {
-		this.orderItemName = orderItemName;
-	}
 
 	public String getId() {
 		return id;

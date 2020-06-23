@@ -127,7 +127,7 @@ public class OrderController {
      * @return
      */
     @PostMapping(value = "/search" )
-    public Result<Page<Order>> findPage(@RequestBody Map searchMap){
+    public Result<PageResult> findPage(@RequestBody Map searchMap){
 
         Page<Order> pageList = orderService.findPage(searchMap);
         PageResult<Order> result = new PageResult<>(pageList.getTotal(), pageList.getResult());

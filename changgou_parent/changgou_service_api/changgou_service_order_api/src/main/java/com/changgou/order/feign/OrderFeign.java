@@ -1,6 +1,7 @@
 package com.changgou.order.feign;
 
 import com.changgou.entity.Page;
+import com.changgou.entity.PageResult;
 import com.changgou.entity.Result;
 import com.changgou.order.pojo.Order;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -19,10 +20,9 @@ public interface OrderFeign {
     @GetMapping("/order/{id}")
     public Result<Order> findById(@PathVariable("id") String id);
 
-<<<<<<< HEAD
-    @PostMapping(value = "/order/search" )
-    public Result<Page<Order>> findPage(@RequestBody Map searchMap);
-=======
+    @PostMapping(value = "/orderbcakend/search" )
+    public Result<PageResult> findPage(@RequestBody Map searchMap);
+
     //查询待收货的订单
     @RequestMapping("/order/findPayOrder")
     public Result<List<Order>> findPayOrder();
@@ -32,5 +32,9 @@ public interface OrderFeign {
 
     @RequestMapping("/order/define")
     public Result define();
->>>>>>> 43e18470db3776e9af434631026f0f8d817695a4
+
+
+    @GetMapping("/orderbcakend/findAll")
+    public List<Order> findAll();
+
 }

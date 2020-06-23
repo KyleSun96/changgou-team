@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
 
 import java.time.LocalDate;
@@ -252,46 +253,55 @@ public class OrderServiceImpl implements OrderService {
     }
 
     /**
-     * 条件+分页查询
+     * 条件+分页查询,采用byExample
      *
      * @param searchMap 查询条件
      * @return 分页结果
      */
     @Override
     public Page<Order> findPage(Map<String, Object> searchMap) {
+
         Integer currentPage = (Integer) searchMap.get("currentPage");
         Integer pageSize = (Integer) searchMap.get("pageSize");
         PageHelper.startPage(currentPage, pageSize);
-        Order order = new Order();
 
+        Example eaxmple = new Example(Order.class);
+        Example.Criteria criteria = eaxmple.createCriteria();
+
+        //  orEqualTo
         if (searchMap.containsKey("receiveMessage")) {
             String receiveMessage = (String) searchMap.get("receiveMessage");
-            if (isNumeric(receiveMessage)) {
-                order.setReceiverMobile(receiveMessage);
-            } else {
-                order.setReceiverContact(receiveMessage);
-            }
+                criteria.orEqualTo("receiverMobile",receiveMessage);
+                criteria.orEqualTo("receiverContact",receiveMessage);
+
+
         }
         if (searchMap.containsKey("orderStatus")) {
-            order.setOrderStatus((String) searchMap.get("orderStatus"));
+            if(!StringUtils.isEmpty((String)searchMap.get("orderStatus"))){
+                criteria.andEqualTo("orderStatus",(String) searchMap.get("orderStatus"));
+            }
+
         }
         if (searchMap.containsKey("sourceType")) {
-            order.setSourceType((String) searchMap.get("sourceType"));
-        }
-        if(searchMap.containsKey("orderId")){
-            order.setId((String) searchMap.get("orderId"));
-        }
-        return (Page<Order>) orderMapper.select(order);
-    }
-
-    public static boolean isNumeric(String str) {
-        for (int i = str.length(); --i >= 0; ) {
-            if (!Character.isDigit(str.charAt(i))) {
-                return false;
+            if(!StringUtils.isEmpty((String)searchMap.get("sourceType"))) {
+                criteria.andEqualTo("sourceType", (String) searchMap.get("sourceType"));
             }
         }
-        return true;
+        if(searchMap.containsKey("orderId")){
+            criteria.andEqualTo("id",(String) searchMap.get("orderId"));
+        }
+        return (Page<Order>) orderMapper.selectByExample(eaxmple);
+
     }
+
+//    public static boolean isNumeric(String str) {
+//        for (int i = str.length(); --i >= 0; ) {
+//            if (!Character.isDigit(str.charAt(i))) {
+//                return false;
+//            }
+//        }
+//        return true;
+//    }
 
     @Autowired
     private OrderLogMapper orderLogMapper;

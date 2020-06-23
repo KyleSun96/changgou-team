@@ -1,5 +1,6 @@
 /*!plugins/normalize/normalize.css*/
 /*! normalize.css v5.0.0 | MIT License | github.com/necolas/normalize.css */
+@import url("//unpkg.com/element-ui@2.13.2/lib/theme-chalk/index.css");
 html {
   font-family: sans-serif;
   line-height: 1.15;
