@@ -88,25 +88,25 @@
                     <div class="list-items">
                         <dl>
 							<dt><i>·</i> 订单中心</dt>
-							<dd ><a href="center-index.html" >我的订单</a></dd>
-							<dd><a href="center-order-pay.html" class="list-active">待付款</a></dd>
-							<dd><a href="center-order-send.html"  >待发货</a></dd>
-							<dd><a href="center-order-receive.html" >待收货</a></dd>
-							<dd><a href="center-order-evaluate.html"  >待评价</a></dd>
+							<dd ><a href="http://localhost:8001/api/wcenter/order/allOrder"   >我的订单</a></dd>
+							<dd><a href="http://localhost:8001/api/wcenter/order/noPayOrder"  class="list-active">待付款</a></dd>
+							<dd><a href="http://localhost:8001/api/wcenter/order/noConsignOrder"  >待发货</a></dd>
+							<dd><a href="http://localhost:8001/api/wcenter/order/findPayOrder" >待收货</a></dd>
+							<dd><a href="http://localhost:8001/api/wcenter/order/findBuyerRate" >待评价</a></dd>
 						</dl>
 						<dl>
 							<dt><i>·</i> 我的中心</dt>
-							<dd><a href="center-collect.html">我的收藏</a></dd>
-							<dd><a href="center-footmark.html" class="list-active">我的足迹</a></dd>
+							<dd><a href="/api/wcenter/toCollect">我的收藏</a></dd>
+							<dd><a href="/api/wcenter/toFootmark">我的足迹</a></dd>
 						</dl>
 						<dl>
 							<dt><i>·</i> 物流消息</dt>
 						</dl>
 						<dl>
 							<dt><i>·</i> 设置</dt>
-							<dd><a href="center-setting-info.html">个人信息</a></dd>
-							<dd><a href="center-setting-address.html"  >地址管理</a></dd>
-							<dd><a href="center-setting-safe.html" >安全管理</a></dd>
+							<dd><a href="/api/wuserInfo" >个人信息</a></dd>
+							<dd><a href="/api/wcenterAddress">地址管理</a></dd>
+							<dd><a href="/api/wcenterSafe">安全管理</a></dd>
 						</dl>
                     </div>
                 </div>
@@ -128,26 +128,26 @@
                             </table>
                         </div>
 
-                        <div class="order-detail">
+                        <div class="order-detail" id="app">
                             <div class="orders" th:each="order:${orderList}">
 
                                 <div class="choose-title">
                                     <label data-toggle="checkbox" class="checkbox-pretty ">
                                            <input type="checkbox" checked="checked"><span>订单编号：<em th:text="${order.id}"></em></span>
                                      </label>
-               
+
                                 </div>
-                                <table class="sui-table table-bordered order-datatable">
+                                <table class="sui-table table-bordered order-datatable" th:each="orderItem:${order.orderItemList}">
 
                                     <tbody>
                                         <tr>
                                             <td width="35%">
-												<div th:each="orderItem:${order.orderItemList}">
+
 													<div class="typographic"><img th:src="${orderItem.image}"  th:width="82 " th:height="82"/>
 														<a href="#" class="block-text">包邮 <em th:text="${orderItem.name}"></em></a>
 
 													</div>
-												</div>
+
                                             </td>
                                             <td width="5%" class="center">
                                                 <ul class="unstyled">
@@ -156,7 +156,7 @@
                                                 </ul>
                                             </td>
                                             <td width="5%" class="center"><em th:text="${order.totalNum}"></em></td>
-                                     
+
                                             <td width="10%" class="center">
                                                 <ul class="unstyled">
                                                     <li>¥<em th:text="${order.totalMoney}"></em></li>
@@ -164,17 +164,17 @@
                                                 </ul>
                                             </td>
                                             <td width="10%" class="center">
-                                                <ul class="unstyled">
-                                                    <li>等待买家付款</li>
-                                                 
-                                                </ul>
+												<ul class="unstyled">
+													<li>等待买家付款</li>
+
+												</ul>
 
 
                                             </td>
                                             <td width="10%" class="center">
                                                 <ul class="unstyled">
-                                                    <li><a href="#" class="sui-btn btn-info">立即付款</a></li>
-                                                    <li><a href="#">取消订单</a></li>
+													<a th:@click="|toPay(${#strings.substring(order.id,0,11)},${#strings.substring(order.id,11)})|" class="sui-btn btn-info">立即付款</a>
+													<a th:@click="|toNoPay(${#strings.substring(order.id,0,11)},${#strings.substring(order.id,11)})|" class="sui-btn btn-info">取消订单</a>
                                                 </ul>
                                             </td>
                                         </tr>
@@ -411,7 +411,49 @@
 	</div>
 </div>
 <!--页面底部END-->
-   
+<script type="text/javascript" src="/js/plugins/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="/js/vue.js"></script>
+<script type="text/javascript" src="/js/axios.js"></script>
+
+	<script th:inline="javascript">
+        var app = new Vue({
+            el:"#app",
+            data:{
+            },
+            methods:{
+                    toPay:function (preId,perId) {
+                        var id = preId+''+perId;
+                    axios.get("/api/wcenter/findtoPay?id="+id).then(function (response) {
+
+                        if (response.data.flag){
+                            alert("支付成功");
+
+                            location.href="http://localhost:8001/api/wcenter/order/noPayOrder";
+                        } else{
+                            alert("支付失败");
+                        }
+                    })
+                },
+                toNoPay:function (preId,perId) {
+                    var id = preId+''+perId;
+                    axios.get("/api/wcenter/findtoNoPay?id="+id).then(function (response) {
+
+                        if (response.data.flag){
+                            alert("取消订单成功");
+
+                            location.href="http://localhost:8001/api/wcenter/order/noPayOrder";
+                        } else{
+                            alert("取消订单失败");
+                        }
+                    })
+                }
+
+            }
+        })
+
+
+
+	</script>
 
 
 </body>

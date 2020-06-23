@@ -1,22 +1,29 @@
 package com.changgou.user.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.changgou.entity.Result;
+import com.changgou.entity.StatusCode;
 import com.changgou.order.pojo.Task;
 import com.changgou.user.config.TokenDecode;
 import com.changgou.user.dao.*;
 import com.changgou.user.pojo.*;
 import com.changgou.user.service.UserService;
+import com.changgou.user.util.OSSClientUtil;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import tk.mybatis.mapper.entity.Example;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -43,13 +50,38 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private TokenDecode tokenDecode;
 
+    @Autowired
+    private OSSClientUtil ossClientUtil;
+
+    /**
+     * 更新用户头像
+     *
+     * @param file
+     */
     @Override
-    @Transactional
+    public void updateHead(MultipartFile file) {
+        String name = ossClientUtil.uploadImg2Oss(file);
+        String imgUrl = ossClientUtil.getImgUrl(name);
+        User user = new User();
+        String username = tokenDecode.getUserInfo().get("username");
+        user.setUsername(username);
+        user.setImageUrl(imgUrl);
+        user.setUpdated(new Date());
+        userMapper.updateByPrimaryKeySelective(user);
+    }
+
+    /**
+     * 更新用户所在地
+     *
+     * @param userInfoMap
+     * @param userInfo
+     */
+    @Override
     public void updateInfo(Map userInfoMap, User userInfo) {
         String areaId = findAreaId(userInfoMap);
-        if (areaId != null){
+        if (areaId != null) {
             String username = tokenDecode.getUserInfo().get("username");
-            userInfo.setAreaId(areaId);
+
             //查询主键usernmae
             userInfo.setUsername(username);
             userInfo.setUpdated(new Date());
@@ -68,14 +100,16 @@ public class UserServiceImpl implements UserService {
     @Override
     public String findAreaId(Map userInfoMap) {
 
-
         //根据省份名称查询省份Id
         String province = (String) userInfoMap.get("province");
-        Provinces provinces = new Provinces();
-        provinces.setProvince(province);
-        Provinces resultProvinces = provincesMapper.selectOne(provinces);
 
-        if (resultProvinces != null) {
+        Example example1 = new Example(Provinces.class);
+        Example.Criteria criteria1 = example1.createCriteria();
+        criteria1.andLike("province", "%" + province + "%");
+        List<Provinces> provincesList = provincesMapper.selectByExample(example1);
+
+        if (provincesList != null && provincesList.size() > 0) {
+            Provinces resultProvinces = provincesList.get(0);
             //存在省份,根据省份Id和城市名称查询城市Id
             String city = (String) userInfoMap.get("city");
             Cities cities = new Cities();
@@ -83,18 +117,18 @@ public class UserServiceImpl implements UserService {
             cities.setCity(city);
             List<Cities> citiesList = citiesMapper.select(cities);
             //存在城市查询区Id
-            if (citiesList != null && citiesList.size()>0){
+            if (citiesList != null && citiesList.size() > 0) {
                 Cities cities1 = citiesList.get(0);
                 String area = (String) userInfoMap.get("district");
                 Example example = new Example(Areas.class);
                 Example.Criteria criteria = example.createCriteria();
-                criteria.andEqualTo("area",area);
-                criteria.andEqualTo("cityid",cities1.getCityid());
+                criteria.andEqualTo("area", area);
+                criteria.andEqualTo("cityid", cities1.getCityid());
 
                 List<Areas> areas = areasMapper.selectByExample(example);
 
                 //如果区不为空修改用户信息
-                if (areas!=null && areas.size() >0){
+                if (areas != null && areas.size() > 0) {
                     String areaid = areas.get(0).getAreaid();
                     //返回地区areaId
                     return areaid;
@@ -103,6 +137,26 @@ public class UserServiceImpl implements UserService {
 
         }
 
+        return null;
+    }
+
+
+    @Override
+    public Map findMapByAreaId() {
+        String username = tokenDecode.getUserInfo().get("username");
+        if (username != null) {
+            String areaId = userMapper.selectByPrimaryKey(username).getAreaId();
+            if (areaId != null) {
+                Areas areas = areasMapper.selectByPrimaryKey(areaId);
+                Cities cities = citiesMapper.selectByPrimaryKey(areas.getCityid());
+                Provinces provinces = provincesMapper.selectByPrimaryKey(cities.getProvinceid());
+                Map map = new HashMap();
+                map.put("province", provinces.getProvince());
+                map.put("city", cities.getCity());
+                map.put("district", areas.getArea());
+                return map;
+            }
+        }
         return null;
     }
 
@@ -201,7 +255,6 @@ public class UserServiceImpl implements UserService {
     }
 
 
-
     @Override
     @Transactional
     public int updateUserPoint(Task task) {
@@ -241,6 +294,101 @@ public class UserServiceImpl implements UserService {
         redisTemplate.delete(task.getId());
         System.out.println("用户服务完成了更改用户积分的操作");
         return 1;
+    }
+
+    /**
+     *  更新密码
+     *
+     * @param password
+     * @return
+     */
+    @Override
+    public Result updatePassword(String password, String hisPassword, String name) {
+        if (password == null || hisPassword == null) {
+            return new Result(false, StatusCode.ERROR, "请输入密码,请重新发送");
+        }
+        if (!password.equals(hisPassword)) {
+            return new Result(false, StatusCode.ERROR, "密码不一致,请重新发送");
+        }
+
+        String username = tokenDecode.getUserInfo().get("username");
+        String newPassword = BCrypt.hashpw(password, BCrypt.gensalt());
+        User user = new User();
+
+        user.setName(name);
+        user.setUsername(username);
+        user.setPassword(newPassword);
+
+        userMapper.updateByPrimaryKeySelective(user);
+        return new Result(true, StatusCode.OK, "修改密码成功");
+
+
+    }
+
+    /**
+     * 修改手机号验证
+     *
+     * @param code
+     * @return
+     */
+    @Override
+    public Result updatePhone(String code) {
+        String username = tokenDecode.getUserInfo().get("username");
+        User user = userMapper.selectByPrimaryKey(username);
+        String phone = "15605607630";
+        String valiCode = (String) redisTemplate.boundValueOps(phone + "001").get();
+        if (valiCode == null || code == null) {
+            return new Result(false, StatusCode.ERROR, "验证码不存在,请重新发送");
+        }
+        if (valiCode.equals(code)) {
+            return new Result(true, StatusCode.OK, "验证通过");
+        } else {
+            return new Result(false, StatusCode.ERROR, "验证码错误");
+        }
+
+    }
+
+    /**
+     * 修改手机号
+     *
+     * @param
+     * @return
+     */
+    @Override
+    public Result updatePhoneTrue(String phone) {
+        String username = tokenDecode.getUserInfo().get("username");
+        User user = userMapper.selectByPrimaryKey(username);
+        user.setPhone(phone);
+        userMapper.updateByPrimaryKeySelective(user);
+        return new Result(true, StatusCode.OK, "修改手机号成功");
+
+    }
+
+    @Override
+    public Result validatePassword(String password) {
+        String username = tokenDecode.getUserInfo().get("username");
+        User user = userMapper.selectByPrimaryKey(username);
+        if (BCrypt.checkpw(password, user.getPassword())) {
+            return new Result(true, StatusCode.OK, "验证通过");
+        }
+        return new Result(false, StatusCode.ERROR, "密码不对");
+    }
+
+    @Override
+    public User findByNull() {
+        String username = tokenDecode.getUserInfo().get("username");
+        User user = userMapper.selectByPrimaryKey(username);
+        return user;
+    }
+
+    /**
+     * 根据用户名获取用户电话
+     * @param username
+     * @return
+     */
+    @Override
+    public String findPhoneByUsername(String username) {
+        return userMapper.findPhoneByUsername(username);
     }
 
     /**

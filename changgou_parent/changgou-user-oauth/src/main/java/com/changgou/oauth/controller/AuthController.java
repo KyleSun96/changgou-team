@@ -5,14 +5,14 @@ import com.changgou.entity.StatusCode;
 import com.changgou.oauth.service.AuthService;
 import com.changgou.oauth.util.AuthToken;
 import com.changgou.oauth.util.CookieUtil;
+import com.changgou.user.pojo.User;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -47,6 +47,7 @@ public class AuthController {
         if (StringUtils.isEmpty(username)){
             throw new RuntimeException("请输入用户名");
         }
+
         if (StringUtils.isEmpty(password)){
             throw new RuntimeException("请输入密码");
         }
@@ -64,4 +65,5 @@ public class AuthController {
     private void saveJtiToCookie(String jti, HttpServletResponse response) {
         CookieUtil.addCookie(response,cookieDomain,"/","uid",jti,cookieMaxAge,false);
     }
+
 }

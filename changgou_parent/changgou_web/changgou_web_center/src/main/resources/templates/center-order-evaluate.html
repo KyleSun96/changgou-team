@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=9; IE=8; IE=7; IE=EDGE">
     <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
-    <title>待收货</title>
+    <title>待评价</title>
     <link rel="icon" href="/img/favicon.ico">
 
     <link rel="stylesheet" type="text/css" href="/css/all.css" />
@@ -39,7 +39,7 @@
                             <li class="f-item"><span>关注畅购</span></li>
                             <li class="f-item"><span><a href="cooperation.html" target="_blank">合作招商</a></span></li>
                             <li class="f-item"><span><a href="shoplogin.html" target="_blank">商家后台</a></span></li>
-                            <li class="f-item"><span>网站导航</li>
+                            <li class="f-item"><span>网站导航</span></li>
                         </ul>
                     </div>
 
@@ -91,16 +91,16 @@
                 <div class="list-items">
                     <dl>
                         <dt><i>·</i> 订单中心</dt>
-                        <dd ><a href="center-index.html" >我的订单</a></dd>
-                        <dd><a href="center-order-pay.html" >待付款</a></dd>
-                        <dd><a href="center-order-send.html"  >待发货</a></dd>
-                        <dd><a href="center-order-receive.html" class="list-active">待收货</a></dd>
-                        <dd><a href="center-order-evaluate.html"  >待评价</a></dd>
+                        <dd ><a href="http://localhost:8001/api/wcenter/order/allOrder"   >我的订单</a></dd>
+                        <dd><a href="http://localhost:8001/api/wcenter/order/noPayOrder" >待付款</a></dd>
+                        <dd><a href="http://localhost:8001/api/wcenter/order/noConsignOrder"  >待发货</a></dd>
+                        <dd><a href="http://localhost:8001/api/wcenter/order/findPayOrder" >待收货</a></dd>
+                        <dd><a href="http://localhost:8001/api/wcenter/order/findBuyerRate" class="list-active" >待评价</a></dd>
                     </dl>
                     <dl>
                         <dt><i>·</i> 我的中心</dt>
-                        <dd><a href="center-collect.html">我的收藏</a></dd>
-                        <dd><a href="center-footmark.html" class="list-active">我的足迹</a></dd>
+                        <dd><a href="/api/wcenter/toCollect">我的收藏</a></dd>
+                        <dd><a href="/api/wcenter/toFootmark">我的足迹</a></dd>
 
                     </dl>
                     <dl>
@@ -108,9 +108,9 @@
                     </dl>
                     <dl>
                         <dt><i>·</i> 设置</dt>
-                        <dd><a href="center-setting-info.html">个人信息</a></dd>
-                        <dd><a href="center-setting-address.html"  >地址管理</a></dd>
-                        <dd><a href="center-setting-safe.html" >安全管理</a></dd>
+                        <dd><a href="/api/wuserInfo" >个人信息</a></dd>
+                        <dd><a href="/api/wcenterAddress">地址管理</a></dd>
+                        <dd><a href="/api/wcenterSafe">安全管理</a></dd>
                     </dl>
                 </div>
             </div>
@@ -158,10 +158,12 @@
                                 <tbody >
                                 <tr>
                                     <td width="35%">
-                                            <div class="typographic"><img th:src="${orderItem.image}" />
+
+                                            <div class="typographic"><img th:src="${orderItem.image}" th:width="82"  th:height="82" />
                                                 <a href="#" class="block-text">包邮 <em th:text="${orderItem.name}"></em></a>
                                                 <!--<span class="guige">规格：温泉喷雾150ml</span>-->
                                             </div>
+
 
                                     </td>
                                     <td width="5%" class="center">
@@ -202,8 +204,6 @@
                                                         <h4 id="myModalLabel" class="modal-title">评价此商品
                                                         </h4>
                                                     </div>
-
-
                                                     <div class="modal-body">
                                                         <table :model="dataList">
                                                             <tr>
@@ -234,7 +234,6 @@
                                                         <button type="button" data-dismiss="modal"
                                                                 class="sui-btn btn-default btn-large">取消评价</button>
                                                     </div>
-
                                                 </div>
                                             </div>
                                         </div>
@@ -256,9 +255,7 @@
                                 </ul>
                                 <div><span>共10页&nbsp;</span><span>
                                             到
-                                            <input type="text" class="page-num"><button class="page-confirm"
-                                                                                        onclick="alert(1)">确定</button>
-                                            页</span></div>
+                                           <input type="text" class="page-num"><button class="page-confirm" onclick="alert(1)">确定</button>页</span></div>
                             </div>
                         </div>
 
@@ -332,7 +329,7 @@
                             <li class="yui3-u-1-4">
                                 <div class="list-wrap">
                                     <div class="p-img">
-                                        <img src="./img/_/itemlike04.png" />
+                                        <img src="/img/_/itemlike04.png" />
                                     </div>
                                     <div class="attr">
                                         <em>DELL戴尔Ins 15MR-7528SS 15英寸 银色 笔记本</em>

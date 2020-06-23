@@ -514,7 +514,7 @@
 			methods:{
 				add:function (skuId,num) {
 					axios.get("/api/wcart/add?id="+skuId+"&num="+num).then(function (response) {
-						if (response.data.flag){
+						if (response.data.flag){v
 							app.items=response.data.data;
 						}
 					})
