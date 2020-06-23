@@ -34,6 +34,6 @@ public class FootmarkServiceImpl implements FootmarkService {
     public List<Footmark> findByUsername(String username) {
         Footmark footmark = new Footmark();
         footmark.setUsername(username);
-        return footmarkMapper.select(footmark);
+        return footmarkMapper.findByUsername(username);
     }
 }
