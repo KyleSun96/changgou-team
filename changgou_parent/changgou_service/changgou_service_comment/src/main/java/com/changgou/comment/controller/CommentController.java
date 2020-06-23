@@ -52,12 +52,21 @@ public class CommentController {
     @RequestMapping("/addC")
     public Result addC(@RequestBody Map map) {
 
-        String level = (String) map.get("score");
-        String content = (String) map.get("comment");
+        Map dataList = (Map) map.get("dataList");
+        String level = (String) dataList.get("score");
+        String content = (String) dataList.get("comment");
+
+        String orderId = String.valueOf((Long) map.get("orderId"));
+        String spuId = String.valueOf((Long) map.get("spuId"));
+        String skuId = String.valueOf((Long) map.get("skuId"));
+
 
         Comment comment = new Comment();
         comment.setLevel(level);
         comment.setContent(content);
+        comment.setSpuId(spuId);
+        comment.setOrderId(orderId);
+        comment.setSkuId(skuId);
 
         String username = tokenDecode.getUserInfo().get("username");
         comment.setUsername(username);

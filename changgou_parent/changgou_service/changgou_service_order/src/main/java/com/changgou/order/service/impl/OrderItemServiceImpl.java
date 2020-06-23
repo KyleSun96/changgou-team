@@ -34,7 +34,12 @@ public class OrderItemServiceImpl implements OrderItemService {
     //根据订单查询商品名称
     @Override
     public List<OrderItem> findByOrderId(String orderId) {
-        List<OrderItem> orderItemList = orderItemMapper.findByOrderId(orderId);
+
+        OrderItem orderItem1 = new OrderItem();
+        orderItem1.setOrderId(orderId);
+        List<OrderItem> orderItemList =  orderItemMapper.select(orderItem1);
+
+        //  List<OrderItem> orderItemList = orderItemMapper.findByOrderId(orderId);
         for (OrderItem orderItem : orderItemList) {
             if (orderItem==null){
                 throw new RuntimeException("订单不存在");

@@ -230,7 +230,7 @@
                                                     </div>
                                                     <div class=" modal-footer">
                                                         <button type="button"
-                                                                class="sui-btn btn-primary btn-large" @click="|addComment(${order.id},${orderItem.spuId},${orderItem.skuId})|">提交评价</button>
+                                                                class="sui-btn btn-primary btn-large" th:@click="|addComment(${order.id},${orderItem.spuId},${orderItem.skuId})|">提交评价</button>
                                                         <button type="button" data-dismiss="modal"
                                                                 class="sui-btn btn-default btn-large">取消评价</button>
                                                     </div>
@@ -496,24 +496,33 @@
         data:{
             dataList: {
                 score:null,
-                comment:null
-            }
+                comment:null,
+            },
+            map:{"dataList":null,
+                "orderId":null,
+                "skuId":null,
+                "spuId":null}
         },
         // 钩子函数，VUE对象初始化完成后自动执行
         created() {
         },
         methods: {
             //编辑
-            addComment:function () {
+
+            addComment:function (orderId,spuId,skuId) {
 
                 // alert(this.dataList.score);
                 //  alert(this.dataList.comment);
                 if (this.dataList.score == null)
                     this.dataList.score = "high";
                 // alert(this.dataList.score);
+                this.map.dataList = this.dataList
 
+                this.map.orderId = orderId
+                this.map.spuId = spuId
+                this.map.skuId = skuId
 
-                axios.post("/api/comment/addC", this.dataList).then((response) => {
+                axios.post("/api/comment/addC", this.map).then((response) => {
                     if (response.data.flag)
                         this.$message.success(response.data.message);
 
