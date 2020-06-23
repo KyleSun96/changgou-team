@@ -10,4 +10,12 @@ public interface UserFeign {
 
     @GetMapping("/user/load/{username}")
     public User findUserInfo(@PathVariable("username") String username);
+
+    /**
+     * 根据用户名获取用户电话
+     *
+     * @return
+     */
+    @GetMapping("/user/findPhoneByUsername")
+    public String findPhoneByUsername();
 }

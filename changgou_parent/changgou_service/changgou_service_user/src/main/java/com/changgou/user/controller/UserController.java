@@ -34,15 +34,15 @@ public class UserController {
 
 
     @PostMapping("/imageUpload")
-    public Result imageUpload(MultipartFile file){
-        try{
+    public Result imageUpload(MultipartFile file) {
+        try {
             //判断文件是否存在
-            if (file == null){
+            if (file == null) {
                 throw new RuntimeException("文件不存在");
             }
             //获取文件的完整名称
             String originalFilename = file.getOriginalFilename();
-            if (StringUtils.isEmpty(originalFilename)){
+            if (StringUtils.isEmpty(originalFilename)) {
                 throw new RuntimeException("文件不存在");
             }
 
@@ -53,40 +53,41 @@ public class UserController {
             byte[] content = file.getBytes();
 
             //创建文件上传的封装实体类
-            FastDFSFile fastDFSFile = new FastDFSFile(originalFilename,content,extName);
+            FastDFSFile fastDFSFile = new FastDFSFile(originalFilename, content, extName);
 
             //基于工具类进行文件上传,并接受返回参数  String[]
             String[] uploadResult = FastDFSClient.upload(fastDFSFile);
 
             //封装返回结果
-            String url = FastDFSClient.getTrackerUrl()+uploadResult[0]+"/"+uploadResult[1];
-            if (url != null){
+            String url = FastDFSClient.getTrackerUrl() + uploadResult[0] + "/" + uploadResult[1];
+            if (url != null) {
                 User user = new User();
                 String username = tokenDecode.getUserInfo().get("username");
                 user.setUsername(username);
                 userService.update(user);
             }
-            return new Result(true,StatusCode.OK,"文件上传成功",url);
-        }catch (Exception e){
+            return new Result(true, StatusCode.OK, "文件上传成功", url);
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        return new Result(false, StatusCode.ERROR,"文件上传失败");
+        return new Result(false, StatusCode.ERROR, "文件上传失败");
 
     }
 
     @PostMapping("/imageUploadOss")
-    public Result imageUploadOss(File file){
-        if (file != null){
-            ImageUpload.upload( file);
-            return new Result(true, StatusCode.OK,"文件上传成功");
+    public Result imageUploadOss(File file) {
+        if (file != null) {
+            ImageUpload.upload(file);
+            return new Result(true, StatusCode.OK, "文件上传成功");
         }
-        return new Result(false, StatusCode.ERROR,"文件上传失败");
+        return new Result(false, StatusCode.ERROR, "文件上传失败");
 
     }
 
 
     /**
      * 更新用户数据
+     *
      * @param userInfoMap
      * @param userInfo
      * @return
@@ -95,8 +96,8 @@ public class UserController {
     public Result updateInfo(@RequestBody Map userInfoMap, @RequestBody User userInfo) {
         System.out.println(userInfoMap);
         System.out.println(userInfo);
-        userService.updateInfo(userInfoMap,userInfo);
-        return new Result(true,StatusCode.OK,"用户更新数据成功");
+        userService.updateInfo(userInfoMap, userInfo);
+        return new Result(true, StatusCode.OK, "用户更新数据成功");
     }
 
 
@@ -193,5 +194,15 @@ public class UserController {
         return new Result(true, StatusCode.OK, "查询成功", pageResult);
     }
 
-
+    /**
+     * 根据用户名获取用户电话
+     *
+     * @return
+     */
+    @GetMapping("/findPhoneByUsername")
+    public String findPhoneByUsername() {
+        String username = tokenDecode.getUserInfo().get("username");
+        String phone = userService.findPhoneByUsername(username);
+        return phone;
+    }
 }

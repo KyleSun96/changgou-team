@@ -128,7 +128,7 @@
                                 </tr>
                             </table>
                         </div>
-                        <div class="order-detail">
+                        <div class="order-detail" id="app">
                             <div class="orders" th:each="order:${orderList}">
                                 
                                 <!--order1-->
@@ -138,16 +138,16 @@
                                      </label>
                              
                                 </div>
-                                <table class="sui-table table-bordered order-datatable">
+                                <table class="sui-table table-bordered order-datatable" th:each="orderItem:${order.orderItemList}">
                                     <tbody>
                                         <tr>
                                             <td width="35%">
-                                                <div th:each="orderItem:${order.orderItemList}">
+
                                                     <div class="typographic"><img th:src="${orderItem.image}"  th:width="82 " th:height="82"/>
                                                         <a href="#" class="block-text">包邮 <em th:text="${orderItem.name}"></em></a>
 
                                                     </div>
-                                                </div>
+
                                             </td>
                                             <td width="5%" class="center">
                                                 <ul class="unstyled">
@@ -171,7 +171,7 @@
                                             </td>
                                             <td width="10%" class="center">
                                                 <ul class="unstyled">
-                                                    <li><a href="#" class="sui-btn btn-info">提醒发货</a></li>
+													<a th:@click="|toCall(${#strings.substring(order.id,0,11)},${#strings.substring(order.id,11)})|" class="sui-btn btn-info">提醒发货</a>
                                                 </ul>
                                             </td>
                                         </tr>
@@ -411,7 +411,34 @@
 	</div>
 </div>
 <!--页面底部END-->
-   
+	<script type="text/javascript" src="/js/plugins/jquery/jquery.min.js"></script>
+	<script type="text/javascript" src="/js/vue.js"></script>
+	<script type="text/javascript" src="/js/axios.js"></script>
+
+	<script th:inline="javascript">
+        var app = new Vue({
+            el:"#app",
+            data:{
+            },
+            methods:{
+                toCall:function (preId,perId) {
+                    var id = preId+''+perId;
+                    axios.get("/api/wcenter/toCall?id="+id).then(function (response) {
+
+                        if (response.data.flag){
+                            alert("短信发送成功，请耐心等待！！！");
+                        } else{
+                            alert("失败");
+                        }
+                    })
+                }
+            }
+        })
+
+
+
+	</script>
+
 
 
 </body>

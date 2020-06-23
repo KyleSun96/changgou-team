@@ -140,16 +140,16 @@
                                      </label>
                                   
                                 </div>
-                                <table class="sui-table table-bordered order-datatable" >
+                                <table class="sui-table table-bordered order-datatable"  th:each="orderItem:${order.orderItemList}">
                                     <tbody>
                                         <tr>
                                             <td width="35%">
-												<div th:each="orderItem:${order.orderItemList}">
+
 													<div class="typographic"><img th:src="${orderItem.image}" th:height="82" th:width="82"/>
 														<a href="#" class="block-text">包邮 <em th:text="${orderItem.name}"></em></a>
 
 													</div>
-												</div>
+
                                             </td>
                                             <td width="5%" class="center">
                                                 <ul class="unstyled">

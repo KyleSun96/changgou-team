@@ -92,4 +92,10 @@ public interface OrderService {
 
 
     void autoTack();
+
+    /**
+     * 发送催发货短信
+     * @param id
+     */
+    void sendMessage(String id);
 }

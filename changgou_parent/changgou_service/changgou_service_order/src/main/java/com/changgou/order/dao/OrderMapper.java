@@ -10,5 +10,4 @@ import java.util.List;
 
 public interface OrderMapper extends Mapper<Order> {
 
-
 }

@@ -137,16 +137,13 @@
                                            <input type="checkbox" checked="checked"><span>订单编号：<em th:text="${order.id}"></em></span>
                                      </label>
                                 </div>
-                                <table class="sui-table table-bordered order-datatable">
+                                <table class="sui-table table-bordered order-datatable" th:each="orderItem:${order.orderItemList}">
                                     <tbody>
                                         <tr>
                                             <td width="35%">
-												<div th:each="orderItem:${order.orderItemList}">
-													<div class="typographic"><img th:src="${orderItem.image}" />
+													<div class="typographic"><img th:src="${orderItem.image}" th:width="82 " th:height="82"/>
 														<a href="#" class="block-text">包邮 <em th:text="${orderItem.name}"></em></a>
-
 													</div>
-												</div>
                                             </td>
                                             <td width="5%" class="center">
                                                 <ul class="unstyled">
@@ -155,9 +152,7 @@
                                                 </ul>
                                             </td>
                                             <td width="5%" class="center"><em th:text="${order.totalNum}"></em></td>
-                                           
-                                               
-                                            </td>
+
                                             <td width="10%" class="center" >
                                                 <ul class="unstyled">
                                                     <li>¥<em th:text="${order.totalMoney}"></em></li>
@@ -165,21 +160,32 @@
                                                 </ul>
                                             </td>
                                             <td width="10%" class="center">
-                                                <ul class="unstyled">
-                                                    <li>等待卖家付款</li>
-                             
-                                                </ul>
+												<ul class="unstyled">
+													<li><span th:if="${(order.orderStatus=='0')}">待支付</span></li>
+													<li><span th:if="${(order.orderStatus=='1')}">待发货</span></li>
+													<li><span th:if="${(order.orderStatus=='2')}">待收货</span></li>
+													<li><span th:if="${(order.orderStatus=='3')}">已完成</span></li>
+													<li><span th:if="${(order.orderStatus=='4')}">已取消</span></li>
+												</ul>
                                             </td>
                                             <td width="10%" class="center">
-                                                <ul class="unstyled">
-													<li><a href="#" class="sui-btn btn-info">立即付款</a></li>
-                                                    <li>取消订单</li>
-                                                    
-                                                </ul>
+
+												<ul class="unstyled">
+													<li><span th:if="${(order.orderStatus=='0')}"><a th:@click="|toPay(${#strings.substring(order.id,0,11)},${#strings.substring(order.id,11)})|" class="sui-btn btn-info">立即付款</a>
+																									<a th:@click="|toNoPay(${#strings.substring(order.id,0,11)},${#strings.substring(order.id,11)})|" class="sui-btn btn-info">取消订单</a>
+														</span>
+													</li>
+													<li class="unstyled"><span th:if="${(order.orderStatus=='1')}"></span><a th:@click="|toCall(${#strings.substring(order.id,0,11)},${#strings.substring(order.id,11)})|" class="sui-btn btn-info">提醒发货</a></li>
+													<li><span th:if="${(order.orderStatus=='2')}"><a th:@click="|linkclick(${#strings.substring(order.id,0,11)},${#strings.substring(order.id,11)})|" class="sui-btn btn-info">确认收货</a></span></li>
+													<li><span th:if="${(order.orderStatus=='3')}">已完成</span></li>
+													<li><span th:if="${(order.orderStatus=='4')}">已取消</span></li>
+
+													<!--<ul class="unstyled">
+														<a th:@click="|toCall(${#strings.substring(order.id,0,11)},${#strings.substring(order.id,11)})|" class="sui-btn btn-info">提醒发货</a>
+													</ul>-->
+												</ul>
                                             </td>
                                         </tr>
-                                        
-
                                     </tbody>
                                 </table>
 
@@ -389,7 +395,7 @@
 					</div>
 					<div class="yui3-u-1-6">
 						<h4>帮助中心</h4>
-						<img src="./img/wx_cz.jpg">
+						<img src="/img/wx_cz.jpg">
 					</div>
 				</div>
 			</div>
@@ -413,7 +419,69 @@
 	</div>
 </div>
 <!--页面底部END-->
-    
+	<script type="text/javascript" src="/js/plugins/jquery/jquery.min.js"></script>
+	<script type="text/javascript" src="/js/vue.js"></script>
+	<script type="text/javascript" src="/js/axios.js"></script>
+
+	<script th:inline="javascript">
+        var app = new Vue({
+                el:"#app",
+                data:{
+                },
+                methods:{
+                    toCall:function (preId,perId) {
+                        var id = preId+''+perId;
+                        axios.get("/api/wcenter/toCall?id="+id).then(function (response) {
+
+                            if (response.data.flag){
+                                alert("短信发送成功，请耐心等待！！！");
+                            } else{
+                                alert("失败");
+                            }
+                        })
+                    },
+                    linkclick:function (preId,perId) {
+                        var id = preId+''+perId;
+                        axios.get("/api/wcenter/task?id="+id).then(function (response) {
+
+                            if (response.data.flag){
+                                alert("成功");
+                                location.href="http://localhost:8001/api/wcenter/order/findPayOrder";
+                            } else{
+                                alert("失败");
+                            }
+                        })
+                    },
+                    toPay:function (preId,perId) {
+                        var id = preId+''+perId;
+                        axios.get("/api/wcenter/findtoPay?id="+id).then(function (response) {
+
+                            if (response.data.flag){
+                                alert("支付成功");
+
+                                location.href="http://localhost:8001/api/wcenter/order/noPayOrder";
+                            } else{
+                                alert("支付失败");
+                            }
+                        })
+                    },
+                    toNoPay:function (preId,perId) {
+                        var id = preId+''+perId;
+                        axios.get("/api/wcenter/findtoNoPay?id="+id).then(function (response) {
+
+                            if (response.data.flag){
+                                alert("取消订单成功");
+
+                                location.href="http://localhost:8001/api/wcenter/order/noPayOrder";
+                            } else{
+                                alert("取消订单失败");
+                            }
+                        })
+                    }
+
+                }
+            })
+	</script>
 
 
 </body>

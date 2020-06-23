@@ -137,17 +137,17 @@
                                      </label>
                
                                 </div>
-                                <table class="sui-table table-bordered order-datatable">
+                                <table class="sui-table table-bordered order-datatable" th:each="orderItem:${order.orderItemList}">
 
                                     <tbody>
                                         <tr>
                                             <td width="35%">
-												<div th:each="orderItem:${order.orderItemList}">
+
 													<div class="typographic"><img th:src="${orderItem.image}"  th:width="82 " th:height="82"/>
 														<a href="#" class="block-text">包邮 <em th:text="${orderItem.name}"></em></a>
 
 													</div>
-												</div>
+
                                             </td>
                                             <td width="5%" class="center">
                                                 <ul class="unstyled">
@@ -174,7 +174,7 @@
                                             <td width="10%" class="center">
                                                 <ul class="unstyled">
                                                     <li><a href="#" class="sui-btn btn-info">立即付款</a></li>
-                                                    <li><a href="#">取消订单</a></li>
+                                                    <li><a href="#" class="sui-btn btn-info">取消订单</a></li>
                                                 </ul>
                                             </td>
                                         </tr>

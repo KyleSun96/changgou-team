@@ -48,7 +48,6 @@ public class UserServiceImpl implements UserService {
         String areaId = findAreaId(userInfoMap);
         if (areaId != null){
             String username = tokenDecode.getUserInfo().get("username");
-            userInfo.setAreaId(areaId);
             //查询主键usernmae
             userInfo.setUsername(username);
             userInfo.setUpdated(new Date());
@@ -240,6 +239,16 @@ public class UserServiceImpl implements UserService {
         redisTemplate.delete(task.getId());
         System.out.println("用户服务完成了更改用户积分的操作");
         return 1;
+    }
+
+    /**
+     * 根据用户名获取用户电话
+     * @param username
+     * @return
+     */
+    @Override
+    public String findPhoneByUsername(String username) {
+        return userMapper.findPhoneByUsername(username);
     }
 
     /**

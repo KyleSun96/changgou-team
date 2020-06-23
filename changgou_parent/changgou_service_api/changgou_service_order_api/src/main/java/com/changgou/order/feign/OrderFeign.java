@@ -46,4 +46,8 @@ public interface OrderFeign {
     @RequestMapping("/order/findNoConsignByUsername")
     public Result<List<Order>> findNoConsignByUsername();
 
+    //发送催货短信
+    @RequestMapping("/order/sendMessage")
+    public Result sendMessage(@RequestParam("id") String id);
+
 }

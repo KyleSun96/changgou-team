@@ -2,13 +2,16 @@ package com.changgou.order.service.impl;
 
 import com.alibaba.fastjson.JSON;
 //import com.alibaba.fescar.spring.annotation.GlobalTransactional;
+import com.aliyuncs.exceptions.ClientException;
 import com.changgou.goods.feign.SkuFeign;
 import com.changgou.order.config.RabbitMQConfig;
 import com.changgou.order.dao.*;
 import com.changgou.order.pojo.*;
 import com.changgou.order.service.CartService;
 import com.changgou.order.service.OrderService;
+import com.changgou.order.util.SMSUtils;
 import com.changgou.pay.feign.PayFeign;
+import com.changgou.user.feign.UserFeign;
 import com.changgou.util.IdWorker;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -21,6 +24,8 @@ import tk.mybatis.mapper.entity.Example;
 
 import java.time.LocalDate;
 import java.util.*;
+
+import static com.changgou.order.util.SMSUtils.KUAIFAHUO_CODE;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -40,17 +45,16 @@ public class OrderServiceImpl implements OrderService {
     }
 
 
-
     //根据用户名查询所有订单
     @Override
     public List<Order> findOrderByUsername(String username) {
 
-        Example example=new Example(Order.class);
+        Example example = new Example(Order.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("username",username);
+        criteria.andEqualTo("username", username);
         List<Order> orderList = orderMapper.selectByExample(example);
         for (Order order : orderList) {
-            if (order==null){
+            if (order == null) {
                 throw new RuntimeException("订单不存在");
             }
         }
@@ -60,17 +64,17 @@ public class OrderServiceImpl implements OrderService {
     //代付款
     @Override
     public List<Order> findNoPayByUsername(String username) {
-        Example example=new Example(Order.class);
+        Example example = new Example(Order.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("username",username);
+        criteria.andEqualTo("username", username);
         List<Order> orderList = orderMapper.selectByExample(example);
 
         List<Order> list = new ArrayList<>();
         for (Order order : orderList) {
-            if (order==null){
+            if (order == null) {
                 throw new RuntimeException("订单不存在");
             }
-            if ("1".equals(order.getOrderStatus()) && "0".equals(order.getPayStatus())){
+            if ("1".equals(order.getOrderStatus()) && "0".equals(order.getPayStatus())) {
                 list.add(order);
             }
         }
@@ -82,17 +86,17 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<Order> findNoConsignByUsername(String username) {
 
-        Example example=new Example(Order.class);
+        Example example = new Example(Order.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("username",username);
+        criteria.andEqualTo("username", username);
         List<Order> orderList = orderMapper.selectByExample(example);
 
         List<Order> list = new ArrayList<>();
         for (Order order : orderList) {
-            if (order==null){
+            if (order == null) {
                 throw new RuntimeException("订单不存在");
             }
-            if ("1".equals(order.getOrderStatus()) && "1".equals(order.getPayStatus()) && "0".equals(order.getConsignStatus())){
+            if ("1".equals(order.getOrderStatus()) && "1".equals(order.getPayStatus()) && "0".equals(order.getConsignStatus())) {
                 list.add(order);
             }
         }
@@ -110,7 +114,7 @@ public class OrderServiceImpl implements OrderService {
         List<Order> list = new ArrayList<>();
 
         //List<Order> orderList = orderMapper.findOrderByUsername(username);
-        Example example=new Example(Order.class);
+        Example example = new Example(Order.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo(username);
         List<Order> orderList = orderMapper.selectByExample(example);
@@ -125,14 +129,15 @@ public class OrderServiceImpl implements OrderService {
         }
         return list;
     }
+
     //根据id查询所有待收货订单
     @Override
-    public List<Order> findAllOrder( ) {
+    public List<Order> findAllOrder() {
 
 
         List<Order> orderList = orderMapper.selectAll();
 
-        List<Order> list=new ArrayList<>();
+        List<Order> list = new ArrayList<>();
         for (Order order : orderList) {
             if (order == null) {
                 throw new RuntimeException("订单不存在");
@@ -148,26 +153,24 @@ public class OrderServiceImpl implements OrderService {
     //查询待评价订单
     @Override
     public List<Order> findBuyerRateByOrder(String username) {
-        Example example=new Example(Order.class);
+        Example example = new Example(Order.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo(username);
         List<Order> orderList = orderMapper.selectByExample(example);
 
-        List<Order> list=new ArrayList<>();
+        List<Order> list = new ArrayList<>();
         for (Order order : orderList) {
             if (order == null) {
                 throw new RuntimeException("订单不存在");
             }
 
-            if (!"1".equals(order.getBuyerRate())&&"1".equals(order.getPayStatus())&&"2".equals(order.getConsignStatus())){
+            if (!"1".equals(order.getBuyerRate()) && "1".equals(order.getPayStatus()) && "2".equals(order.getConsignStatus())) {
                 list.add(order);
             }
         }
 
         return list;
     }
-
-
 
 
     @Autowired
@@ -191,6 +194,8 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
+    @Autowired
+    private UserFeign userFeign;
 
     /**
      * 增加
@@ -331,7 +336,7 @@ public class OrderServiceImpl implements OrderService {
         if (searchMap.containsKey("sourceType")) {
             order.setSourceType((String) searchMap.get("sourceType"));
         }
-        if(searchMap.containsKey("orderId")){
+        if (searchMap.containsKey("orderId")) {
             order.setId((String) searchMap.get("orderId"));
         }
         return (Page<Order>) orderMapper.select(order);
@@ -518,7 +523,6 @@ public class OrderServiceImpl implements OrderService {
     }
 
 
-
     @Autowired
     private OrderConfigMapper orderConfigMapper;
 
@@ -549,6 +553,21 @@ public class OrderServiceImpl implements OrderService {
             this.confirmTask(order.getId(), "system");
         }
 
+    }
+
+    /**
+     * 发送催发货短信
+     *
+     * @param id
+     */
+    @Override
+    public void sendMessage(String id) {
+        String phone = userFeign.findPhoneByUsername();
+        try {
+            SMSUtils.sendShortMessage(SMSUtils.KUAIFAHUO_CODE, phone, id);
+        } catch (ClientException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -650,5 +669,6 @@ public class OrderServiceImpl implements OrderService {
         }
         return example;
     }
+
 
 }

@@ -81,4 +81,13 @@ public interface UserService {
     Page<User> findPage(Map<String, Object> searchMap, int page, int size);
 
     int updateUserPoint(Task task);
+
+    /**
+     * 根据用户名获取用户电话
+     * @param username
+     * @return
+     */
+    String findPhoneByUsername(String username);
+
+
 }

@@ -20,6 +20,8 @@ public class OrderController {
     private OrderService orderService;
 
 
+
+
     //手动确定收货
     @RequestMapping ("/task/id")
     public Result confirmTask(@RequestParam("id") String Id){
@@ -168,6 +170,18 @@ public class OrderController {
         orderService.batchSend(orders);
         return new Result(true,StatusCode.OK,"发货成功");
     }
+
+    /**
+     * 发送短信
+     * @param id
+     * @return
+     */
+    @RequestMapping("/sendMessage")
+    public Result sendMessage(@RequestParam("id") String id){
+        orderService.sendMessage(id);
+        return new Result(true,StatusCode.OK,"发送信息成功");
+    }
+
 
 
 }
