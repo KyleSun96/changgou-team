@@ -107,15 +107,15 @@ public class OrderServiceImpl implements OrderService {
         return list;
     }
 
-    /**
+/*    *//**
      * 根据ID查询
      *
      * @return
-     */
+     *//*
     @Override
     public Order findById(String id) {
         return orderMapper.selectByPrimaryKey(id);
-    }
+    }*/
 
 
     /**
