@@ -72,9 +72,9 @@
 </div>
 
     <!--header-->
-    <div id="account">
+    <div id="app">
         <div class="py-container">
-            <div class="yui3-g home">
+            <div   class="yui3-g home">
                 <!--左侧列表-->
                 <div class="yui3-u-1-6 list">
 
@@ -171,14 +171,14 @@
 													<li><span th:if="${(order.orderStatus=='2')}">待收货</span></li>
 													<li><span th:if="${(order.orderStatus=='3')}">已完成</span></li>
 													<li><span th:if="${(order.orderStatus=='4')}">已取消</span></li>
-													<li><em href="javascript:void(0) "  th:if="${(order.orderStatus=='2' or order.orderStatus=='3')}"  th:@click="|checklogisitic(${#strings.substring(order.id,0,11)},${#strings.substring(order.id,11)})|">物流详情</em></li>
+													<li><a href="javascript:void(0) "  th:if="${(order.orderStatus=='2' or order.orderStatus=='3')}"  th:@click="|checklogisitic(${#strings.substring(order.id,0,11)},${#strings.substring(order.id,11)})|">物流详情</a></li>
 												</ul>
                                             </td>
                                             <td width="10%" class="center">
                                                <!-- <ul class="unstyled">
 													<li><a href="#" class="sui-btn btn-info">立即付款</a></li>
                                                     <li>取消订单</li>
-                                                    
+
                                                 </ul>-->
 												<ul class="unstyled">
 													<li>
@@ -492,6 +492,11 @@
                             alert("失败");
                         }
                     })
+                },
+                checklogisitic:function(preId,perId){
+                    var id = preId+''+perId;
+                    console.log(id);
+                    window.open("/api/wlogisitic/trace?orderId="+id);
                 }
 
             }
