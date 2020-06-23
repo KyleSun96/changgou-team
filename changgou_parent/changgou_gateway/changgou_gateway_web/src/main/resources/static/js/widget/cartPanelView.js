@@ -20,7 +20,7 @@ var cartPanelView = {
             $(this).removeClass("tbar-tab-selected");
         });
 
-        cartPanelView.cartCellTemplate = $("#tbar-cart-item-templates").html();
+        cartPanelView.cartCellTemplate = $("#tbar-cart-item-template").html();
 
         callback();
     },

@@ -8,6 +8,8 @@ import com.changgou.order.pojo.Order;
 import com.github.pagehelper.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 @RestController
@@ -18,6 +20,8 @@ public class OrderController {
 
     @Autowired
     private OrderService orderService;
+
+
 
 
     //手动确定收货
@@ -170,7 +174,7 @@ public class OrderController {
      * @return
      */
     @PostMapping(value = "/search" )
-    public Result<Page<Order>> findPage(@RequestBody Map searchMap){
+    public Result<PageResult> findPage(@RequestBody Map searchMap){
 
         Page<Order> pageList = orderService.findPage(searchMap);
         PageResult<Order> result = new PageResult<>(pageList.getTotal(), pageList.getResult());
@@ -183,5 +187,23 @@ public class OrderController {
         return new Result(true,StatusCode.OK,"发货成功");
     }
 
+    /**
+     * 发送短信
+     * @param id
+     * @return
+     */
+    @RequestMapping("/sendMessage")
+    public Result sendMessage(@RequestParam("id") String id){
+        orderService.sendMessage(id);
+        return new Result(true,StatusCode.OK,"发送信息成功");
+    }
+
+
+
+    @RequestMapping("/statistics")
+    public Result<List<Map<String, Integer>>> findOrderStatisticsData(@RequestParam("start") Date start,@RequestParam("end") Date end){
+        List<Map<String, Integer>> data = orderService.findOrderStatisticsData(start, end);
+        return new Result<>(true,StatusCode.OK,"获取数据成功",data);
+    }
 
 }

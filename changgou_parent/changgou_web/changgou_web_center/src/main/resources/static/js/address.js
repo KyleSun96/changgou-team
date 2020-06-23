@@ -51,6 +51,8 @@ $(function () {
 	$(".addAddressInfo").address(".province1", ".city1", ".district1");
 })
 
+
+
 // 省市县数据
 var provinceList = [
 	{

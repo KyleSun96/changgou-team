@@ -15,6 +15,14 @@ public class User implements Serializable {
     @Id
     private String username;//用户名
 
+    private String profession;//职业
+
+    private String imageUrl;//头像地址
+
+    private String areaId; //所在地Id
+
+
+
     private String password;//密码，加密存储
     private String phone;//注册手机号
     private String email;//注册邮箱
@@ -34,35 +42,7 @@ public class User implements Serializable {
     private Integer experienceValue;//经验值
     private java.util.Date birthday;//出生年月日
     private java.util.Date lastLoginTime;//最后登录时间
-    private String profession;//职业
 
-    private String imageUrl;//头像地址
-
-    private String areaId; //所在地Id
-
-    public String getImageUrl() {
-        return imageUrl;
-    }
-
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
-
-    public String getProfession() {
-        return profession;
-    }
-
-    public void setProfession(String profession) {
-        this.profession = profession;
-    }
-
-    public String getAreaId() {
-        return areaId;
-    }
-
-    public void setAreaId(String areaId) {
-        this.areaId = areaId;
-    }
 
     public String getUsername() {
         return username;
@@ -222,6 +202,30 @@ public class User implements Serializable {
 
     public void setLastLoginTime(java.util.Date lastLoginTime) {
         this.lastLoginTime = lastLoginTime;
+    }
+
+    public String getProfession() {
+        return profession;
+    }
+
+    public void setProfession(String profession) {
+        this.profession = profession;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public String getAreaId() {
+        return areaId;
+    }
+
+    public void setAreaId(String areaId) {
+        this.areaId = areaId;
     }
 
 }

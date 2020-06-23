@@ -1,16 +1,11 @@
-import com.aliyun.oss.ClientException;
 import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSClientBuilder;
-import com.aliyun.oss.OSSException;
-import com.aliyun.oss.model.GetObjectRequest;
-import com.aliyun.oss.model.OSSObject;
 import com.aliyun.oss.model.PutObjectRequest;
 import org.springframework.util.ResourceUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 
 public class uploadTest {
     public static void main(String[] args) {
@@ -23,9 +18,10 @@ public class uploadTest {
 
 
 
+
 // 创建OSSClient实例。
         OSS ossClient = new OSSClientBuilder().build(endpoint, accessKeyId, accessKeySecret);
-        String x = uploadTest.class.getClassLoader().getResource("1.jpg").toExternalForm();
+        String x = uploadTest.class.getClassLoader().getResource("1.png").toExternalForm();
         System.out.println(x);
         File file = null;
         try {
@@ -37,7 +33,7 @@ public class uploadTest {
 
 
 // 创建PutObjectRequest对象。
-        PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, "1.jpg",file);
+        PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, "1.png",file);
 
 // 如果需要上传时设置存储类型与访问权限，请参考以下示例代码。
 // ObjectMetadata metadata = new ObjectMetadata();

@@ -173,4 +173,14 @@ public class OrderCenterController {
         return "center-index";
     }
 
+    /**
+     * 发送催发货短信
+     */
+    @RequestMapping("/toCall")
+    @ResponseBody
+    public Result toCall(@RequestParam("id") String id){
+        String subId = id.substring(id.length() - 6);
+        Result result = orderFeign.sendMessage(subId);
+        return result;
+    }
 }

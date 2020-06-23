@@ -12,6 +12,9 @@ public class FastDFSFile {
     //文件创建作者
     private String author;
 
+    public FastDFSFile() {
+    }
+
     public FastDFSFile(String name, byte[] content, String ext, String height,
                        String width, String author) {
         super();

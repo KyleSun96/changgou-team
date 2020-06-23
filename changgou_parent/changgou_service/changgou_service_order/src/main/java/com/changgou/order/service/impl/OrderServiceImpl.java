@@ -2,13 +2,16 @@ package com.changgou.order.service.impl;
 
 import com.alibaba.fastjson.JSON;
 //import com.alibaba.fescar.spring.annotation.GlobalTransactional;
+import com.aliyuncs.exceptions.ClientException;
 import com.changgou.goods.feign.SkuFeign;
 import com.changgou.order.config.RabbitMQConfig;
 import com.changgou.order.dao.*;
 import com.changgou.order.pojo.*;
 import com.changgou.order.service.CartService;
 import com.changgou.order.service.OrderService;
+import com.changgou.order.util.SMSUtils;
 import com.changgou.pay.feign.PayFeign;
+import com.changgou.user.feign.UserFeign;
 import com.changgou.util.IdWorker;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -17,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
 
 import java.time.LocalDate;
@@ -307,46 +311,55 @@ public class OrderServiceImpl implements OrderService {
     }
 
     /**
-     * 条件+分页查询
+     * 条件+分页查询,采用byExample
      *
      * @param searchMap 查询条件
      * @return 分页结果
      */
     @Override
     public Page<Order> findPage(Map<String, Object> searchMap) {
+
         Integer currentPage = (Integer) searchMap.get("currentPage");
         Integer pageSize = (Integer) searchMap.get("pageSize");
         PageHelper.startPage(currentPage, pageSize);
-        Order order = new Order();
 
+        Example eaxmple = new Example(Order.class);
+        Example.Criteria criteria = eaxmple.createCriteria();
+
+        //  orEqualTo
         if (searchMap.containsKey("receiveMessage")) {
             String receiveMessage = (String) searchMap.get("receiveMessage");
-            if (isNumeric(receiveMessage)) {
-                order.setReceiverMobile(receiveMessage);
-            } else {
-                order.setReceiverContact(receiveMessage);
-            }
+                criteria.orEqualTo("receiverMobile",receiveMessage);
+                criteria.orEqualTo("receiverContact",receiveMessage);
+
+
         }
         if (searchMap.containsKey("orderStatus")) {
-            order.setOrderStatus((String) searchMap.get("orderStatus"));
+            if(!StringUtils.isEmpty((String)searchMap.get("orderStatus"))){
+                criteria.andEqualTo("orderStatus",(String) searchMap.get("orderStatus"));
+            }
+
         }
         if (searchMap.containsKey("sourceType")) {
-            order.setSourceType((String) searchMap.get("sourceType"));
-        }
-        if(searchMap.containsKey("orderId")){
-            order.setId((String) searchMap.get("orderId"));
-        }
-        return (Page<Order>) orderMapper.select(order);
-    }
-
-    public static boolean isNumeric(String str) {
-        for (int i = str.length(); --i >= 0; ) {
-            if (!Character.isDigit(str.charAt(i))) {
-                return false;
+            if(!StringUtils.isEmpty((String)searchMap.get("sourceType"))) {
+                criteria.andEqualTo("sourceType", (String) searchMap.get("sourceType"));
             }
         }
-        return true;
+        if(searchMap.containsKey("orderId")){
+            criteria.andEqualTo("id",(String) searchMap.get("orderId"));
+        }
+        return (Page<Order>) orderMapper.selectByExample(eaxmple);
+
     }
+
+//    public static boolean isNumeric(String str) {
+//        for (int i = str.length(); --i >= 0; ) {
+//            if (!Character.isDigit(str.charAt(i))) {
+//                return false;
+//            }
+//        }
+//        return true;
+//    }
 
     @Autowired
     private OrderLogMapper orderLogMapper;
@@ -585,6 +598,14 @@ public class OrderServiceImpl implements OrderService {
 
     }
 
+
+    //查询订单统计数据
+    @Override
+    public List<Map<String, Integer>> findOrderStatisticsData(Date start, Date end) {
+        List<Map<String, Integer>> dataList = orderMapper.findOrderStatisticsData(start, end);
+        return dataList;
+    }
+
     /**
      * 构建查询对象
      *
@@ -683,6 +704,25 @@ public class OrderServiceImpl implements OrderService {
 
         }
         return example;
+    }
+
+
+    @Autowired
+    private UserFeign userFeign;
+
+    /**
+     * 发送催发货短信
+     *
+     * @param id
+     */
+    @Override
+    public void sendMessage(String id) {
+        String phone = userFeign.findPhoneByUsername();
+        try {
+            SMSUtils.sendShortMessage(SMSUtils.KUAIFAHUO_CODE, phone, id);
+        } catch (ClientException e) {
+            e.printStackTrace();
+        }
     }
 
 }

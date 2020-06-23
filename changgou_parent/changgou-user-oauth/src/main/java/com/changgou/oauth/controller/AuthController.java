@@ -47,6 +47,7 @@ public class AuthController {
         if (StringUtils.isEmpty(username)){
             throw new RuntimeException("请输入用户名");
         }
+
         if (StringUtils.isEmpty(password)){
             throw new RuntimeException("请输入密码");
         }

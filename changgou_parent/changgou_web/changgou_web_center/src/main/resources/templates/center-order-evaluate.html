@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=9; IE=8; IE=7; IE=EDGE">
     <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
-    <title>待收货</title>
+    <title>待评价</title>
     <link rel="icon" href="/img/favicon.ico">
 
     <link rel="stylesheet" type="text/css" href="/css/all.css" />
@@ -97,8 +97,8 @@
                     </dl>
                     <dl>
                         <dt><i>·</i> 我的中心</dt>
-                        <dd><a href="center-collect.html">我的收藏</a></dd>
-                        <dd><a href="center-footmark.html" class="list-active">我的足迹</a></dd>
+                        <dd><a href="/api/wcenter/toCollect">我的收藏</a></dd>
+                        <dd><a href="/api/wcenter/toFootmark">我的足迹</a></dd>
 
                     </dl>
                     <dl>
@@ -106,9 +106,9 @@
                     </dl>
                     <dl>
                         <dt><i>·</i> 设置</dt>
-                        <dd><a href="center-setting-info.html">个人信息</a></dd>
-                        <dd><a href="center-setting-address.html"  >地址管理</a></dd>
-                        <dd><a href="center-setting-safe.html" >安全管理</a></dd>
+                        <dd><a href="/api/wuserInfo" >个人信息</a></dd>
+                        <dd><a href="/api/wcenterAddress">地址管理</a></dd>
+                        <dd><a href="/api/wcenterSafe">安全管理</a></dd>
                     </dl>
                 </div>
             </div>
@@ -208,13 +208,13 @@
                                                                 <td>评分：</td>
                                                                 <td>
                                                                     <label class="radio-pretty inline checked">
-                                                                        <input type="radio" checked="checked" name="radio"><span>好评</span>
+                                                                        <input type="radio" checked="checked" name="radio" value="0"><span>好评</span>
                                                                     </label>
                                                                     <label class="radio-pretty inline">
-                                                                        <input type="radio" name="radio"><span>中评</span>
+                                                                        <input type="radio" name="radio" value="0"><span>中评</span>
                                                                     </label>
                                                                     <label class="radio-pretty inline">
-                                                                        <input type="radio" name="radio"><span>差评</span>
+                                                                        <input type="radio" name="radio" value="0"><span>差评</span>
                                                                     </label>
                                                                 </td>
                                                             </tr>
@@ -327,7 +327,7 @@
                             <li class="yui3-u-1-4">
                                 <div class="list-wrap">
                                     <div class="p-img">
-                                        <img src="./img/_/itemlike04.png" />
+                                        <img src="/img/_/itemlike04.png" />
                                     </div>
                                     <div class="attr">
                                         <em>DELL戴尔Ins 15MR-7528SS 15英寸 银色 笔记本</em>
