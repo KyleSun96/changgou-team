@@ -516,15 +516,18 @@
                 if (this.dataList.score == null)
                     this.dataList.score = "high";
                 // alert(this.dataList.score);
-                this.map.dataList = this.dataList
+                this.map.dataList = this.dataList;
 
-                this.map.orderId = orderId
-                this.map.spuId = spuId
-                this.map.skuId = skuId
+                this.map.orderId = orderId;
+                this.map.spuId = spuId;
+                this.map.skuId = skuId;
 
                 axios.post("/api/comment/addC", this.map).then((response) => {
-                    if (response.data.flag)
-                        this.$message.success(response.data.message);
+                    if (response.data.flag){
+                        /*this.$message.success(response.data.message);*/
+                        alert(response.data.flag);
+                        location.href="http://localhost:8001/api/page/toItem/10000001516600";
+                    }
 
                 });
             }
