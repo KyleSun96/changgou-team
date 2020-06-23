@@ -43,6 +43,12 @@ public class CommentController {
         return new Result(true, StatusCode.OK, "添加评论成功");
     }
 
+
+    /**
+     * @description: //TODO 添加评论
+     * @param: [map]
+     * @return: com.changgou.entity.Result
+     */
     @RequestMapping("/addC")
     public Result addC(@RequestBody Map map) {
 
@@ -51,7 +57,7 @@ public class CommentController {
 
         Comment comment = new Comment();
         comment.setLevel(level);
-        comment.setLevel(content);
+        comment.setContent(content);
 
         String username = tokenDecode.getUserInfo().get("username");
         comment.setUsername(username);

@@ -506,11 +506,11 @@
             //编辑
             addComment:function () {
 
-                alert(this.dataList.score);
-                alert(this.dataList.comment);
+                // alert(this.dataList.score);
+                //  alert(this.dataList.comment);
                 if (this.dataList.score == null)
                     this.dataList.score = "high";
-                alert(this.dataList.score);
+                // alert(this.dataList.score);
 
 
                 axios.post("/api/comment/addC", this.dataList).then((response) => {
