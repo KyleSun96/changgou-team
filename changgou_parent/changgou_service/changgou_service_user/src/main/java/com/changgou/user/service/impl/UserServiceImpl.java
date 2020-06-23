@@ -48,7 +48,7 @@ public class UserServiceImpl implements UserService {
         String areaId = findAreaId(userInfoMap);
         if (areaId != null){
             String username = tokenDecode.getUserInfo().get("username");
-            userInfo.setAreaId(areaId);
+
             //查询主键usernmae
             userInfo.setUsername(username);
             userInfo.setUpdated(new Date());

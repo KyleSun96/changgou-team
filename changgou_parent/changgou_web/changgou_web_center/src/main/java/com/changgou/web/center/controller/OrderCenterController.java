@@ -26,7 +26,7 @@ public class OrderCenterController {
 
 
     /**
-     * 跳转到未发货订单页面
+     * 跳转到待发货订单页面
      * @param model
      * @return
      */
@@ -54,6 +54,21 @@ public class OrderCenterController {
         }
         model.addAttribute("orderList", orderList);
         return "center-order-pay";
+    }
+    //立即支付
+    @RequestMapping("/findtoPay")
+    @ResponseBody
+    public Result findtoPayByUsername(@RequestParam("id")String id){
+        Result result = orderFeign.findtoPayByUsername(id);
+        return result;
+    }
+
+    //取消订单
+    @RequestMapping("/findtoNoPay")
+    @ResponseBody
+    public Result findtoNoPayById(@RequestParam("id")String id){
+        Result result = orderFeign.findtoNoPayById(id);
+        return result;
     }
     //手动确定收货
     @GetMapping("/task")
@@ -117,6 +132,7 @@ public class OrderCenterController {
             List<OrderItem> orderItemList = (List<OrderItem>) orderItemFeign.findByOrderId(order.getId()).getData();
             order.setOrderItemList(orderItemList);
         }
+        model.addAttribute("orderList", orderList);
 
         return "center-index";
     }

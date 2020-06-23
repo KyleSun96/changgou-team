@@ -70,13 +70,15 @@ public class OrderServiceImpl implements OrderService {
             if (order==null){
                 throw new RuntimeException("订单不存在");
             }
-            if ("1".equals(order.getOrderStatus()) && "0".equals(order.getPayStatus())){
+            if ("0".equals(order.getOrderStatus()) && "0".equals(order.getPayStatus()) && "0".equals(order.getConsignStatus())){
                 list.add(order);
             }
         }
 
         return list;
     }
+
+
 
     //代发货
     @Override
@@ -119,7 +121,7 @@ public class OrderServiceImpl implements OrderService {
             if (order == null) {
                 throw new RuntimeException("订单不存在");
             }
-            if ("1".equals(order.getPayStatus()) && "1".equals(order.getConsignStatus())) {
+            if ("1".equals(order.getPayStatus()) && "1".equals(order.getConsignStatus()) && "2".equals(order.getOrderStatus())) {
                 list.add(order);
             }
         }
@@ -159,7 +161,7 @@ public class OrderServiceImpl implements OrderService {
                 throw new RuntimeException("订单不存在");
             }
 
-            if (!"1".equals(order.getBuyerRate())&&"1".equals(order.getPayStatus())&&"2".equals(order.getConsignStatus())){
+            if (!"1".equals(order.getBuyerRate())&&"1".equals(order.getPayStatus())&&"2".equals(order.getConsignStatus()) && "3".equals(order.getOrderStatus())){
                 list.add(order);
             }
         }
@@ -486,7 +488,39 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
-    //手动确定收货
+    //立即支付->支付完到待发货
+    @Override
+    public void findtoPayByUsername(String id) {
+
+        Order order = orderMapper.selectByPrimaryKey(id);
+        if (order==null){
+            throw new RuntimeException("订单不存在");
+        }
+        order.setPayTime(new Date());
+        order.setPayStatus("1");
+        order.setConsignStatus("0");
+        order.setOrderStatus("1");
+        orderMapper.updateByPrimaryKeySelective(order);
+
+
+    }
+
+    //取消订单
+    @Override
+    public void findtoNoPayById(String id) {
+        Order order = orderMapper.selectByPrimaryKey(id);
+        if (order==null){
+            throw new RuntimeException("订单不存在");
+        }
+        if ("0".equals(order.getOrderStatus()) && "0".equals(order.getPayStatus()) && "0".equals(order.getConsignStatus())){
+            order.setCloseTime(new Date());
+            order.setIsDelete("0");
+            order.setOrderStatus("4");
+            orderMapper.updateByPrimaryKeySelective(order);
+        }
+    }
+
+    //手动确定收货->到待评价
     @Override
     @Transactional
     public void confirmTask(String orderId, String operator) {

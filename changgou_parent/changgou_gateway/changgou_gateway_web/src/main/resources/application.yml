@@ -61,7 +61,6 @@ spring:
             - Path=/api/wseckillgoods/**,/api/wseckillorder/**
           filters:
             - StripPrefix=1
-<<<<<<< HEAD
       #物流微服务
         - id: changgou_logistic
           uri: lb://logistic
@@ -74,7 +73,6 @@ spring:
           uri: lb://logistic-web
           predicates:
             - Path=/api/wlogisitic/**
-=======
         #搜索微服务
         - id: changgou_search_route
           uri: lb://search
@@ -87,7 +85,6 @@ spring:
           uri: lb://order-center
           predicates:
             - Path=/api/wcenter/**
->>>>>>> 43e18470db3776e9af434631026f0f8d817695a4
           filters:
             - StripPrefix=1
   redis:

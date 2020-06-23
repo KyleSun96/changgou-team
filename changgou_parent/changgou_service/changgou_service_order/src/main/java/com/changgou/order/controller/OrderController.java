@@ -58,6 +58,20 @@ public class OrderController {
         List<Order> orderList = orderService.findNoPayByUsername(username);
         return new Result<List<Order>>(true,StatusCode.OK,"查询代付款订单成功",orderList);
     }
+
+    //立即支付
+    @RequestMapping("/findtoPay")
+    public Result findtoPayByUsername(@RequestParam("id") String id){
+
+        orderService.findtoPayByUsername(id);
+        return new Result(true,StatusCode.OK,"支付成功");
+    }
+    //取消订单
+    @RequestMapping("/findtoNoPay")
+    public Result findtoNoPayById(@RequestParam("id") String id){
+        orderService.findtoNoPayById(id);
+        return new Result(true,StatusCode.OK,"取消订单成功");
+    }
     //代发货
     @RequestMapping("/findNoConsignByUsername")
     public Result<List<Order>> findNoConsignByUsername(){

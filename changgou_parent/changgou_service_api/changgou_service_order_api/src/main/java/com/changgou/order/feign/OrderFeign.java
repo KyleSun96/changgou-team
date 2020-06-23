@@ -46,4 +46,12 @@ public interface OrderFeign {
     @RequestMapping("/order/findNoConsignByUsername")
     public Result<List<Order>> findNoConsignByUsername();
 
+    //立即支付
+    @RequestMapping("/order/findtoPay")
+    public Result findtoPayByUsername(@RequestParam("id") String id);
+
+    //取消订单
+    @RequestMapping("/order/findtoNoPay")
+    public Result findtoNoPayById(@RequestParam("id") String id);
+
 }
