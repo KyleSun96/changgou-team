@@ -25,10 +25,14 @@ public interface OrderService {
     //代付款
     List<Order> findNoPayByUsername(String username);
 
+    //立即支付
+    void findtoPayByUsername(String id);
+
+    //取消订单
+    void findtoNoPayById(String id);
+
     //代发货
     List<Order> findNoConsignByUsername(String username);
-
-    //立即支付
 
     //查询待收货的订单
     List<Order> findPayOrder(String username);
@@ -94,6 +98,12 @@ public interface OrderService {
 
 
     void autoTack();
+
+    /**
+     * 发送催发货短信
+     * @param id
+     */
+    void sendMessage(String id);
 
 
     //查询订单统计数据

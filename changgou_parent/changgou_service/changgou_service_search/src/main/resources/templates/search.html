@@ -481,10 +481,10 @@
                         <a th:href="@{${#strings.replace(url,'&price='+searchMap.price,'')}}">×</a>
                     </li>
                     <!--规格-->
-					<li class="with-x" th:each="sm:${searchMap}" th:if="${#strings.startsWith(sm.key,'spec_')}">
-                        <span th:text="${#strings.replace(sm.key,'spec_','')}"></span> : <span th:text="${#strings.replace(sm.value,'%2B','+')}"></span>
-                        <a th:href="@{${#strings.replace(url,'&'+sm.key+'='+sm.value,'')}}">×</a>
-                    </li>
+                        <li class="with-x" th:each="sm:${searchMap}" th:if="${#strings.startsWith(sm.key,'spec_')}">
+                            <span th:text="${#strings.replace(sm.key,'spec_','')}"></span> : <span th:text="${#strings.replace(sm.value,'%2B','+')}"></span>
+                            <a th:href="@{${#strings.replace(url,'&'+sm.key+'='+sm.value,'')}}">×</a>
+                        </li>
 				</ul>
 				<form class="fl sui-form form-dark">
 					<div class="input-control control-right">

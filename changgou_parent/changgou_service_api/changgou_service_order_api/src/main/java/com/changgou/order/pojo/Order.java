@@ -51,6 +51,7 @@ public class Order implements Serializable {
 	private String payStatus;//支付状态
 	private String consignStatus;//发货状态
 	private String isDelete;//是否删除
+
 	private List<OrderItem> orderItemList;
 
 	public List<OrderItem> getOrderItemList() {
@@ -60,6 +61,7 @@ public class Order implements Serializable {
 	public void setOrderItemList(List<OrderItem> orderItemList) {
 		this.orderItemList = orderItemList;
 	}
+
 
 
 	public String getId() {

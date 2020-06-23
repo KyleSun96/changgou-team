@@ -17,7 +17,7 @@
         <module>changgou_web_myorder</module>
         <module>changgou_web_backend</module>
         <module>changgou_web_center</module>
-
+        <module>changgou_web_user</module>
     </modules>
 
 

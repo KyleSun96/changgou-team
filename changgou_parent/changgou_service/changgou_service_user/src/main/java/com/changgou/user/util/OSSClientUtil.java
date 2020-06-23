@@ -24,14 +24,16 @@ public class OSSClientUtil {
 
     Log log = LogFactory.getLog(OSSClientUtil.class);
     // endpoint以杭州为例，其它region请按实际情况填写
-    private String endpoint = "您的endpoint";
+    private String endpoint =  "http://oss-cn-shanghai.aliyuncs.com";
     // accessKey
-    private String accessKeyId = "您的accessKeyId";
-    private String accessKeySecret = "您的accessKeySecret";
+    private String accessKeyId = "LTAI4GFjxnD8VkecUwygdh9W";
+    private String accessKeySecret = "de1IISVqHfFaJBxnsqCgPYdGSrdQEE";
+
+
     //空间
-    private String bucketName = "bcis";
+    private String bucketName = "changgou-lqz";
     //文件存储目录
-    private String filedir = "data/";
+    private String filedir = "";
 
     private OSSClient ossClient;
 
