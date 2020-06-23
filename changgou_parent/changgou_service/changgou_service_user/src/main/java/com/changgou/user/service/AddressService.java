@@ -8,6 +8,13 @@ import java.util.Map;
 
 public interface AddressService {
 
+
+    /**
+     * 编辑地址
+     * @param address
+     */
+    void edit(Address address);
+
     /***
      * 查询所有
      * @return
@@ -67,4 +74,13 @@ public interface AddressService {
     List<Address> list(String username);
 
 
+    void addPush(Map areaMap);
+
+    void editPush(Map areaMap);
+
+    Address findByIdPush(Integer integer);
+
+    public Map findMapByMapId(Address address);
+
+    void setDefault(Integer id);
 }

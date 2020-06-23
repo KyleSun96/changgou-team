@@ -455,7 +455,7 @@
 						</div>
 					</div>
 				</div>
-				<div class="Mod-copyright">
+				<div class="Mod-copyright"	>
 					<ul class="helpLink">
 						<li>关于我们
 							<span class="space"></span>
@@ -514,7 +514,7 @@
 			methods:{
 				add:function (skuId,num) {
 					axios.get("/api/wcart/add?id="+skuId+"&num="+num).then(function (response) {
-						if (response.data.flag){
+						if (response.data.flag){v
 							app.items=response.data.data;
 						}
 					})

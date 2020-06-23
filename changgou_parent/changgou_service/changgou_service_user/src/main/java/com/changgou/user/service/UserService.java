@@ -1,13 +1,37 @@
 package com.changgou.user.service;
 
+import com.changgou.entity.Result;
 import com.changgou.order.pojo.Task;
 import com.changgou.user.pojo.User;
 import com.github.pagehelper.Page;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
 
 public interface UserService {
+
+    public Map findMapByAreaId();
+
+    /**
+     * 更新头像
+     */
+    void updateHead(MultipartFile file);
+
+
+    /**
+     * 修改数据
+     * @param userInfoMap
+     * @param userInfo
+     */
+    void updateInfo(Map userInfoMap, User userInfo);
+
+    /**
+     * 根据地区
+     *
+     * @return
+     */
+    String findAreaId(Map userInfoMap);
 
     /***
      * 查询所有
@@ -17,6 +41,7 @@ public interface UserService {
 
     /**
      * 根据ID查询
+     *
      * @param username
      * @return
      */
@@ -36,7 +61,7 @@ public interface UserService {
 
     /***
      * 删除
-     * @param id
+     * @param username
      */
     void delete(String username);
 
@@ -65,4 +90,23 @@ public interface UserService {
     Page<User> findPage(Map<String, Object> searchMap, int page, int size);
 
     int updateUserPoint(Task task);
+
+    Result updatePassword(String password,String hisPassword, String name);
+
+    Result updatePhone(String code);
+
+    public Result updatePhoneTrue(String phone);
+
+    Result validatePassword(String password);
+
+    User findByNull();
+
+    /**
+     * 根据用户名获取用户电话
+     * @param username
+     * @return
+     */
+    String findPhoneByUsername(String username);
+
+
 }
