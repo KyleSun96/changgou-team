@@ -206,4 +206,15 @@ public class OrderController {
         return new Result<>(true,StatusCode.OK,"获取数据成功",data);
     }
 
+    /***
+     * 根据ID查询数据
+     * @param id
+     * @return
+     */
+    @GetMapping("/{id}")
+    public Result<Order> findById(@PathVariable("id") String id){
+        Order order = orderService.findById(id);
+        return new Result(true,StatusCode.OK,"查询成功",order);
+    }
+
 }

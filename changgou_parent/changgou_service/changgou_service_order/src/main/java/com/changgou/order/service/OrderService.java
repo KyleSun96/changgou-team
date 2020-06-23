@@ -17,7 +17,12 @@ public interface OrderService {
      */
     List<Order> findAll();
 
-
+    /**
+     * 根据ID查询
+     * @param id
+     * @return
+     */
+    Order findById(String id);
 
     //根据用户名查询所有订单
     List<Order> findOrderByUsername(String username);

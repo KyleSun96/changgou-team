@@ -10,7 +10,8 @@ import java.util.Map;
 public class KDNiaoUtil {
 
     //即时查询接口
-    public static final String Order_Handle_URL="http://api.kdniao.com/Ebusiness/EbusinessOrderHandle.aspx";
+    public static final String Order_Handle_URL="http://api.kdniao.com/Eb" +
+            "usiness/EbusinessOrderHandle.aspx";
     // 即时查询接口指令
     public static final  String Order_Handle_URL_RequestType="1002";
 
