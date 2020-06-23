@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+    <html xmlns:th="http://www.thymeleaf.org">
 <html>
 
 <head>
@@ -7,13 +7,13 @@
     <meta http-equiv="X-UA-Compatible" content="IE=9; IE=8; IE=7; IE=EDGE">
     <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7"/>
     <title>设置-个人信息</title>
-    <link rel="icon" href="./img/favicon.ico">
+    <link rel="icon" href="/img/favicon.ico">
 
-    <link rel="stylesheet" type="text/css" href="./css/all.css"/>
-    <link rel="stylesheet" type="text/css" href="./css/pages-seckillOrder.css"/>
-    <script src="js/plugins/jquery/jquery.min.js"></script>
-    <script src="js/plugins/sui/sui.min.js"></script>
-    <script src="js/address.js"></script>
+    <link rel="stylesheet" type="text/css" href="/css/all.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/pages-seckillOrder.css"/>
+    <script src="/js/plugins/jquery/jquery.min.js"></script>
+    <script src="/js/plugins/sui/sui.min.js"></script>
+    <script src="/js/address.js"></script>
 
 </head>
 
@@ -77,14 +77,14 @@
 </div>
 
 <!--header-->
-<div id="account">
+<div id="app">
     <div class="py-container">
         <div class="yui3-g home">
             <!--左侧列表-->
             <div class="yui3-u-1-6 list">
 
                 <div class="person-info">
-                    <div class="person-photo"><img src="./img/_/photo.png" alt=""></div>
+                    <div class="person-photo"><img src="/img/_/photo.png" alt=""></div>
                     <div class="person-account">
                         <span class="name">Michelle</span>
                         <span class="safe">账户安全</span>
@@ -111,9 +111,9 @@
                     </dl>
                     <dl>
                         <dt><i>·</i> 设置</dt>
-                        <dd><a href="center-setting-info.html" class="list-active">个人信息</a></dd>
-                        <dd><a href="center-setting-address.html">地址管理</a></dd>
-                        <dd><a href="center-setting-safe.html">安全管理</a></dd>
+                        <dd><a href="/api/wuserInfo" class="list-active">个人信息</a></dd>
+                        <dd><a href="/api/wcenterAddress">地址管理</a></dd>
+                        <dd><a href="/api/wcenterSafe">安全管理</a></dd>
                     </dl>
                 </div>
             </div>
@@ -126,18 +126,18 @@
                     </ul>
                     <div class="tab-content ">
                         <div id="one" class="tab-pane active">
-                            <form id="form-msg" class="sui-form form-horizontal">
+                            <form id="form-msg" class="sui-form form-horizontal" >
                                 <div class="control-group">
                                     <label for="inputName" class="control-label">昵称：</label>
                                     <div class="controls">
-                                        <input type="text" id="inputName" name="email" placeholder="昵称">
+                                        <input type="text" id="inputName" v-model="nickName"  placeholder="昵称">
                                     </div>
                                 </div>
                                 <div class="control-group">
                                     <label for="inputGender" class="control-label">性别：</label>
                                     <div class="controls">
                                         <label data-toggle="radio" class="radio-pretty inline">
-                                            <input type="radio" name="gender" v-model="userInfo.sex"
+                                            <input type="radio" name="gender"  v-model="userInfo.sex"
                                                    value="1"><span>男</span>
                                         </label>
                                         <label data-toggle="radio" class="radio-pretty inline">
@@ -152,7 +152,7 @@
                                     <div class="controls">
                                         <div data-toggle="distpicker">
                                             <div class="form-group area">
-                                                <select class="form-control province1" th:value="">
+                                                <select class="form-control province1">
                                                 </select>
                                             </div>
                                             <div class="form-group area">
@@ -175,10 +175,10 @@
                                                         class="sui-dropdown-menu">
 														<li role="presentation"><a role="menuitem" tabindex="-1"
                                                                                    href="javascript:void(0);"
-                                                                                   th:onclick="check('程序员')" value="bj">程序员</a></li>
+                                                                                   th:@click="|check('程序员')|" value="bj">程序员</a></li>
 														<li role="presentation"><a role="menuitem" tabindex="-1"
                                                                                    href="javascript:void(0);"
-                                                                                   th:onclick="check('产品经理')"
+                                                                                   th:@click="|check('产品经理')|"
                                                                                    value="sb">产品经理</a></li>
 														<li role="presentation"><a role="menuitem" tabindex="-1"
                                                                                    href="javascript:void(0);"
@@ -192,20 +192,30 @@
                                 <div class="control-group">
                                     <label for="sanwei" class="control-label"></label>
                                     <div class="controls">
-                                        <button type="submit" class="sui-btn btn-primary" onclick="save()">完成</button>
+
+                                        <a type="submit" class="sui-btn btn-primary" th:@click="|save()|">完成</a>
+
                                     </div>
                                 </div>
+
                             </form>
+
                         </div>
                         <div id="two" class="tab-pane">
 
-                            <div class="new-photo" th:action="/api/user/imageUpload"    th:enctype="multipart/form-data" th:method="post">
+
+                            <div class="new-photo">
                                 <p>当前头像：</p>
-                                <div class="upload">
-                                    <!-- th:if="{{userInfo.url}} ==null"-->
-                                    <img id="imgShow_WU_FILE_0" width="100" height="100"
-                                        src="./img/_/photo_icon.png" alt="">
-                                    <input type="file" id="up_img_WU_FILE_0"/>
+                                <div class="upload"  >
+                                    <!-- th:if="{{userInfo.url}} ==null"
+                                    th:src="userInfo.imageUrl==null?'./img/_/photo_icon.png':userInfo.imageUrl"-->
+                                    <form name="asd"   action="/api/wuserInfo/imageUploadOss"   enctype="multipart/form-data" method="post">
+                                        <img id="imgShow_WU_FILE_0" width="100" height="100"
+                                             src="/img/_/photo_icon.png"  alt="">
+                                        <input  type="file" name="file"  id="up_img_WU_FILE_0" />
+                                        <br/>
+                                        <input type="submit">
+                                    </form>
                                 </div>
 
                             </div>
@@ -326,7 +336,7 @@
                     </div>
                     <div class="yui3-u-1-6">
                         <h4>帮助中心</h4>
-                        <img src="./img/wx_cz.jpg">
+                        <img src="/img/wx_cz.jpg">
                     </div>
                 </div>
             </div>
@@ -353,44 +363,46 @@
 <!--
 <script>
 
-        alert($(".province1").find("option:selected").text());
-        alert($(".city1").find("option:selected").text());
-        alert($(".district1").find("option:selected").text());
+            alert($(".province1").find("option:selected").text());
+            alert($(".city1").find("option:selected").text());
+            alert($(".district1").find("option:selected").text());
     }
 </script>-->
+<!-- 引入组件库 -->
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.8/dist/vue.js"></script>
+<script src="https://cdn.bootcss.com/element-ui/2.5.4/index.js"></script>
+<script src="/js/axios.js"></script>
 <script th:inline="javascript">
     var app = new Vue({
-        el: "#account",
+        el: "#app",
         data: {
             userInfo: [[${userInfo}]],
-            //   {'nickName': [[${user.nickName}]], 'sex': [[${user.sex}]], 'profession': [[${user.profession}]]},
-            map: {
-                'province': $(".province1").find("option:selected").text(),
-                'city': $(".city1").find("option:selected").text(),
-                'district': $(".district1").find("option:selected").text()
-            },
+            province: null,
+            city: null,
+            district: null,
+            nickName:null,
+            map: {},
+            userInfoMap:{}
         },
         methods: {
-
             check: function (profession) {
+
+                    alert(profession),
                 app.$set(app.userInfo, 'profession', profession)
             },
             save: function () {
-                axios.put("api/user", {'userInfo': this.userInfo, 'userInfoMap': this.map}).then(function (response) {
+
+
+
+                axios.put('/api/wuserInfo',this.map).then(function (response) {
                     if (response.data.flag) {
                         alert(response.data.message);
                     } else {
                         alert("服务器繁忙,请稍后修改!")
                     }
                 })
-            },
-            add: function (skuId, num) {
-                axios.get("/api/wcart/add?id=" + skuId + "&num=" + num).then(function (response) {
-                    if (response.data.flag) {
-                        app.items = response.data.data;
-                    }
-                })
             }
+
         }
     })
 </script>

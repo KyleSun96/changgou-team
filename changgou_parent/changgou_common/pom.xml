@@ -12,6 +12,16 @@
     <artifactId>changgou_common</artifactId>
 
     <dependencies>
+        <dependency>
+            <groupId>com.aliyun</groupId>
+            <artifactId>aliyun-java-sdk-core</artifactId>
+            <version>3.3.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.aliyun</groupId>
+            <artifactId>aliyun-java-sdk-dysmsapi</artifactId>
+            <version>1.0.0</version>
+        </dependency>
         <!--web起步依赖-->
         <dependency>
             <groupId>org.springframework.boot</groupId>

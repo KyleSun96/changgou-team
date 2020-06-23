@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
 <html>
 
 <head>
@@ -6,19 +7,19 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=9; IE=8; IE=7; IE=EDGE">
 	<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
 	<title>设置-个人信息</title>
-	<link rel="icon" href="./img/favicon.ico">
+	<link rel="icon" href="/img/favicon.ico">
 
-	<link rel="stylesheet" type="text/css" href="./css/all.css" />
-	<link rel="stylesheet" type="text/css" href="./css/pages-seckillOrder.css" />
-	<script src="js/plugins/jquery/jquery.min.js"></script>
-	<script src="js/plugins/sui/sui.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="/css/all.css" />
+	<link rel="stylesheet" type="text/css" href="/css/pages-seckillOrder.css" />
+	<script src="/js/plugins/jquery/jquery.min.js"></script>
+	<script src="/js/plugins/sui/sui.min.js"></script>
 
 </head>
 
-<body>
+<body >
 	<!-- 头部栏位 -->
 	<!--页面顶部-->
-	<div id="nav-bottom">
+	<div  >
 		<!--顶部-->
 		<div class="nav-top">
 			<div class="top">
@@ -75,14 +76,14 @@
 	</div>
 
 	<!--header-->
-	<div id="account">
+	<div id="app">
 		<div class="py-container">
 			<div class="yui3-g home">
 				<!--左侧列表-->
 				<div class="yui3-u-1-6 list">
 
 					<div class="person-info">
-						<div class="person-photo"><img src="./img/_/photo.png" alt=""></div>
+						<div class="person-photo"><img src="/img/_/photo.png" alt=""></div>
 						<div class="person-account">
 							<span class="name">Michelle</span>
 							<span class="safe">账户安全</span>
@@ -108,9 +109,9 @@
 						</dl>
 						<dl>
 							<dt><i>·</i> 设置</dt>
-							<dd><a href="center-setting-info.html">个人信息</a></dd>
-							<dd><a href="center-setting-address.html">地址管理</a></dd>
-							<dd><a href="center-setting-safe.html" class="list-active">安全管理</a></dd>
+							<dd><a href="/api/wuserInfo" >个人信息</a></dd>
+							<dd><a href="/api/wcenterAddress">地址管理</a></dd>
+							<dd><a href="/api/wcenterSafe"  class="list-active">安全管理</a></dd>
 						</dl>
 					</div>
 				</div>
@@ -129,14 +130,15 @@
 										<label for="inputPassword" class="control-label">密码：</label>
 										<div class="controls">
 											<input class="fn-tinput" type="password" name="password" value=""
-												placeholder="新密码" required id="password" data-rule-remote="php.php">
+												placeholder="旧密码" v-model="password" required id="oldPasseord" data-rule-remote="php.php">
 										</div>
 									</div>
 
 									<div class="control-group">
 										<label class="control-label"></label>
 										<div class="controls">
-											<button type="submit" class="sui-btn btn-primary">提交按钮</button>
+											<a class="sui-btn btn-primary" th:@click="|updatePwd()|" href="javascript:void(0)">提交</a>
+
 										</div>
 									</div>
 								</form>
@@ -172,20 +174,22 @@
 
 									<div class="control-group">
 										<label for="inputPassword" class="control-label">验证方式：</label>
-										<div class="controls fixed">手机验证（138****9856）</div>
+										<div class="controls fixed">手机验证(
+										<span th:if="${phone.length()}==11"><span th:text="${#strings.substring(phone,0,4)}"/>***********<span th:text="${#strings.substring(phone,10,11)}"/></span>)
+										</div>
 									</div>
 						
 									<div class="control-group">
 										<label for="inputRepassword" class="control-label">短信验证码：</label>
 										<div class="controls">
-											<input name="msgcode" type="text" id="msgcode">
+											<input name="msgcode" type="text" id="msgcode" v-model="code">
 										</div>
 										<div class="controls">
-											<button class="sui-btn btn-info">发送</button>
+											<a class="sui-btn btn-primary" th:@click="|send(${phone})|" href="javascript:void(0)">发送</a>
 										</div>
 									</div>
 									<div class="control-group next-btn">
-										<a class="sui-btn btn-primary" href="seckillsetting-address-phone.html">下一步</a>
+										<a class="sui-btn btn-primary"  th:@click="|next()|" href="javascript:void(0)">下一步</a>
 									</div>
 								</form>
 							</div>
@@ -330,7 +334,44 @@
 	</div>
 	<!--页面底部END-->
 
+	<script type="text/javascript" src="/js/vue.js"></script>
+	<script type="text/javascript" src="/js/axios.js"></script>
+	<script src="/js/axios.js"></script>
+	<script th:inline="javascript">
+        var app = new Vue({
+            el: "#app",
+            data: {
+                oldPasseord:null,
+                password:null,
+				code:null
+            },
+            methods: {
+                send: function (phone) {
 
+					axios.get("/api/wcenterSafe/send?phone="+phone);
+                },
+				next: function () {
+					axios.get("/api/wcenterSafe/updatePhone?code="+this.code).then(function (response) {
+						if (response.data.flag){
+						    location.href="/api/wcenterSafe/phone";
+						}else {
+						    alert(response.data.message)
+						}
+                    })
+                },
+
+                updatePwd: function () {
+                    axios.get("/api/wcenterSafe/validatePassword?password="+this.password).then(function (response) {
+                        if (response.data.flag){
+                            location.href="/api/wcenterSafe/phone";
+                        }else {
+                            alert(response.data.message)
+                        }
+                    })
+                }
+            }
+        })
+	</script>
 
 
 </body>

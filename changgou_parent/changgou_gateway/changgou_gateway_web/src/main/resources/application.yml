@@ -24,7 +24,7 @@ spring:
         - id: changgou_user_route
           uri: lb://user
           predicates:
-            - Path=/api/user/**,/api/address/**,/api/areas/**,/api/cities/**,/api/provinces/**
+            - Path=/api/user/**,/api/address/**,/api/areas/**,/api/cities/**,/api/provinces/**,/api/info/**
           filters:
             - StripPrefix=1
           #认证微服务
@@ -66,7 +66,14 @@ spring:
         - id: changgou_center_web_route
           uri: lb://order-center
           predicates:
-            - Path=/api/wcenter/**
+            - Path=/api/wcenter/**,/api/userInfo/**,/api/wuserInfo/**,/api/wcenterAddress/**,/api/wcenterSafe/**,
+          filters:
+            - StripPrefix=1
+            #网关静态资源调用中心渲染微服务
+        - id: changgou_gateway-web
+          uri: lb://gateway-web
+          predicates:
+            - Path=/api/js/**,/api/css/**,/api/img/**,/api/fonts/**,/api/data/**
           filters:
             - StripPrefix=1
   redis:

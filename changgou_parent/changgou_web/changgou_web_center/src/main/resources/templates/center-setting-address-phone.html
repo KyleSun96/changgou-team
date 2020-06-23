@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
 <html>
 
 <head>
@@ -6,13 +7,13 @@
     <meta http-equiv="X-UA-Compatible" content="IE=9; IE=8; IE=7; IE=EDGE">
     <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
     <title>设置-个人信息</title>
-     <link rel="icon" href="./img/favicon.ico">
+     <link rel="icon" href="/img/favicon.ico">
 
-    <link rel="stylesheet" type="text/css" href="./css/all.css" />
-    <link rel="stylesheet" type="text/css" href="./css/pages-seckillOrder.css" />
+    <link rel="stylesheet" type="text/css" href="/css/all.css" />
+    <link rel="stylesheet" type="text/css" href="/css/pages-seckillOrder.css" />
 </head>
 
-<body>
+<body >
     <!-- 头部栏位 -->
     <!--页面顶部-->
 <div id="nav-bottom">
@@ -78,7 +79,7 @@
                 <div class="yui3-u-1-6 list">
 
                     <div class="person-info">
-                        <div class="person-photo"><img src="./img/_/photo.png" alt=""></div>
+                        <div class="person-photo"><img src="/img/_/photo.png" alt=""></div>
                         <div class="person-account">
                             <span class="name">Michelle</span>
                             <span class="safe">账户安全</span>
@@ -104,14 +105,14 @@
 						</dl>
 						<dl>
 							<dt><i>·</i> 设置</dt>
-							<dd><a href="center-setting-info.html">个人信息</a></dd>
-							<dd><a href="center-setting-address.html" class="list-active" >地址管理</a></dd>
-							<dd><a href="center-setting-safe.html" >安全管理</a></dd>
+							<dd><a href="/api/wuserInfo" >个人信息</a></dd>
+							<dd><a href="/api/wcenterAddress">地址管理</a></dd>
+							<dd><a href="/api/wcenterSafe"  class="list-active">安全管理</a></dd>
 						</dl>
                     </div>
                 </div>
                 <!--右侧主内容-->
-                <div class="yui3-u-5-6">
+                <div class="yui3-u-5-6" id="app">
                     <div class="body userSafe">
                         <ul class="sui-nav nav-tabs nav-large nav-primary ">
                             <li><a href="#one" data-toggle="tab">密码设置</a></li>
@@ -124,7 +125,7 @@
                                         <label for="inputusername" class="control-label">用户名：</label>
                                         <div class="controls">
                                             <input id="pwdid" class="fn-tinput" data-rule-remote="http://www.baidu.com" type="password" name="OldPassword" placeholder="输入昵称"
-                                                required data-msg-required="请输入昵称" minlength="6" data-msg-minlength="至少输入6个字符"
+                                            v-model="name"    required data-msg-required="请输入昵称" minlength="6" data-msg-minlength="至少输入6个字符"
                                             />
 
                                         </div>
@@ -132,20 +133,20 @@
                                     <div class="control-group">
                                         <label for="inputPassword" class="control-label">密码：</label>
                                         <div class="controls">
-                                            <input class="fn-tinput" type="password" name="password" value="" placeholder="新密码" required id="password" data-rule-remote="php.php">
+                                            <input class="fn-tinput" type="password" v-model="password" name="password" value="" placeholder="新密码" required id="password" data-rule-remote="php.php">
                                         </div>
                                     </div>
                                     <div class="control-group">
                                         <label for="inputRepassword" class="control-label">重复密码：</label>
                                         <div class="controls">
-                                            <input class="fn-tinput" type="password" name="confirm_password" value="" placeholder="确认新密码" required equalTo="#password">
+                                            <input class="fn-tinput" type="password" v-model="hisPasseord" name="confirm_password" value="" placeholder="确认新密码" required equalTo="#password">
                                         </div>
                                     </div>
 
                                     <div class="control-group">
                                         <label class="control-label"></label>
                                         <div class="controls">
-                                            <button type="submit" class="sui-btn btn-primary">提交按钮</button>
+											<a class="sui-btn btn-primary" th:@click="|updatePwd()|" href="javascript:void(0)">发送</a>
                                         </div>
                                     </div>
                                 </form>
@@ -177,13 +178,14 @@
                                     <div class="control-group">
                                         <label for="inputPassword" class="control-label">手机号：</label>
                                         <div class="controls">
-                                            <input name="inputphone" type="text" id="inputphone" placeholder="请输入新手机号">
+                                            <input name="inputphone" type="text" v-model="phone" id="inputphone" placeholder="请输入新手机号">
                                         </div>                            
                                     </div>
 
                                     <div class="control-group next-btn">
-                                        <a class="sui-btn btn-primary" href="seckillsetting-safe.html">上一步</a>&nbsp;
-                                        <a class="sui-btn btn-primary" type="submit" href="seckillsetting-address-complete.html">下一步</a>
+                                        <a class="sui-btn btn-primary" href="/api/wcenterSafe">上一步</a>&nbsp;
+										<a class="sui-btn btn-primary" th:@click="|updatePhone()|" href="javascript:void(0)">下一步</a>
+									</div>
                                     </div>
                                 </form>
                             </div>
@@ -303,7 +305,7 @@
 					</div>
 					<div class="yui3-u-1-6">
 						<h4>帮助中心</h4>
-						<img src="./img/wx_cz.jpg">
+						<img src="/img/wx_cz.jpg">
 					</div>
 				</div>
 			</div>
@@ -329,9 +331,45 @@
 <!--页面底部END-->
    
 
-
-
-
 </body>
+
+
+<script type="text/javascript" src="/js/vue.js"></script>
+<script type="text/javascript" src="/js/axios.js"></script>
+<script src="/js/axios.js"></script>
+<script th:inline="javascript">
+    var app = new Vue({
+        el: "#app",
+        data: {
+            hisPasseord:null,
+            password:null,
+            phone:null
+        },
+        methods: {
+
+            updatePhone: function () {
+                axios.get("/api/wcenterSafe/updatePhoneTrue?phone="+this.phone).then(function (response) {
+                    if (response.data.flag){
+                        location.href="/api/wcenterSafe/complete";
+                    }else {
+                        alert(response.data.message)
+                    }
+                })
+            },
+
+            updatePwd: function () {
+                axios.get("/api/wcenterSafe/updatePassword?password="+this.password+"&hisPassword="+this.hisPasseord+"&name="+this.name).then(function (response) {
+                    if (response.data.flag){
+                        location.href="/api/wcenterSafe/complete";
+                    }else {
+                        alert(response.data.message)
+                    }
+                })
+
+            }
+        }
+    })
+</script>
+
 
 </html>

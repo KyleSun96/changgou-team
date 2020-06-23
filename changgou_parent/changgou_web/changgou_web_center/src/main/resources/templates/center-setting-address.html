@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
 <html>
 
 <head>
@@ -6,13 +7,14 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=9; IE=8; IE=7; IE=EDGE">
 	<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
 	<title>设置-个人信息</title>
-	<link rel="icon" href="./img/favicon.ico">
+	<link rel="icon" href="/img/favicon.ico">
 
-	<link rel="stylesheet" type="text/css" href="./css/all.css" />
-	<link rel="stylesheet" type="text/css" href="./css/pages-seckillOrder.css" />
-	<script src="./js/plugins/jquery/jquery.min.js"></script>
-	<script src="./js/plugins/sui/sui.min.js"></script>
-	<script src="./js/address.js"></script>
+	<link rel="stylesheet" type="text/css" href="/css/all.css" />
+	<link rel="stylesheet" type="text/css" href="/css/pages-seckillOrder.css" />
+	<script src="/js/plugins/jquery/jquery.min.js"></script>
+	<script src="/js/plugins/sui/sui.min.js"></script>
+	<script src="/js/address.js"></script>
+
 </head>
 
 <body>
@@ -75,14 +77,14 @@
 	</div>
 
 	<!--header-->
-	<div id="account">
+	<div id="app">
 		<div class="py-container">
 			<div class="yui3-g home">
 				<!--左侧列表-->
 				<div class="yui3-u-1-6 list">
 
 					<div class="person-info">
-						<div class="person-photo"><img src="./img/_/photo.png" alt=""></div>
+						<div class="person-photo"><img src="/img/_/photo.png" alt=""></div>
 						<div class="person-account">
 							<span class="name">Michelle</span>
 							<span class="safe">账户安全</span>
@@ -108,9 +110,9 @@
 						</dl>
 						<dl>
 							<dt><i>·</i> 设置</dt>
-							<dd><a href="center-setting-info.html">个人信息</a></dd>
-							<dd><a href="center-setting-address.html" class="list-active">地址管理</a></dd>
-							<dd><a href="center-setting-safe.html">安全管理</a></dd>
+							<dd><a href="/api/wuserInfo" >个人信息</a></dd>
+							<dd><a href="/api/wcenterAddress" class="list-active">地址管理</a></dd>
+							<dd><a href="/api/wcenterSafe">安全管理</a></dd>
 						</dl>
 					</div>
 				</div>
@@ -133,73 +135,19 @@
 										<th>操作</th>
 									</tr>
 								</thead>
-								<tbody>
+								<tbody th:each="addr:${addressList}">
 									<tr>
-										<td>刘田田</td>
-										<td>北京 北京市 海淀区 上地街道东北旺西路8号中关村软件园9号楼</td>
-										<td>1774***********4</td>
+										<td th:text="${addr.contact}"></td>
+										<td th:text="${addr.address}"></td>
+										<td th:if="${addr.phone.length()}>=11"><span th:text="${#strings.substring(addr.phone,0,4)}"/>***********<span th:text="${#strings.substring(addr.phone,10,11)}"/></td>
+										<td th:if="${addr.phone.length()}<11" th:text="${addr.phone}"></td>
 										<td>
+
 											<a href="#" data-toggle="modal" data-target=".editAddressInfo"
-												data-keyboard="false">编辑</a>
-											<a href="#">删除</a>
-											默认地址
-											<div tabindex="-1" role="dialog" data-hasfoot="false"
-												class="editAddress sui-modal hide fade left">
-												<div class="modal-dialog">
-													<div class="modal-content">
-														<div class="modal-header">
-															<button type="button" data-dismiss="modal"
-																aria-hidden="true" class="sui-close">×</button>
-															<h4 id="myModalLabel" class="modal-title">评价此商品
-															</h4>
-														</div>
-														<div class="modal-body">
-															书写评论：
-															<textarea name="" id="" cols="30" rows="10""></textarea>
-														</div>
-														<div class=" modal-footer">
-															<button type="button" data-ok="modal"
-																class="sui-btn btn-primary btn-large">提交评价</button>
-															<button type="button" data-dismiss="modal"
-																class="sui-btn btn-default btn-large">取消评价</button>
-														</div>
-													</div>
-												</div>
-											</div>
-											<div tabindex="-1" role="dialog" data-hasfoot="false"
-												class="deleteAddress sui-modal hide fade left">
-												<div class="modal-dialog">
-													<div class="modal-content">
-														<div class="modal-header">
-															<button type="button" data-dismiss="modal"
-																aria-hidden="true" class="sui-close">×</button>
-															<h4 id="myModalLabel" class="modal-title">评价此商品
-															</h4>
-														</div>
-														<div class="modal-body">
-															书写评论：
-															<textarea name="" id="" cols="30" rows="10""></textarea>
-														</div>
-														<div class=" modal-footer">
-															<button type="button" data-ok="modal"
-																class="sui-btn btn-primary btn-large">提交评价</button>
-															<button type="button" data-dismiss="modal"
-																class="sui-btn btn-default btn-large">取消评价</button>
-														</div>
-													</div>
-												</div>
-											</div>
-										</td>
-									</tr>
-									<tr>
-										<td>沈沉</td>
-										<td>北京 北京市 海淀区 上地街道东北旺西路8号中关村软件园9号楼</td>
-										<td>1774***********4</td>
-										<td>
-											<a href="#" data-toggle="modal" data-target=".editAddressInfo"
-												data-keyboard="false">编辑</a>
-											<a href="#">删除</a>
-											<a href="#">设为默认</a>
+											   th:@click="|queryAddress(${addr.id})|"	data-keyboard="false">编辑</a>
+											<a  th:href="@{/api/wcenterAddress/deleteAddress(id=${addr.id})}" >删除</a>
+											<span th:if="${addr.isDefault}==1"><b>默认地址</b></span>
+											<span th:if="${addr.isDefault}!=1"><a   th:@click="|setDefault(${addr.id})|" >设为默认</a></span>
 										</td>
 									</tr>
 
@@ -222,52 +170,50 @@
 											<div class="control-group">
 												<label class="control-label">收货人：</label>
 												<div class="controls">
-													<input type="text" class="input-medium">
+													<input type="text"  v-model="address.contact"  class="input-medium">
 												</div>
 											</div>
-											<div class="control-group">
+											<div class="control-group address">
 												<label class="control-label">所在地区：</label>
-												<div class="controls address">
+												<div class="controls">
 													<div data-toggle="distpicker">
 														<div class="form-group area">
-															<select class="form-control province1"></select>
+															<select class="form-control province1" v-model="areaMap.province"></select>
 														</div>
 														<div class="form-group area">
-															<select class="form-control city1"></select>
+															<select class="form-control city1" v-model="areaMap.city"></select>
 														</div>
 														<div class="form-group area">
-															<select class="form-control district1"></select>
+															<select class="form-control district1" v-model="areaMap.area"></select>
 														</div>
 													</div>
 												</div>
 											</div>
 											<div class="control-group">
-												<label class="control-label">详细地址：</label>
+												<label class="control-label">详细地址</label>
 												<div class="controls">
-													<input type="text" class="input-large">
+													<input type="text" v-model="address.address" class="input-large">
 												</div>
 											</div>
 											<div class="control-group">
 												<label class="control-label">联系电话：</label>
 												<div class="controls">
-													<input type="text" class="input-medium">
+													<input type="text" v-model="address.phone" class="input-medium">
 												</div>
 											</div>
 											
 											<div class="control-group">
 												<label class="control-label">地址别名：</label>
 												<div class="controls">
-													<input type="text" class="input-medium">
+													<input type="text"  v-model="address.alias" class="input-medium">
 												</div>
 											</div>
-
 										</form>
-
-
 									</div>
 									<div class="modal-footer">
+
 										<button type="button" data-ok="modal"
-											class="sui-btn btn-primary btn-large">确定</button>
+											th:@click="|add()|"	class="sui-btn btn-primary btn-large">确定</button>
 										<button type="button" data-dismiss="modal"
 											class="sui-btn btn-default btn-large">取消</button>
 									</div>
@@ -282,49 +228,50 @@
 									<div class="modal-header">
 										<button type="button" data-dismiss="modal" aria-hidden="true"
 											class="sui-close">×</button>
-										<h4 id="myModalLabel" class="modal-title">新增地址</h4>
+										<h4 id="myModalLabel" class="modal-title">编辑地址</h4>
 									</div>
 									<div class="modal-body">
 										<form action="" class="sui-form form-horizontal">
 											<div class="control-group">
 												<label class="control-label">收货人：</label>
 												<div class="controls">
-													<input type="text" class="input-medium">
+													<input type="text" class="input-medium" v-model="address.contact">
 												</div>
 											</div>
-											<div class="control-group address">
+												<div class="control-group address">
 												<label class="control-label">所在地区：</label>
 												<div class="controls">
 													<div data-toggle="distpicker">
 														<div class="form-group area">
-															<select class="form-control province1"></select>
+															<select class="form-control province1" v-model="areaMap.province"></select>
 														</div>
 														<div class="form-group area">
-															<select class="form-control city1"></select>
+															<select class="form-control city1" v-model="areaMap.city"></select>
 														</div>
 														<div class="form-group area">
-															<select class="form-control district1"></select>
+															<select class="form-control district1" v-model="areaMap.area"></select>
 														</div>
 													</div>
 												</div>
 											</div>
+
 											<div class="control-group">
 												<label class="control-label">详细地址：</label>
 												<div class="controls">
-													<input type="text" class="input-large">
+													<input type="text" class="input-large" v-model="address.address">
 												</div>
 											</div>
 											<div class="control-group">
 												<label class="control-label">联系电话：</label>
 												<div class="controls">
-													<input type="text" class="input-medium">
+													<input type="text" class="input-medium" v-model="address.phone">
 												</div>
 											</div>
 						
 											<div class="control-group">
 												<label class="control-label">地址别名：</label>
 												<div class="controls">
-													<input type="text" class="input-medium">
+													<input type="text" class="input-medium" v-model="address.alias">
 												</div>
 											</div>
 
@@ -333,8 +280,9 @@
 
 									</div>
 									<div class="modal-footer">
+
 										<button type="button" data-ok="modal"
-											class="sui-btn btn-primary btn-large">确定</button>
+												th:@click="|editAddress()|"	class="sui-btn btn-primary btn-large">确定</button>
 										<button type="button" data-dismiss="modal"
 											class="sui-btn btn-default btn-large">取消</button>
 									</div>
@@ -479,8 +427,83 @@
 		</div>
 	</div>
 	<!--页面底部END-->
+	<!--页面底部END-->
+	<script type="text/javascript" src="/js/vue.js"></script>
+	<script type="text/javascript" src="/js/axios.js"></script>
 
+	<script th:inline="javascript">
+        var app = new Vue({
+            el:"#app",
+            data:{
+                address:{},
+                map: {},
+                areaMap:{
+                    'province':'北京',
+					'city':'市辖区',
+					'area':'东城区'
+				},
+				areaMapHis:{
+                    'province':'北京',
+					'city':'市辖区',
+					'area':'东城区'
+				}
+            },
+            methods:{
+                setDefault: function(addressId){
+                    axios.get('/api/wcenterAddress/setDefault?id='+addressId).then(function (response) {
+                        if (response.data.flag) {
+                            alert(response.data.message);
+                        } else {
+                            alert("服务器繁忙,请稍后修改!")
+                        }
+                    })
+				},
 
+                deleteAddress:function (addressId) {
+                    axios.del('/api/wcenterAddress',addressId).then(function (response) {
+                        if (response.data.flag) {
+                            alert(response.data.message);
+                        } else {
+                            alert("服务器繁忙,请稍后修改!")
+                        }
+                    })
+                },
+                add: function () {
+                    this.map.address =this.address;
+                    this.map.areaMap =this.areaMap;
+
+                    axios.post('/api/wcenterAddress/addAddress',this.map).then(function (response) {
+                        if (response.data.flag) {
+                            this.areaMap= this.areaMapHis;
+                            //alert(response.data.message);
+                        } else {
+                           // alert("服务器繁忙,请稍后修改!")
+                        }
+                        this.address = {}
+                    })
+                },
+                queryAddress:function (addressId) {
+                    axios.get('/api/wcenterAddress/queryAddress?id='+addressId).then(function (response) {
+
+                            this.address = response.data.data;
+                    })
+                } ,
+                editAddress:function () {
+                    this.map.address =this.address;
+                    this.map.areaMap =this.areaMap;
+
+                    axios.put('/api/wcenterAddress/editAddress',this.map).then(function (response) {
+                        if (response.data.flag) {
+                           // alert(response.data.message);
+                        } else {
+                            alert("服务器繁忙,请稍后修改!")
+                        }
+                        this.address = {}
+                    })
+                }
+            }
+        })
+	</script>
 
 
 
