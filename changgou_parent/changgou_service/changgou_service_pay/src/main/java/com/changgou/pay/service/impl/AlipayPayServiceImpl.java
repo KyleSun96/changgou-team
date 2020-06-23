@@ -21,9 +21,6 @@ public class AlipayPayServiceImpl implements AlipayPayService {
     @Autowired
     private AlipayClient alipayClient;
 
-/*    @Value("$(alipay.notify_url)")
-    private String notify_url;*/
-
     //下单
     @Override
     public Map nativePay(String orderId, Integer money) {
