@@ -11,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.text.SimpleDateFormat;
@@ -81,9 +82,12 @@ public class DemoTest {
     // 测试失败
     @Test
     public void groupBySpuId() {
-        Aggregation agg = Aggregation.newAggregation(Aggregation.group("spuId"));
-        AggregationResults<String> aggregationResults = mongoTemplate.aggregate(agg, "comment", String.class);
-        List<String> countList = aggregationResults.getMappedResults();
+        Aggregation agg = Aggregation.newAggregation(
+                Aggregation.group("spuId").count().as("spuIdCount")
+                );
+
+        AggregationResults<Comment> aggregationResults = mongoTemplate.aggregate(agg, "comment", Comment.class);
+        List<Comment> countList = aggregationResults.getMappedResults();
         System.out.println(countList);
     }
 }

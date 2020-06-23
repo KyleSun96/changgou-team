@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Program: changgou_parent
@@ -40,6 +41,24 @@ public class CommentController {
         comment.setUsername(username);
         commentService.add(comment);
         return new Result(true, StatusCode.OK, "添加评论成功");
+    }
+
+    @RequestMapping("/addC")
+    public Result addC(@RequestBody Map map) {
+
+        String level = (String) map.get("score");
+        String content = (String) map.get("comment");
+
+        Comment comment = new Comment();
+        comment.setLevel(level);
+        comment.setLevel(content);
+
+        String username = tokenDecode.getUserInfo().get("username");
+        comment.setUsername(username);
+
+        commentService.add(comment);
+        return new Result(true, StatusCode.OK, "添加评论成功");
+
     }
 
 

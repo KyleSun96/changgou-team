@@ -63,7 +63,6 @@ public class CommentServiceImpl implements CommentService {
 
         commentRepository.save(comment);
 
-        // 发送订单id通知
     }
 
 

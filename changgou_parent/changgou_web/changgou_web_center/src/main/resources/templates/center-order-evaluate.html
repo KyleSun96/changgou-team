@@ -11,6 +11,8 @@
 
     <link rel="stylesheet" type="text/css" href="/css/all.css" />
     <link rel="stylesheet" type="text/css" href="/css/pages-seckillOrder.css" />
+    <script src="/js/plugins/jquery/jquery.min.js"></script>
+    <script src="/js/plugins/sui/sui.min.js"></script>
 </head>
 
 <body>
@@ -73,7 +75,7 @@
 
 <!--header-->
 <div id="account">
-    <div class="py-container">
+    <div class="py-container" id="app">
         <div class="yui3-g home">
             <!--左侧列表-->
             <div class="yui3-u-1-6 list">
@@ -152,16 +154,14 @@
                                 </label>
                                 <a class="sui-btn btn-info share-btn">分享</a>
                             </div>
-                            <table class="sui-table table-bordered order-datatable">
+                            <table class="sui-table table-bordered order-datatable" th:each="orderItem:${order.orderItemList}">
                                 <tbody >
                                 <tr>
                                     <td width="35%">
-                                        <div th:each="orderItem:${order.orderItemList}">
                                             <div class="typographic"><img th:src="${orderItem.image}" />
                                                 <a href="#" class="block-text">包邮 <em th:text="${orderItem.name}"></em></a>
                                                 <!--<span class="guige">规格：温泉喷雾150ml</span>-->
                                             </div>
-                                        </div>
 
                                     </td>
                                     <td width="5%" class="center">
@@ -202,25 +202,27 @@
                                                         <h4 id="myModalLabel" class="modal-title">评价此商品
                                                         </h4>
                                                     </div>
+
+
                                                     <div class="modal-body">
-                                                        <table>
+                                                        <table :model="dataList">
                                                             <tr>
                                                                 <td>评分：</td>
                                                                 <td>
                                                                     <label class="radio-pretty inline checked">
-                                                                        <input type="radio" checked="checked" name="radio"><span>好评</span>
+                                                                        <input id="c1" type="radio" v-model="dataList.score" checked="checked" name="radio" value="high"><span>好评</span>
                                                                     </label>
                                                                     <label class="radio-pretty inline">
-                                                                        <input type="radio" name="radio"><span>中评</span>
+                                                                        <input id="c2" type="radio" v-model="dataList.score" name="radio" value="medium"><span>中评</span>
                                                                     </label>
                                                                     <label class="radio-pretty inline">
-                                                                        <input type="radio" name="radio"><span>差评</span>
+                                                                        <input id="c3" type="radio" v-model="dataList.score" name="radio" value="low"><span>差评</span>
                                                                     </label>
                                                                 </td>
                                                             </tr>
                                                             <tr>
                                                                 <td>书写评论：</td>
-                                                                <td><textarea name="" id="" cols="30" rows="10"></textarea>
+                                                                <td><textarea name="textArea" v-model="dataList.comment" id="textArea" cols="30" rows="10"></textarea>
                                                                 </td>
                                                             </tr>
                                                         </table>
@@ -228,10 +230,11 @@
                                                     </div>
                                                     <div class=" modal-footer">
                                                         <button type="button"
-                                                                class="sui-btn btn-primary btn-large">提交评价</button>
+                                                                class="sui-btn btn-primary btn-large" @click="addComment()">提交评价</button>
                                                         <button type="button" data-dismiss="modal"
                                                                 class="sui-btn btn-default btn-large">取消评价</button>
                                                     </div>
+
                                                 </div>
                                             </div>
                                         </div>
@@ -490,12 +493,38 @@
 <script type="text/javascript" src="/js/vue.js"></script>
 <script type="text/javascript" src="/js/axios.js"></script>
 
-<script>
+<script th:inline="javascript">
+    var vue = new Vue({
+        el: '#app',
+        data:{
+            dataList: {
+                score:null,
+                comment:null
+            }
+        },
+        // 钩子函数，VUE对象初始化完成后自动执行
+        created() {
+        },
+        methods: {
+            //编辑
+            addComment:function () {
+
+                alert(this.dataList.score);
+                alert(this.dataList.comment);
+                if (this.dataList.score == null)
+                    this.dataList.score = "high";
+                alert(this.dataList.score);
 
 
+                axios.post("/api/comment/addC", this.dataList).then((response) => {
+                    if (response.data.flag)
+                        this.$message.success(response.data.message);
 
+                });
+            }
+        }
+    })
 </script>
-
 
 
 </body>
