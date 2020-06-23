@@ -23,7 +23,17 @@ public class CommentInfo implements Serializable {
 
     private String userPhoto;       //用户头像
 
+    private String date;            // 评论时间
+
     private List<String> specList;  //规格信息，只取相关的value
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
 
     public String getUsername() {
         return username;

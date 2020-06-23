@@ -134,6 +134,7 @@ public class CommentServiceImpl implements CommentService {
             commentInfo.setUsername(comment.getUsername());
             commentInfo.setContent(comment.getContent());
             commentInfo.setLevel(comment.getLevel());
+            commentInfo.setDate(comment.getDate());
 
             // 封装当前sku的规格信息，使用其value
             List<String> specList = new ArrayList<>();

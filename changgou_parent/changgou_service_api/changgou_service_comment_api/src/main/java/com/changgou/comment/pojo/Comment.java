@@ -31,7 +31,7 @@ public class Comment implements Serializable {
 
     private String level;       //评论等级
 
-    private String date;          // 评论时间
+    private String date;        // 评论时间
 
     public String getDate() {
         return date;
