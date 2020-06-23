@@ -74,7 +74,7 @@ public class OSSClientUtil {
 
 
     public String uploadImg2Oss(MultipartFile file) {
-        if (file.getSize() > 1024 * 1024) {
+        if (file.getSize() > 1024 * 1024*20) {
             throw new RuntimeException("上传图片大小不能超过1M！");
         }
         String originalFilename = file.getOriginalFilename();

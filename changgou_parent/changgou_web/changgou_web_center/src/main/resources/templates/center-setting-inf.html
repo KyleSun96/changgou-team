@@ -84,7 +84,7 @@
             <div class="yui3-u-1-6 list">
 
                 <div class="person-info">
-                    <div class="person-photo"><img src="/img/_/photo.png" alt=""></div>
+                    <div class="person-photo"><img th:src="${userInfo.imageUrl}"  alt=""></div>
                     <div class="person-account">
                         <span class="name">Michelle</span>
                         <span class="safe">账户安全</span>
@@ -130,7 +130,7 @@
                                 <div class="control-group">
                                     <label for="inputName" class="control-label">昵称：</label>
                                     <div class="controls">
-                                        <input type="text" id="inputName" v-model="nickName" placeholder="昵称">
+                                        <input type="text" id="inputName" v-model="userInfo.nickName" placeholder="昵称">
                                     </div>
                                 </div>
                                 <div class="control-group">
@@ -173,7 +173,7 @@
                                             class="caret"></i><span>请选择</span></a>
 													<ul id="menu4" role="menu" aria-labelledby="drop4"
                                                         class="sui-dropdown-menu">
-														<li role="presentation"><a role="menuitem" tabindex="-1"
+														<li  role="presentation"><a role="menuitem" tabindex="-1"
                                                                                    href="javascript:void(0);"
                                                                                    th:@click="|check('程序员')|"
                                                                                    value="bj">程序员</a></li>

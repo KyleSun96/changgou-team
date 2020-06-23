@@ -85,8 +85,7 @@
 						<div class="controls">
 							<input type="text" placeholder="请输入你的手机号" v-model="pojo.phone"
 								   class="input-xfat input-xlarge">
-							<input style="font-size: x-small;" id="validateCodeButton" @click="sendSms()"
-								   type="button" value="发送验证码">
+
 						</div>
 					</div>
 					<div class="control-group">
@@ -94,6 +93,8 @@
 						<div class="controls">
 							<input type="text" v-model="smsCode" placeholder="请输入验证码" class="input-xfat input-xlarge" >
 						</div>
+						<input style="font-size: x-small;" id="validateCodeButton" @click="sendSms()"
+							   type="button" value="发送验证码">
 					</div>
 					<div class="control-group">
 						<label  class="control-label">登录密码：</label>
