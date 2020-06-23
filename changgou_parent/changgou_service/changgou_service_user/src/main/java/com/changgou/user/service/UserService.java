@@ -100,4 +100,13 @@ public interface UserService {
     Result validatePassword(String password);
 
     User findByNull();
+
+    /**
+     * 根据用户名获取用户电话
+     * @param username
+     * @return
+     */
+    String findPhoneByUsername(String username);
+
+
 }

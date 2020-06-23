@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Bean;
 @EnableEurekaClient
 @EnableFeignClients(basePackages = {"com.changgou.goods.feign", "com.changgou.user.feign", "com.changgou.order.feign"})
 public class CenterApplication {
+
     public static void main(String[] args) {
         SpringApplication.run(CenterApplication.class,args);
     }

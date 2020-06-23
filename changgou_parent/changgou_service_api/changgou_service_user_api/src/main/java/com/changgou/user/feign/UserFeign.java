@@ -10,6 +10,11 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.websocket.server.PathParam;
 import java.util.List;
 import java.util.Map;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 @FeignClient(name = "user")
 public interface UserFeign {
@@ -59,4 +64,16 @@ public interface UserFeign {
 
     @GetMapping("/user/load/noname")
     public User findUse();
+
+    @PostMapping("/user/add")
+    public Result add(@RequestBody User user);
+
+
+    /**
+     * 根据用户名获取用户电话
+     *
+     * @return
+     */
+    @GetMapping("/user/findPhoneByUsername")
+    public String findPhoneByUsername();
 }

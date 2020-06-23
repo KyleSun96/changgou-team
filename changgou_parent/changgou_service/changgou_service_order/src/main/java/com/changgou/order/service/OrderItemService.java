@@ -14,6 +14,9 @@ public interface OrderItemService {
      */
     List<OrderItem> findAll();
 
+    //根据订单查询商品名称
+    public List<OrderItem>  findByOrderId(String orderId);
+
     /**
      * 根据ID查询
      * @param id
