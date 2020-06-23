@@ -1,7 +1,7 @@
 package com.changgou.web.center.controller;
 
 import com.changgou.entity.Result;
-import com.changgou.order.feign.OrderFeign;
+
 import com.changgou.user.feign.AddressFeign;
 import com.changgou.user.feign.UserFeign;
 import com.changgou.user.pojo.Address;
@@ -21,8 +21,6 @@ import java.util.concurrent.TimeUnit;
 @RequestMapping("/wcenterSafe")
 public class WCenterSafeController {
 
-    @Autowired
-    private OrderFeign orderFeign;
 
     @Autowired
     private UserFeign userFeign;
@@ -33,9 +31,9 @@ public class WCenterSafeController {
     @GetMapping
     public String cnenterAddress(Model model) {
         User user = userFeign.findUse();
-        System.out.println(user.getPhone());
-      //  model.addAttribute("phone", user.getPhone());
-        model.addAttribute("phone", "15605607630");
+
+        model.addAttribute("phone", user.getPhone());
+
         return "center-setting-safe";
     }
 
@@ -115,7 +113,7 @@ public class WCenterSafeController {
         System.out.println("validateCode: " + validateCode);
         //给用户发送验证码
         try {
-           // SMSUtilsLqz.sendShortMessage(SMSUtilsLqz.VALIDATE_CODE, phone, validateCode.toString());
+           SMSUtilsLqz.sendShortMessage(SMSUtilsLqz.VALIDATE_CODE, phone, validateCode.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }

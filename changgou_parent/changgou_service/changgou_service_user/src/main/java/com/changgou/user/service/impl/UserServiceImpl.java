@@ -77,7 +77,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void updateInfo(Map userInfoMap, User userInfo) {
         String areaId = findAreaId(userInfoMap);
-        if (areaId != null) {
+
             String username = tokenDecode.getUserInfo().get("username");
             userInfo.setAreaId(areaId);
             //查询主键usernmae
@@ -85,7 +85,7 @@ public class UserServiceImpl implements UserService {
             userInfo.setUpdated(new Date());
 
             userMapper.updateByPrimaryKeySelective(userInfo);
-        }
+
 
     }
 
@@ -117,7 +117,7 @@ public class UserServiceImpl implements UserService {
             //存在城市查询区Id
             if (citiesList != null && citiesList.size() > 0) {
                 Cities cities1 = citiesList.get(0);
-                String area = (String) userInfoMap.get("district");
+                String area = (String) userInfoMap.get("area");
                 Example example = new Example(Areas.class);
                 Example.Criteria criteria = example.createCriteria();
                 criteria.andEqualTo("area", area);
@@ -333,8 +333,8 @@ public class UserServiceImpl implements UserService {
     public Result updatePhone(String code) {
         String username = tokenDecode.getUserInfo().get("username");
         User user = userMapper.selectByPrimaryKey(username);
-        String phone = "15605607630";
-        String valiCode = (String) redisTemplate.boundValueOps(phone + "001").get();
+
+        String valiCode = (String) redisTemplate.boundValueOps(user.getPhone() + "001").get();
         if (valiCode == null || code == null) {
             return new Result(false, StatusCode.ERROR, "验证码不存在,请重新发送");
         }

@@ -29,9 +29,10 @@ public class AddressController {
      * 设置默认
      * @param id
      */
-    @GetMapping("/setDefault")
-    public void setDefault(@PathParam("id") Integer id){
-addressService.setDefault(id);
+    @RequestMapping("/setDefault")
+    public void setDefault(@RequestParam("id") Integer id){
+
+        addressService.setDefault(id);
     }
 
 
@@ -41,7 +42,7 @@ addressService.setDefault(id);
      * @param areaMap
      * @return
      */
-    @PostMapping("/addPush")
+    @RequestMapping("/addPush")
     public Result addPush(@RequestBody Map areaMap) {
         addressService.addPush(areaMap);
         return new Result(true, StatusCode.OK, "地址添加成功");
@@ -53,14 +54,14 @@ addressService.setDefault(id);
      * @param id
      * @return
      */
-    @GetMapping("/queryAddress")
-    public Result<Address> queryAddress(@PathVariable("id") String id) {
-        Address address = addressService.findByIdPush(Integer.valueOf(id));
+    @RequestMapping("/queryAddress")
+    public Result<Address> queryAddress(@RequestParam("id") Integer id) {
+        Address address = addressService.findByIdPush(id);
         return new Result(true, StatusCode.OK, "查询对象成功", address);
     }
 
 
-    @PostMapping("/findMapByMapId")
+    @RequestMapping("/findMapByMapId")
     public Map findMapByMapId(@RequestBody  Address address) {
         return addressService.findMapByMapId(address);
     }
@@ -178,7 +179,7 @@ addressService.setDefault(id);
     @Autowired
     private TokenDecode tokenDecode;
 
-    @GetMapping("/list")
+    @RequestMapping("/list")
     public Result<List<Address>> list() {
         //获取当前的登录人名称
         String username = tokenDecode.getUserInfo().get("username");
