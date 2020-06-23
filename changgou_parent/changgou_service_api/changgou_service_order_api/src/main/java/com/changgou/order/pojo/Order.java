@@ -1,8 +1,16 @@
 package com.changgou.order.pojo;
 
+
+
+
+import com.alibaba.fastjson.annotation.JSONField;
+import com.alibaba.fastjson.serializer.ToStringSerializer;
+
+
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * order实体类
@@ -44,12 +52,25 @@ public class Order implements Serializable {
 	private String consignStatus;//发货状态
 	private String isDelete;//是否删除
 
-	
-	public String getId() {
-		return id;
+	private List<OrderItem> orderItemList;
+
+	public List<OrderItem> getOrderItemList() {
+		return orderItemList;
 	}
+
+	public void setOrderItemList(List<OrderItem> orderItemList) {
+		this.orderItemList = orderItemList;
+	}
+
+
+
+	public String getId() {
+		return  id;
+	}
+
 	public void setId(String id) {
 		this.id = id;
+
 	}
 
 	public Integer getTotalNum() {

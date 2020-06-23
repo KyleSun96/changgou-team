@@ -2,13 +2,17 @@ package com.changgou.order.service.impl;
 
 import com.alibaba.fastjson.JSON;
 //import com.alibaba.fescar.spring.annotation.GlobalTransactional;
+import com.aliyuncs.exceptions.ClientException;
 import com.changgou.goods.feign.SkuFeign;
 import com.changgou.order.config.RabbitMQConfig;
 import com.changgou.order.dao.*;
 import com.changgou.order.pojo.*;
 import com.changgou.order.service.CartService;
 import com.changgou.order.service.OrderService;
+import com.changgou.pay.feign.AlipayFeign;
+import com.changgou.order.util.SMSUtils;
 import com.changgou.pay.feign.PayFeign;
+import com.changgou.user.feign.UserFeign;
 import com.changgou.util.IdWorker;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -17,13 +21,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
 
 import java.time.LocalDate;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -38,19 +40,152 @@ public class OrderServiceImpl implements OrderService {
      */
     @Override
     public List<Order> findAll() {
-        return orderMapper.selectAll();
+        List<Order> orderList = orderMapper.selectAll();
+        return orderList;
+    }
+
+
+
+    //根据用户名查询所有订单
+    @Override
+    public List<Order> findOrderByUsername(String username) {
+
+        Example example=new Example(Order.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("username",username);
+        List<Order> orderList = orderMapper.selectByExample(example);
+        for (Order order : orderList) {
+            if (order==null){
+                throw new RuntimeException("订单不存在");
+            }
+        }
+        return orderList;
+    }
+
+    //代付款
+    @Override
+    public List<Order> findNoPayByUsername(String username) {
+        Example example=new Example(Order.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("username",username);
+        List<Order> orderList = orderMapper.selectByExample(example);
+
+        List<Order> list = new ArrayList<>();
+        for (Order order : orderList) {
+            if (order==null){
+                throw new RuntimeException("订单不存在");
+            }
+            if ("0".equals(order.getOrderStatus()) && "0".equals(order.getPayStatus()) && "0".equals(order.getConsignStatus())){
+                list.add(order);
+            }
+        }
+
+        return list;
+    }
+
+
+
+    //代发货
+    @Override
+    public List<Order> findNoConsignByUsername(String username) {
+
+        Example example=new Example(Order.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("username",username);
+        List<Order> orderList = orderMapper.selectByExample(example);
+
+        List<Order> list = new ArrayList<>();
+        for (Order order : orderList) {
+            if (order==null){
+                throw new RuntimeException("订单不存在");
+            }
+            if ("1".equals(order.getOrderStatus()) && "1".equals(order.getPayStatus()) && "0".equals(order.getConsignStatus())){
+                list.add(order);
+            }
+        }
+
+        return list;
     }
 
     /**
      * 根据ID查询
      *
-     * @param id
      * @return
      */
     @Override
     public Order findById(String id) {
         return orderMapper.selectByPrimaryKey(id);
     }
+
+
+    /**
+     * 查询待收货的订单
+     *
+     * @return
+     */
+    @Override
+    public List<Order> findPayOrder(String username) {
+        List<Order> list = new ArrayList<>();
+
+        //List<Order> orderList = orderMapper.findOrderByUsername(username);
+        Example example=new Example(Order.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo(username);
+        List<Order> orderList = orderMapper.selectByExample(example);
+        for (Order order : orderList) {
+
+            if (order == null) {
+                throw new RuntimeException("订单不存在");
+            }
+            if ("1".equals(order.getPayStatus()) && "1".equals(order.getConsignStatus()) && "2".equals(order.getOrderStatus())) {
+                list.add(order);
+            }
+        }
+        return list;
+    }
+    //根据id查询所有待收货订单
+    @Override
+    public List<Order> findAllOrder( ) {
+
+
+        List<Order> orderList = orderMapper.selectAll();
+
+        List<Order> list=new ArrayList<>();
+        for (Order order : orderList) {
+            if (order == null) {
+                throw new RuntimeException("订单不存在");
+            }
+            if ("1".equals(order.getPayStatus()) && "1".equals(order.getConsignStatus())) {
+                list.add(order);
+            }
+        }
+        return list;
+    }
+
+    //查询待评价订单
+    @Override
+    public List<Order> findBuyerRateByOrder(String username) {
+        Example example=new Example(Order.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo(username);
+        List<Order> orderList = orderMapper.selectByExample(example);
+
+        List<Order> list=new ArrayList<>();
+        for (Order order : orderList) {
+            if (order == null) {
+                throw new RuntimeException("订单不存在");
+            }
+
+            if (!"1".equals(order.getBuyerRate())&&"1".equals(order.getPayStatus())&&"2".equals(order.getConsignStatus()) && "3".equals(order.getOrderStatus())){
+                list.add(order);
+            }
+        }
+
+        return list;
+    }
+
+
+
 
     @Autowired
     private CartService cartService;
@@ -72,6 +207,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private RabbitTemplate rabbitTemplate;
+
 
     /**
      * 增加
@@ -185,19 +321,55 @@ public class OrderServiceImpl implements OrderService {
     }
 
     /**
-     * 条件+分页查询
+     * 条件+分页查询,采用byExample
      *
      * @param searchMap 查询条件
-     * @param page      页码
-     * @param size      页大小
      * @return 分页结果
      */
     @Override
-    public Page<Order> findPage(Map<String, Object> searchMap, int page, int size) {
-        PageHelper.startPage(page, size);
-        Example example = createExample(searchMap);
-        return (Page<Order>) orderMapper.selectByExample(example);
+    public Page<Order> findPage(Map<String, Object> searchMap) {
+
+        Integer currentPage = (Integer) searchMap.get("currentPage");
+        Integer pageSize = (Integer) searchMap.get("pageSize");
+        PageHelper.startPage(currentPage, pageSize);
+
+        Example eaxmple = new Example(Order.class);
+        Example.Criteria criteria = eaxmple.createCriteria();
+
+        //  orEqualTo
+        if (searchMap.containsKey("receiveMessage")) {
+            String receiveMessage = (String) searchMap.get("receiveMessage");
+                criteria.orEqualTo("receiverMobile",receiveMessage);
+                criteria.orEqualTo("receiverContact",receiveMessage);
+
+
+        }
+        if (searchMap.containsKey("orderStatus")) {
+            if(!StringUtils.isEmpty((String)searchMap.get("orderStatus"))){
+                criteria.andEqualTo("orderStatus",(String) searchMap.get("orderStatus"));
+            }
+
+        }
+        if (searchMap.containsKey("sourceType")) {
+            if(!StringUtils.isEmpty((String)searchMap.get("sourceType"))) {
+                criteria.andEqualTo("sourceType", (String) searchMap.get("sourceType"));
+            }
+        }
+        if(searchMap.containsKey("orderId")){
+            criteria.andEqualTo("id",(String) searchMap.get("orderId"));
+        }
+        return (Page<Order>) orderMapper.selectByExample(eaxmple);
+
     }
+
+//    public static boolean isNumeric(String str) {
+//        for (int i = str.length(); --i >= 0; ) {
+//            if (!Character.isDigit(str.charAt(i))) {
+//                return false;
+//            }
+//        }
+//        return true;
+//    }
 
     @Autowired
     private OrderLogMapper orderLogMapper;
@@ -235,6 +407,9 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private PayFeign payFeign;
 
+    @Autowired
+    private AlipayFeign alipayFeign;
+
     @Override
     @Transactional
     public void closeOrder(String orderId) {
@@ -244,29 +419,38 @@ public class OrderServiceImpl implements OrderService {
          * 2.1)如果当前订单的支付状态为已支付,则进行数据补偿(mysql)
          * 2.2)如果当前订单的支付状态为未支付,则修改mysql中的订单信息,新增订单日志,恢复商品的库存,基于微信关闭订单
          */
-        System.out.println("关闭订单业务开启:" + orderId);
+        System.out.println("关闭订单业务开启:"+orderId);
         Order order = orderMapper.selectByPrimaryKey(orderId);
-        if (order == null) {
+        if (order == null){
             throw new RuntimeException("订单不存在!");
         }
-        if (!"0".equals(order.getPayStatus())) {
+        if (!"0".equals(order.getPayStatus())){
             System.out.println("当前订单不需要关闭");
             return;
         }
-        System.out.println("关闭订单校验通过:" + orderId);
+        System.out.println("关闭订单校验通过:"+orderId);
 
         //基于微信查询订单信息
         Map wxQueryMap = (Map) payFeign.queryOrder(orderId).getData();
-        System.out.println("查询微信支付订单:" + wxQueryMap);
+        System.out.println("查询微信支付订单:"+wxQueryMap);
 
-        //如果订单的支付状态为已支付,进行数据补偿(mysql)
-        if ("SUCCESS".equals(wxQueryMap.get("trade_state"))) {
-            this.updatePayStatus(orderId, (String) wxQueryMap.get("transaction_id"));
+        //基于支付宝查询订单信息
+        Map aliQueryMap = (Map) alipayFeign.queryOrder(orderId).getData();
+        System.out.println("查询支付宝支付订单:"+aliQueryMap);
+
+        //如果微信订单的支付状态为已支付,进行数据补偿(mysql)
+        if ("SUCCESS".equals(wxQueryMap.get("trade_state"))){
+            this.updatePayStatus(orderId,(String) wxQueryMap.get("transaction_id"));
+            System.out.println("完成数据补偿");
+        }
+        //如果支付宝订单的支付状态为已支付,进行数据补偿(mysql)
+        if ("SUCCESS".equals(aliQueryMap.get("trade_state"))){
+            this.updatePayStatus(orderId,(String) aliQueryMap.get("transaction_id"));
             System.out.println("完成数据补偿");
         }
 
-        //如果订单的支付状态为未支付,则修改mysql中的订单信息,新增订单日志,恢复商品的库存,基于微信关闭订单
-        if ("NOTPAY".equals(wxQueryMap.get("trade_state"))) {
+        //如果微信订单的支付状态为未支付,则修改mysql中的订单信息,新增订单日志,恢复商品的库存,基于微信关闭订单
+        if ("NOTPAY".equals(wxQueryMap.get("trade_state"))){
             System.out.println("执行关闭");
             order.setUpdateTime(new Date());
             order.setOrderStatus("4"); //订单已关闭
@@ -274,7 +458,7 @@ public class OrderServiceImpl implements OrderService {
 
             //新增订单日志
             OrderLog orderLog = new OrderLog();
-            orderLog.setId(idWorker.nextId() + "");
+            orderLog.setId(idWorker.nextId()+"");
             orderLog.setOperater("system");
             orderLog.setOperateTime(new Date());
             orderLog.setOrderStatus("4");
@@ -287,11 +471,40 @@ public class OrderServiceImpl implements OrderService {
             List<OrderItem> orderItemList = orderItemMapper.select(_orderItem);
 
             for (OrderItem orderItem : orderItemList) {
-                skuFeign.resumeStockNum(orderItem.getSkuId(), orderItem.getNum());
+                skuFeign.resumeStockNum(orderItem.getSkuId(),orderItem.getNum());
             }
 
             //基于微信关闭订单
             payFeign.closeOrder(orderId);
+
+        }
+        //如果支付宝订单的支付状态为未支付,则修改mysql中的订单信息,新增订单日志,恢复商品的库存,基于微信关闭订单
+        if ("NOTPAY".equals(aliQueryMap.get("trade_state"))){
+            System.out.println("执行关闭");
+            order.setUpdateTime(new Date());
+            order.setOrderStatus("4"); //订单已关闭
+            orderMapper.updateByPrimaryKeySelective(order);
+
+            //新增订单日志
+            OrderLog orderLog = new OrderLog();
+            orderLog.setId(idWorker.nextId()+"");
+            orderLog.setOperater("system");
+            orderLog.setOperateTime(new Date());
+            orderLog.setOrderStatus("4");
+            orderLog.setOrderId(order.getId());
+            orderLogMapper.insert(orderLog);
+
+            //恢复商品的库存
+            OrderItem _orderItem = new OrderItem();
+            _orderItem.setOrderId(orderId);
+            List<OrderItem> orderItemList = orderItemMapper.select(_orderItem);
+
+            for (OrderItem orderItem : orderItemList) {
+                skuFeign.resumeStockNum(orderItem.getSkuId(),orderItem.getNum());
+            }
+
+            //基于支付宝关闭订单
+            alipayFeign.closeOrder(orderId);
 
         }
 
@@ -339,10 +552,44 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
+    //立即支付->支付完到待发货
+    @Override
+    public void findtoPayByUsername(String id) {
+
+        Order order = orderMapper.selectByPrimaryKey(id);
+        if (order==null){
+            throw new RuntimeException("订单不存在");
+        }
+        order.setPayTime(new Date());
+        order.setPayStatus("1");
+        order.setConsignStatus("0");
+        order.setOrderStatus("1");
+        orderMapper.updateByPrimaryKeySelective(order);
+
+
+    }
+
+    //取消订单
+    @Override
+    public void findtoNoPayById(String id) {
+        Order order = orderMapper.selectByPrimaryKey(id);
+        if (order==null){
+            throw new RuntimeException("订单不存在");
+        }
+        if ("0".equals(order.getOrderStatus()) && "0".equals(order.getPayStatus()) && "0".equals(order.getConsignStatus())){
+            order.setCloseTime(new Date());
+            order.setIsDelete("0");
+            order.setOrderStatus("4");
+            orderMapper.updateByPrimaryKeySelective(order);
+        }
+    }
+
+    //手动确定收货->到待评价
     @Override
     @Transactional
     public void confirmTask(String orderId, String operator) {
 
+        //127 290 920 888 657 9200
         Order order = orderMapper.selectByPrimaryKey(orderId);
         if (order == null) {
             throw new RuntimeException("订单不存在");
@@ -367,6 +614,8 @@ public class OrderServiceImpl implements OrderService {
         orderLog.setOrderId(order.getId());
         orderLogMapper.insertSelective(orderLog);
     }
+
+
 
     @Autowired
     private OrderConfigMapper orderConfigMapper;
@@ -398,6 +647,14 @@ public class OrderServiceImpl implements OrderService {
             this.confirmTask(order.getId(), "system");
         }
 
+    }
+
+
+    //查询订单统计数据
+    @Override
+    public List<Map<String, Integer>> findOrderStatisticsData(Date start, Date end) {
+        List<Map<String, Integer>> dataList = orderMapper.findOrderStatisticsData(start, end);
+        return dataList;
     }
 
     /**
@@ -498,6 +755,25 @@ public class OrderServiceImpl implements OrderService {
 
         }
         return example;
+    }
+
+
+    @Autowired
+    private UserFeign userFeign;
+
+    /**
+     * 发送催发货短信
+     *
+     * @param id
+     */
+    @Override
+    public void sendMessage(String id) {
+        String phone = userFeign.findPhoneByUsername();
+        try {
+            SMSUtils.sendShortMessage(SMSUtils.KUAIFAHUO_CODE, phone, id);
+        } catch (ClientException e) {
+            e.printStackTrace();
+        }
     }
 
 }

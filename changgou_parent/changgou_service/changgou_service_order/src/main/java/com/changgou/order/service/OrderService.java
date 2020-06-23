@@ -1,8 +1,11 @@
 package com.changgou.order.service;
 
 import com.changgou.order.pojo.Order;
+import com.changgou.order.pojo.OrderItem;
 import com.github.pagehelper.Page;
+import org.apache.ibatis.annotations.Param;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -20,6 +23,32 @@ public interface OrderService {
      * @return
      */
     Order findById(String id);
+
+    //根据用户名查询所有订单
+    List<Order> findOrderByUsername(String username);
+
+    //代付款
+    List<Order> findNoPayByUsername(String username);
+
+    //立即支付
+    void findtoPayByUsername(String id);
+
+    //取消订单
+    void findtoNoPayById(String id);
+
+    //代发货
+    List<Order> findNoConsignByUsername(String username);
+
+    //查询待收货的订单
+    List<Order> findPayOrder(String username);
+
+    //查询所有待收货订单
+    List<Order> findAllOrder();
+
+    //查询带评价订单
+    List<Order> findBuyerRateByOrder(String username);
+
+
 
     /***
      * 新增
@@ -57,11 +86,9 @@ public interface OrderService {
     /***
      * 多条件分页查询
      * @param searchMap
-     * @param page
-     * @param size
      * @return
      */
-    Page<Order> findPage(Map<String, Object> searchMap, int page, int size);
+    Page<Order> findPage(Map<String, Object> searchMap);
 
     //修改订单的支付状态,并记录日志
     void updatePayStatus(String orderId, String transactionId);
@@ -73,5 +100,17 @@ public interface OrderService {
     //手动确认收货
     void confirmTask(String orderId,String operator);
 
+
+
     void autoTack();
+
+    /**
+     * 发送催发货短信
+     * @param id
+     */
+    void sendMessage(String id);
+
+
+    //查询订单统计数据
+    List<Map<String,Integer>> findOrderStatisticsData(Date start,Date end);
 }

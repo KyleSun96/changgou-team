@@ -28,7 +28,7 @@ public class TokenDecode {
      */
     public Map<String,String> getUserInfo(){
         //获取授权信息
-        OAuth2AuthenticationDetails details = (OAuth2AuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails();
+            OAuth2AuthenticationDetails details = (OAuth2AuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails();
         //令牌解码
         return dcodeToken(details.getTokenValue());
     }

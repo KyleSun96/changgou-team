@@ -3,7 +3,7 @@ package com.changgou.web.gateway.filter;
 public class UrlFilter {
 
     //所有需要传递令牌的地址
-    public static String filterPath="/api/wcenterSafe/**,/api/wuserInfo/**,/api/wcenterAddress/**,/api/wcenter/**,/api/userInfo/**,/api/worder/**,/api/wseckillorder,/api/seckill,/api/wxpay,/api/wxpay/**,/api/user/**,/api/address/**,/api/wcart/**,/api/cart/**,/api/categoryReport/**,/api/orderConfig/**,/api/order/**,/api/orderItem/**,/api/orderLog/**,/api/preferential/**,/api/returnCause/**,/api/returnOrder/**,/api/returnOrderItem/**";
+    public static String filterPath="/api/wuserInfo/**,/api/alipay/,/api/alipay/**,/api/statistics/**,/api/wfootmark/**,/api/wcenter/**,/api/wfavorites/**,/api/sku/**,/api/favorites/**,/api/wlogisitic/**,/api/logisitic/**,/api/comment/**,/api/page/**,/api/worder/**,/api/wseckillorder,/api/seckill,/api/wxpay,/api/wxpay/**,/api/user/**,/api/address/**,/api/wcart/**,/api/cart/**,/api/categoryReport/**,/api/orderConfig/**,/api/order/**,/api/orderItem/**,/api/orderLog/**,/api/preferential/**,/api/returnCause/**,/api/returnOrder/**,/api/returnOrderItem/**";
 
     public static boolean hasAuthorize(String url){
 

@@ -41,7 +41,7 @@
 							<li class="f-item"><span>关注畅购</span></li>
 							<li class="f-item"><span><a href="cooperation.html" target="_blank">合作招商</a></span></li>
 							<li class="f-item"><span><a href="shoplogin.html" target="_blank">商家后台</a></span></li>
-							<li class="f-item"><span>网站导航</li>
+                            <li class="f-item"><span>网站导航</span></li>
 						</ul>
 					</div>
 
@@ -69,8 +69,6 @@
 					</div>
 
 				</div>
-
-
 
 			</div>
 		</div>
@@ -466,7 +464,7 @@
 </div>
 			</div>
 		</div>
-	<div class="py-container">
+	<div class="py-container" id="app">
 		<div id="item">
 			<div class="crumb-wrap">
 				<ul class="sui-breadcrumb">
@@ -506,7 +504,7 @@
 
 				<div class="fr itemInfo-wrap"id="itemArray">
 					<div class="sku-name">
-						<h4 >{{sku.name}}</h4>
+						<h4>{{sku.name}}</h4>
 					</div>
 					<div class="news"><span th:text="${spu.caption}"></span></div>
 					<div class="summary">
@@ -516,11 +514,12 @@
 							</div>
 							<div class="fl price">
 								<i>¥</i>
-								<em>{{sku.price}}</em>
+								<!--<em>{{sku.price}}</em>-->
+								<em>40800</em>
 								<span>降价通知</span>
 							</div>
 							<div class="fr remark">
-								<i>累计评价</i><em>612188</em>
+                                <i>累计评价</i><em th:text="${commentCount.allComment}"></em>
 							</div>
 						</div>
 						<div class="summary-wrap">
@@ -533,7 +532,6 @@
 							</div>
 						</div>
 					</div>
-
 
 					<div class="support">
 						<div class="summary-wrap">
@@ -778,163 +776,74 @@
 					</div>
 					<div class="tab-main intro">
 						<ul class="sui-nav nav-tabs tab-wraped">
-							<li class="active">
-								<a href="#one" data-toggle="tab">
-									<span>商品介绍</span>
-								</a>
-							</li>
-							<li>
-								<a href="#two" data-toggle="tab">
-									<span>规格与包装</span>
-								</a>
-							</li>
-							<li>
-								<a href="#three" data-toggle="tab">
-									<span>售后保障</span>
-								</a>
-							</li>
-							<li>
-								<a href="#four" data-toggle="tab">
-									<span>商品评价</span>
-								</a>
-							</li>
-							<li>
-								<a href="#five" data-toggle="tab">
-									<span>手机社区</span>
-								</a>
-							</li>
+                            <li :class="currentIndex==0?'active':''" @click="currentIndex=0">
+                                <a data-toggle="tab" >
+                                    <span>商品介绍</span>
+                                </a>
+                            </li>
+                            <li :class="currentIndex==1?'active':''" @click="currentIndex=1">
+                                <a data-toggle="tab" @click="currentIndex=1">
+                                    <span>规格与包装</span>
+                                </a>
+                            </li>
+                            <li :class="currentIndex==2?'active':''" @click="currentIndex=2">
+                                <a data-toggle="tab">
+                                    <span>售后保障</span>
+                                </a>
+                            </li>
+                            <li :class="currentIndex==3?'active':''" @click="currentIndex=3">
+                                <a data-toggle="tab">
+                                    <span>商品评价</span>
+                                </a>
+                            </li>
+                            <li :class="currentIndex==4?'active':''" @click="currentIndex=4">
+                                <a data-toggle="tab">
+                                    <span>手机社区</span>
+                                </a>
+                            </li>
 						</ul>
 						<div class="clearfix"></div>
 						<div class="tab-content tab-wraped">
-							<div id="one" class="tab-pane active"  th:utext="${spu.introduction}">
+							<div id="one" class="tab-pane" v-show="currentIndex==0" th:utext="${spu.introduction}">
 
 							</div>
-							<div id="two" class="tab-pane" th:utext="${spu.introduction}">
+							<div id="two" class="tab-pane" v-show="currentIndex==1" th:utext="${spu.introduction}">
 
 							</div>
-							<div id="three" class="tab-pane" th:utext="${spu.saleService}">
+							<div id="three" class="tab-pane" v-show="currentIndex==2" th:utext="${spu.saleService}">
 
 							</div>
-							<div id="four" class="tab-pane">
+							<div id="four" class="tab-pane" v-show="currentIndex==3">
 								<div class="comment">
 									<div class="com-tit">商品评价</div>
 									<div class="com-percent">
-										<p>好评度 <span class="percent">96%</span></p>
+										<p>好评度 <span class="percent"><em th:text="${rate}"></em><span>%</span></span></p>
 									</div>
 									<div class="com-tab-type">
 										<ul class="type">
-											<li class="current"><a href="javascript:;">全部评价(123456)</a></li>
-											<li><a href="javascript:;">晒图(500)</a></li>
-											<li><a href="javascript:;">追评(500)</a></li>
-											<li><a href="javascript:;">好评(500)</a></li>
-											<li><a href="javascript:;">中评(500)</a></li>
-											<li><a href="javascript:;">差评(500)</a></li>
+											<li  class="current"><a href="javascript:void(0)" th:@click="|getCommentInfoList(${spuId},'all')|">全部评价(<span th:text="${commentCount.allComment}"/>)</a></li>
+											<li><a href="javascript:void(0)" th:@click="|getCommentInfoList(${spuId},'high')|">好评(<span th:text="${commentCount.highComment}"/>)</a></li>
+											<li><a href="javascript:void(0)" th:@click="|getCommentInfoList(${spuId},'medium')|">中评(<span th:text="${commentCount.mediumComment}"/>)</a></li>
+											<li><a href="javascript:void(0)" th:@click="|getCommentInfoList(${spuId},'low')|">差评(<span th:text="${commentCount.lowComment}"/>)</a></li>
 										</ul>
 										<div class="content">
-											<div class="com-item">
+                                            <div class="com-item" v-for="commentInfo in commentInfoList">
 												<div class="user-column">
-													<div class="username"><img src="/img/_/photo.jpg"/>用户****1</div>
+													<div class="username"><img :src="commentInfo.userPhoto"/>{{commentInfo.username}}</div>
 													<div class="usernum">品享值258698</div>
 												</div>
 												<div class="user-info">
 													<div class="stars star4"></div>
-													<p>手机还不错，可以的可以的</p>
+													<p>{{commentInfo.content}}</p>
 													<div class="guige">
 														<ul class="mini">
-															<li>玫瑰金</li>
-															<li>标配版</li>
-															<li>2017-11-02 13:23</li>
+															<li v-for="spec in commentInfo.specList">
+                                                                {{spec}}
+                                                            </li>
+                                                            <li>{{commentInfo.date}}</li>
 														</ul>
 														<div class="operate">
-															<span id="collect"><i class="sui-icon icon-tb-like"></i> 325</span>
-															<span id="comment"><i class="sui-icon icon-tb-wang"></i> 256</span>
-														</div>
-														<div class="clearfix"></div>
-													</div>
-												</div>
-											</div>
-											<div class="com-item">
-												<div class="user-column">
-													<div class="username"><img src="/img/_/photo.jpg"/>用户****1</div>
-													<div class="usernum">品享值258698</div>
-												</div>
-												<div class="user-info">
-													<div class="stars star4"></div>
-													<p>手机还不错，可以的可以的</p>
-													<div class="guige">
-														<ul class="mini">
-															<li>玫瑰金</li>
-															<li>标配版</li>
-															<li>2017-11-02 13:23</li>
-														</ul>
-														<div class="operate">
-															<span id="collect"><i class="sui-icon icon-tb-like"></i> 325</span>
-															<span id="comment"><i class="sui-icon icon-tb-wang"></i> 256</span>
-														</div>
-														<div class="clearfix"></div>
-													</div>
-												</div>
-											</div>
-											<div class="com-item">
-												<div class="user-column">
-													<div class="username"><img src="/img/_/photo.jpg"/>用户****1</div>
-													<div class="usernum">品享值258698</div>
-												</div>
-												<div class="user-info">
-													<div class="stars star4"></div>
-													<p>手机还不错，可以的可以的</p>
-													<div class="guige">
-														<ul class="mini">
-															<li>玫瑰金</li>
-															<li>标配版</li>
-															<li>2017-11-02 13:23</li>
-														</ul>
-														<div class="operate">
-															<span id="collect"><i class="sui-icon icon-tb-like"></i> 325</span>
-															<span id="comment"><i class="sui-icon icon-tb-wang"></i> 256</span>
-														</div>
-														<div class="clearfix"></div>
-													</div>
-												</div>
-											</div>
-											<div class="com-item">
-												<div class="user-column">
-													<div class="username"><img src="/img/_/photo.jpg"/>用户****1</div>
-													<div class="usernum">品享值258698</div>
-												</div>
-												<div class="user-info">
-													<div class="stars star4"></div>
-													<p>手机还不错，可以的可以的</p>
-													<div class="guige">
-														<ul class="mini">
-															<li>玫瑰金</li>
-															<li>标配版</li>
-															<li>2017-11-02 13:23</li>
-														</ul>
-														<div class="operate">
-															<span id="collect"><i class="sui-icon icon-tb-like"></i> 325</span>
-															<span id="comment"><i class="sui-icon icon-tb-wang"></i> 256</span>
-														</div>
-														<div class="clearfix"></div>
-													</div>
-												</div>
-											</div>
-											<div class="com-item">
-												<div class="user-column">
-													<div class="username"><img src="/img/_/photo.jpg"/>用户****1</div>
-													<div class="usernum">品享值258698</div>
-												</div>
-												<div class="user-info">
-													<div class="stars star4"></div>
-													<p>手机还不错，可以的可以的</p>
-													<div class="guige">
-														<ul class="mini">
-															<li>玫瑰金</li>
-															<li>标配版</li>
-															<li>2017-11-02 13:23</li>
-														</ul>
-														<div class="operate">
-															<span id="collect"><i class="sui-icon icon-tb-like"></i> 325</span>
+															<span id="collect"><i class="sui-icon icon-tb-like" ></i> 325</span>
 															<span id="comment"><i class="sui-icon icon-tb-wang"></i> 256</span>
 														</div>
 														<div class="clearfix"></div>
@@ -945,7 +854,7 @@
 									</div>
 								</div>
 							</div>
-							<div id="five" class="tab-pane">
+							<div id="five" class="tab-pane" v-show="currentIndex==4">
 								<p>手机社区</p>
 							</div>
 						</div>
@@ -1329,14 +1238,18 @@
 
 	</div>
 </div>
+<script src="/js/axios.js"></script>
     <script th:inline="javascript">
         var item = new Vue({
-            el: '#itemArray',
+            el: '#app',
             data: {
                 skuList : [[${skuList}]],   //SKU集合
                 sku:{},                     //当前选中的sku
-                spec:{},                   //选中的sku的规格
-                num:1
+                spec:{},                    //选中的sku的规格
+                num:1,
+                commentCount:{},
+                commentInfoList:[],
+                currentIndex: 0
             },
             methods:{
                 //是否绑定selected样式
@@ -1394,7 +1307,7 @@
                 },
                 // +
                 addNum:function(){
-                    this.num++;
+                    item.num++;
                 },
                 //-
                 subNum:function(){
@@ -1403,16 +1316,29 @@
                         //this.num = 1;
                         alert("还买不买");
                     }else{
-                        this.num--;
+                        item.num--;
                     }
 
+                },
+                // 获取该spu的评论列表
+                getCommentInfoList:function (spuId,level) {
+                    axios.get("http://localhost:8001/api/page/getCommentInfoList/"+spuId+"/"+level).then(function (response) {
+                        if (response.data.flag){
+                            item.commentInfoList=response.data.data;
+                        }
+                    })
                 }
             },
+
+
+
             created:function () {
                 //默认选中第1个SKU,深克隆
-                this.sku=JSON.parse(JSON.stringify(this.skuList[0]));
+                item.sku=JSON.parse(JSON.stringify(this.skuList[0]));
                 //第1个SKU的规格,深克隆
-                this.spec=JSON.parse(this.skuList[0].spec);
+                item.spec=JSON.parse(this.skuList[0].spec);
+                //查询当前spu所有的评论
+                item.getCommentInfoList(this.sku.spuId,"all");
             }
         })
     </script>

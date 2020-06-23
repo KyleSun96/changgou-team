@@ -21,7 +21,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.websocket.server.PathParam;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
@@ -79,13 +78,6 @@ public class UserController {
         return userService.updatePhoneTrue(phone);
     }
 
-
-    /**
-     * 更新用户头像
-     *
-     * @param file
-     * @return
-     */
     @PostMapping("/imageUpload")
     public Result imageUpload(MultipartFile file) {
         try {
@@ -142,7 +134,6 @@ public class UserController {
 
     /**
      * 更新用户数据
-     *
      * @param userInfoMap
      * @param userInfo
      * @return
@@ -202,7 +193,7 @@ public class UserController {
         return user;
     }
 
-    @GetMapping("/areaMap")
+    @RequestMapping("/areaMap")
     public Map findAreaMap() {
         Map map = userService.findMapByAreaId();
         return map;
@@ -213,8 +204,8 @@ public class UserController {
      * @param user
      * @return
      */
-    @PostMapping
-    public Result add(@RequestBody User user) {
+    @PostMapping("/add")
+    public Result add(@RequestBody User user){
         userService.add(user);
         return new Result(true, StatusCode.OK, "添加成功");
     }
@@ -271,5 +262,15 @@ public class UserController {
         return new Result(true, StatusCode.OK, "查询成功", pageResult);
     }
 
-
+    /**
+     * 根据用户名获取用户电话
+     *
+     * @return
+     */
+    @GetMapping("/findPhoneByUsername")
+    public String findPhoneByUsername() {
+        String username = tokenDecode.getUserInfo().get("username");
+        String phone = userService.findPhoneByUsername(username);
+        return phone;
+    }
 }

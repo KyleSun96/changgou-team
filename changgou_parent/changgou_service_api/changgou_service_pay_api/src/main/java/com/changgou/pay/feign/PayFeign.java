@@ -18,4 +18,5 @@ public interface PayFeign {
 
     @PutMapping("/wxpay/close/{orderId}")
     public Result closeOrder(@PathVariable("orderId") String orderId);
+
 }

@@ -28,10 +28,9 @@ public class OrderBackendController {
     @PostMapping(value = "/search" )
     public Result<PageResult> findPageBackend(@RequestBody Map searchMap){
 
-        //Page<Order> pageList = orderService.findPage(searchMap);
-     //   PageResult<Order> result = new PageResult<>(pageList.getTotal(), pageList.getResult());
-     //   return new Result(true, StatusCode.OK,"查询成功",result);
-        return null;
+        Page<Order> pageList = orderService.findPage(searchMap);
+        PageResult<Order> result = new PageResult<>(pageList.getTotal(), pageList.getResult());
+        return new Result(true, StatusCode.OK,"查询成功",result);
     }
 
     @GetMapping("/findAll")

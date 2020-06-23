@@ -83,7 +83,7 @@ public class PageServiceImpl implements PageService {
     private SkuFeign skuFeign;
 
     //获取静态化页面的相关数据
-    private Map<String, Object> getItemData(String spuId) {
+    public Map<String, Object> getItemData(String spuId) {
         Map<String, Object> resultMap = new HashMap<>();
         //获取spu
         Spu spu = spuFeign.findSpuById(spuId).getData();

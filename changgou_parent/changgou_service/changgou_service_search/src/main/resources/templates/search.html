@@ -6,9 +6,10 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
 	<title>产品列表页</title>
 	 <link rel="icon" href="/img/favicon.ico">
-	
+
     <link rel="stylesheet" type="text/css" href="/css/all.css" />
     <link rel="stylesheet" type="text/css" href="/css/pages-list.css" />
+    <link rel="stylesheet" href="/plugins/elementui/index.css">
 </head>
 
 <body>
@@ -27,18 +28,18 @@
 					<div class="fr typelist">
 						<ul class="types">
 							<li class="f-item"><span>我的订单</span></li>
-							
+
 							<li class="f-item"><span><a href="cart.html" target="_blank">我的购物车</a></span></li>
-							<li class="f-item"><span><a href="home.html" target="_blank">我的畅购</a></span></li>			
-							<li class="f-item"><span>畅购会员</span></li>						
-							<li class="f-item"><span>企业采购</span></li>						
+							<li class="f-item"><span><a href="home.html" target="_blank">我的畅购</a></span></li>
+							<li class="f-item"><span>畅购会员</span></li>
+							<li class="f-item"><span>企业采购</span></li>
 							<li class="f-item"><span>关注畅购</span></li>
 							<li class="f-item"><span><a href="cooperation.html" target="_blank">合作招商</a></span></li>
-							<li class="f-item"><span><a href="shoplogin.html" target="_blank">商家后台</a></span></li>				
-							<li class="f-item"><span>网站导航</li>
+							<li class="f-item"><span><a href="shoplogin.html" target="_blank">商家后台</a></span></li>
+							<li class="f-item"><span>网站导航</span></li>
 						</ul>
 					</div>
-					
+
 				</div>
 			</div>
 		</div>
@@ -60,7 +61,7 @@
 							</form>
 						</div>
 					</div>
-					
+
 				</div>
 
 			</div>
@@ -458,7 +459,7 @@
 			</div>
 		</div>
 	<!--list-content-->
-	<div class="main">
+	<div class="main" id="app">
 		<div class="py-container">
 			<!--bread-->
 			<div class="bread">
@@ -606,7 +607,8 @@
 							<div class="list-wrap">
 								<div class="p-img">
 									<!--<a th:href="'http://192.168.200.128:8081/'+${sku.spuId}+'.html'"  target="_blank"><img th:src="${sku.image}" /></a>-->
-                                    <a th:href="'http://192.168.200.128:8081/10000000616300.html'"  target="_blank"><img th:src="${sku.image}" /></a>
+                                    <!--<a th:href="'http://192.168.200.128:80/10000001516600.html'"  target="_blank"><img th:src="${sku.image}" /></a>-->
+                                    <a th:href="'http://localhost:8001/api/page/toItem/'+${sku.spuId}" th:@click="|addFootmark('${sku.id}')|" target="_blank"><img th:src="${sku.image}" /></a>
 								</div>
 								<div class="price">
 									<strong>
@@ -615,14 +617,15 @@
 										</strong>
 								</div>
 								<div class="attr">
-									<a target="_blank" th:href="'http://192.168.200.128:8081/10000000616300.html'" th:title="${sku.spec}" th:utext="${sku.name}"></a>
+                                    <!--<a target="_blank" th:href="'http://192.168.200.128:8081/10000000616300.html'" th:title="${sku.spec}" th:utext="${sku.name}"></a>-->
+									<a target="_blank" th:href="'http://localhost:8001/api/page/toItem/'+${sku.spuId}" th:@click="|addFootmark('${sku.id}')|" th:title="${sku.spec}" th:utext="${sku.name}"></a>
 								</div>
 								<div class="commit">
 									<i class="command">已有<span>2000</span>人评价</i>
 								</div>
 								<div class="operate">
 									<a href="success-cart.html" target="_blank" class="sui-btn btn-bordered btn-danger">加入购物车</a>
-									<a href="javascript:void(0);" class="sui-btn btn-bordered">收藏</a>
+									<a href="javascript:void(0);" th:@click="|add('${sku.id}')|" class="sui-btn btn-bordered">收藏</a>
 								</div>
 							</div>
 						</li>
@@ -867,7 +870,7 @@
 	</div>
 </div>
 <!--页面底部END-->
-	
+
 	<!-- 基础js库 -->
 
 	<!--侧栏面板开始-->
@@ -989,7 +992,35 @@
 </div>
 
 
-<script type="text/javascript" src="./js/all.js"></script>
+<script type="text/javascript" src="/js/all.js"></script>
+<script type="text/javascript" src="/js/plugins/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="/js/vue.js"></script>
+<script type="text/javascript" src="/plugins/elementui/index.js"></script>
+<script type="text/javascript" src="/js/axios.js"></script>
+<script th:inline="javascript">
+    var app = new Vue({
+        el:"#app",
+        data:{},
+        methods:{
+            add:function (skuId) {
+                axios.post('/api/wfavorites/add/'+skuId).then(function (response) {
+                    if (response.data.flag){
+                        //添加收藏成功
+                        app.$message.success(response.data.message);
+                    } else{
+                        app.$message.error(response.data.message);
+                    }
+                })
+            },
+            addFootmark:function (skuId) {
+                axios.post('/api/wfootmark/add/'+skuId).then(function (response) {
+                    /*location.href="http://192.168.200.128:80/10000001516600.html";*/
+                })
+            }
+        }
+    })
+</script>
 </body>
+
 
 </html>

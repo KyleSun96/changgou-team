@@ -30,5 +30,10 @@
             <artifactId>changgou_service_goods_api</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>com.changgou</groupId>
+            <artifactId>changgou_service_comment_api</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 </project>

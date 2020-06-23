@@ -23,7 +23,12 @@ public class PayController {
     @Autowired
     private PayFeign payFeign;
 
-    //跳转到微信支付二维码页面
+    /**
+     * 跳转到微信支付二维码页面
+     * @param orderId
+     * @param model
+     * @return
+     */
     @GetMapping
     public String wxPay(String orderId , Model model){
         //1.根据orderid查询订单,如果订单不存在,跳转到错误页面
@@ -59,4 +64,5 @@ public class PayController {
         model.addAttribute("payMoney",payMoney);
         return "paysuccess";
     }
+
 }
