@@ -144,6 +144,7 @@ public class UserController {
 
         User user = JSON.parseObject(userInfo, User.class);
 
+
         userService.updateInfo(userInfoMap, user);
         return new Result(true, StatusCode.OK, "用户更新数据成功");
     }
@@ -192,7 +193,7 @@ public class UserController {
         return user;
     }
 
-    @GetMapping("/areaMap")
+    @RequestMapping("/areaMap")
     public Map findAreaMap() {
         Map map = userService.findMapByAreaId();
         return map;

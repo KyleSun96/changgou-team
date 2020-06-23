@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-    <html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org">
 <html>
 
 <head>
@@ -126,18 +126,18 @@
                     </ul>
                     <div class="tab-content ">
                         <div id="one" class="tab-pane active">
-                            <form id="form-msg" class="sui-form form-horizontal" >
+                            <form id="form-msg" class="sui-form form-horizontal">
                                 <div class="control-group">
                                     <label for="inputName" class="control-label">昵称：</label>
                                     <div class="controls">
-                                        <input type="text" id="inputName" v-model="nickName"  placeholder="昵称">
+                                        <input type="text" id="inputName" v-model="nickName" placeholder="昵称">
                                     </div>
                                 </div>
                                 <div class="control-group">
                                     <label for="inputGender" class="control-label">性别：</label>
                                     <div class="controls">
                                         <label data-toggle="radio" class="radio-pretty inline">
-                                            <input type="radio" name="gender"  v-model="userInfo.sex"
+                                            <input type="radio" name="gender" v-model="userInfo.sex"
                                                    value="1"><span>男</span>
                                         </label>
                                         <label data-toggle="radio" class="radio-pretty inline">
@@ -175,7 +175,8 @@
                                                         class="sui-dropdown-menu">
 														<li role="presentation"><a role="menuitem" tabindex="-1"
                                                                                    href="javascript:void(0);"
-                                                                                   th:@click="|check('程序员')|" value="bj">程序员</a></li>
+                                                                                   th:@click="|check('程序员')|"
+                                                                                   value="bj">程序员</a></li>
 														<li role="presentation"><a role="menuitem" tabindex="-1"
                                                                                    href="javascript:void(0);"
                                                                                    th:@click="|check('产品经理')|"
@@ -206,13 +207,14 @@
 
                             <div class="new-photo">
                                 <p>当前头像：</p>
-                                <div class="upload"  >
+                                <div class="upload">
                                     <!-- th:if="{{userInfo.url}} ==null"
                                     th:src="userInfo.imageUrl==null?'./img/_/photo_icon.png':userInfo.imageUrl"-->
-                                    <form name="asd"   action="/api/wuserInfo/imageUploadOss"   enctype="multipart/form-data" method="post">
+                                    <form name="asd" action="/api/wuserInfo/imageUploadOss"
+                                          enctype="multipart/form-data" method="post">
                                         <img id="imgShow_WU_FILE_0" width="100" height="100"
-                                             src="/img/_/photo_icon.png"  alt="">
-                                        <input  type="file" name="file"  id="up_img_WU_FILE_0" />
+                                             th:src="${userInfo.imageUrl}" alt="">
+                                        <input type="file" name="file" id="up_img_WU_FILE_0"/>
                                         <br/>
                                         <input type="submit">
                                     </form>
@@ -369,8 +371,8 @@
     }
 </script>-->
 <!-- 引入组件库 -->
-<script src="https://cdn.jsdelivr.net/npm/vue@2.6.8/dist/vue.js"></script>
-<script src="https://cdn.bootcss.com/element-ui/2.5.4/index.js"></script>
+<script type="text/javascript" src="/js/vue.js"></script>
+<script type="text/javascript" src="/js/axios.js"></script>
 <script src="/js/axios.js"></script>
 <script th:inline="javascript">
     var app = new Vue({
@@ -380,21 +382,22 @@
             province: null,
             city: null,
             district: null,
-            nickName:null,
+            nickName: null,
             map: {},
-            userInfoMap:{}
+            userInfoMap: {}
         },
         methods: {
             check: function (profession) {
-
-                    alert(profession),
                 app.$set(app.userInfo, 'profession', profession)
             },
             save: function () {
+                this.userInfoMap.province = $(".province1").find("option:selected").text()
+                this.userInfoMap.city = $(".city1").find("option:selected").text()
+                this.userInfoMap.area = $(".district1").find("option:selected").text()
+                this.map.userInfoMap = this.userInfoMap;
+                this.map.userInfo = this.userInfo;
 
-
-
-                axios.put('/api/wuserInfo',this.map).then(function (response) {
+                axios.put('/api/wuserInfo', this.map).then(function (response) {
                     if (response.data.flag) {
                         alert(response.data.message);
                     } else {

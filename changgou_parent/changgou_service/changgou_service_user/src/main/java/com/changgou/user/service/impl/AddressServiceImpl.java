@@ -163,44 +163,44 @@ public class AddressServiceImpl implements AddressService {
         Address addressResult = JSONObject.parseObject(s, Address.class);
         Map areaMap = (Map) map.get("areaMap");
         Map<String, String> resultMap = findAreaId(areaMap);
-        if (resultMap != null) {
-            if (resultMap.get("areaId") != null){
+        if (areaMap != null) {
+            if (resultMap.get("areaId") != null) {
                 addressResult.setAreaid(resultMap.get("areaId"));
             }
-            if (resultMap.get("provincesId") != null){
+            if (resultMap.get("provincesId") != null) {
                 addressResult.setProvinceid(resultMap.get("provincesId"));
             }
-            if (resultMap.get("cityId") != null){
-
+            if (resultMap.get("cityId") != null) {
                 addressResult.setCityid(resultMap.get("cityId"));
             }
         }
+        addressResult.setUsername(tokenDecode.getUserInfo().get("username"));
         addressMapper.insert(addressResult);
 
 
     }
+
     /**
      * 根据id查地址
+     *
      * @param
      * @return
      */
     @Override
-    public Map findMapByMapId(Address address){
-
-
+    public Map findMapByMapId(Address address) {
 
         Map<String, String> map = new HashMap<>();
 
         if (address != null) {
-            if (address.getAreaid() != null){
-               map.put("area", String.valueOf(areasMapper.selectByPrimaryKey(address.getAreaid())));
+            if (address.getAreaid() != null) {
+                map.put("area", String.valueOf(areasMapper.selectByPrimaryKey(address.getAreaid()).getArea()));
             }
-            if (address.getProvinceid() != null){
-                map.put("province",String.valueOf(provincesMapper.selectByPrimaryKey(address.getProvinceid())));
+            if (address.getProvinceid() != null) {
+                map.put("province", String.valueOf(provincesMapper.selectByPrimaryKey(address.getProvinceid()).getProvince()));
 
             }
-            if (address.getCityid() != null){
-                map.put("city",String.valueOf(citiesMapper.selectByPrimaryKey(address.getCityid() )));
+            if (address.getCityid() != null) {
+                map.put("city", String.valueOf(citiesMapper.selectByPrimaryKey(address.getCityid()).getCity()));
 
             }
         }
@@ -209,54 +209,58 @@ public class AddressServiceImpl implements AddressService {
 
     @Autowired
     private TokenDecode tokenDecode;
+
     /**
      * 设置默认
+     *
      * @param id
      */
     @Override
     @Transactional
     public void setDefault(Integer id) {
         Address address = addressMapper.selectByPrimaryKey(id);
-        if (address == null){
+        if (address == null) {
             throw new RuntimeException("地址不存在");
         }
-        if (!"1".equals(address.getIsDefault())){
+        if (!"1".equals(address.getIsDefault())) {
             //将默认地址修改为0
             String username = tokenDecode.getUserInfo().get("username");
             Example example = new Example(Address.class);
             Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("username",username);
-            criteria.andEqualTo("isDefault","1");
+            criteria.andEqualTo("username", username);
+            criteria.andEqualTo("isDefault", "1");
             List<Address> addressList = addressMapper.selectByExample(example);
             for (Address address1 : addressList) {
                 address1.setIsDefault("0");
                 addressMapper.updateByPrimaryKeySelective(address1);
             }
-                address.setIsDefault("1");
-                addressMapper.updateByPrimaryKeySelective(address);
+            address.setIsDefault("1");
+            addressMapper.updateByPrimaryKeySelective(address);
         }
     }
 
 
     /**
      * 编辑地址信息
+     *
      * @param map
      */
     @Override
     public void editPush(Map map) {
+
         Object address = map.get("address");
         String s = JSONObject.toJSONString(address);
         Address addressResult = JSONObject.parseObject(s, Address.class);
         Map areaMap = (Map) map.get("areaMap");
         Map<String, String> resultMap = findAreaId(areaMap);
         if (resultMap != null) {
-            if (resultMap.get("areaId") != null){
+            if (resultMap.get("areaId") != null) {
                 addressResult.setAreaid(resultMap.get("areaId"));
             }
-            if (resultMap.get("provincesId") != null){
+            if (resultMap.get("provincesId") != null) {
                 addressResult.setProvinceid(resultMap.get("provincesId"));
             }
-            if (resultMap.get("cityId") != null){
+            if (resultMap.get("cityId") != null) {
 
                 addressResult.setCityid(resultMap.get("cityId"));
             }
@@ -265,9 +269,9 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
-    public Address findByIdPush(Integer integer) {
-        Address address = addressMapper.selectByPrimaryKey(integer);
-        return null;
+    public Address findByIdPush(Integer id) {
+        Address address = addressMapper.selectByPrimaryKey(id);
+        return address;
     }
 
     /**
@@ -277,40 +281,66 @@ public class AddressServiceImpl implements AddressService {
      * @return
      */
     public Map<String, String> findAreaId(Map areaMap) {
-        String province = (String) areaMap.get("province");
-        Map<String, String> map = new HashMap<>();
-        if (province != null) {
+        try {
 
-            Example example = new Example(Provinces.class);
-            example.createCriteria().andEqualTo("province", province);
-            Provinces provinces = provincesMapper.selectOneByExample(example);
-            if (provinces != null) {
+            String province = null;
+            String city = null;
+            String area = null;
+            try {
+                province = (String) areaMap.get("province");
+            } catch (Exception e) {
 
-                map.put("provincesId", provinces.getProvinceid());
-                String city = (String) areaMap.get("city");
-                Cities cities = new Cities();
-                cities.setProvinceid(provinces.getProvinceid());
-                cities.setCity(city);
-                Cities citiesResult = citiesMapper.selectOne(cities);
-                if (citiesResult != null) {
-                    map.put("cityId", citiesResult.getCityid());
-                    String area = (String) areaMap.get("area");
-                    Areas areas = new Areas();
-                    areas.setArea(area);
-                    areas.setCityid(citiesResult.getCityid());
-                    Areas areasResult = areasMapper.selectOne(areas);
+            }
 
-                    if (areasResult != null) {
+            Map<String, String> map = new HashMap<>();
+            if (province != null) {
 
-                        map.put("areaId", areasResult.getAreaid());
+                Provinces provinces1 = new Provinces();
+                provinces1.setProvince(province);
+
+                Example example = new Example(Provinces.class);
+                Example.Criteria criteria = example.createCriteria();
+                criteria.andLike("province", "%" + province + "%");
+
+                Provinces provinces = provincesMapper.selectOneByExample(example);
+                if (provinces != null) {
+
+                    map.put("provincesId", provinces.getProvinceid());
+                    try {
+                        city = (String) areaMap.get("city");
+                    } catch (Exception e) {
+
                     }
 
+                    Cities cities = new Cities();
+                    cities.setProvinceid(provinces.getProvinceid());
+                    cities.setCity(city);
+                    Cities citiesResult = citiesMapper.selectOne(cities);
+                    if (citiesResult != null) {
+                        map.put("cityId", citiesResult.getCityid());
+                        try {
+                            area = (String) areaMap.get("area");
+                        } catch (Exception e) {
 
+                        }
+                        Areas areas = new Areas();
+                        areas.setArea(area);
+                        areas.setCityid(citiesResult.getCityid());
+                        Areas areasResult = areasMapper.selectOne(areas);
+
+                        if (areasResult != null) {
+
+                            map.put("areaId", areasResult.getAreaid());
+                        }
+
+
+                    }
                 }
             }
+            return map;
+        } catch (Exception e) {
+            return null;
         }
-        return map;
-
     }
 
     /**

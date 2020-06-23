@@ -1,10 +1,7 @@
 package com.changgou.web.center.controller;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.changgou.entity.Result;
-import com.changgou.entity.StatusCode;
-import com.changgou.order.feign.OrderFeign;
 import com.changgou.user.feign.UserFeign;
 import com.changgou.user.pojo.User;
 import com.changgou.web.center.utils.DateUtils;
@@ -21,8 +18,6 @@ import java.util.Map;
 @RequestMapping("/wuserInfo")
 public class UserInfoController {
 
-    @Autowired
-    private OrderFeign orderFeign;
 
     @Autowired
     private UserFeign userFeign;
@@ -35,7 +30,7 @@ public class UserInfoController {
         model.addAttribute("userInfo", userInfo);
         model.addAttribute("map", areaMap);
 
-        return "center-setting-info";
+        return "center-setting-inf";
     }
 
     @PostMapping("/imageUploadOss")
@@ -48,9 +43,9 @@ public class UserInfoController {
         model.addAttribute("map", areaMap);
         if (file != null) {
             userFeign.imageUploadOss(file);
-            return "center-setting-info";
+            return "center-setting-inf";
         }
-        return "center-setting-info";
+        return "center-setting-inf";
     }
 
     @PutMapping

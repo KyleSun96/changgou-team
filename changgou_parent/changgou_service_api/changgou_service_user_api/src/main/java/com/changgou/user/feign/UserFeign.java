@@ -26,7 +26,7 @@ public interface UserFeign {
     @GetMapping("/user/load")
     public User findUserInfo();
 
-    @GetMapping("/user/areaMap")
+    @RequestMapping("/user/areaMap")
     public Map findAreaMap();
 
     @PostMapping("/user/imageUpload")

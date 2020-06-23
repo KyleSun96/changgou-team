@@ -1,21 +1,17 @@
 package com.changgou.web.center.controller;
 
-import com.alibaba.fastjson.JSONObject;
 import com.changgou.entity.Result;
 import com.changgou.entity.StatusCode;
-import com.changgou.order.feign.OrderFeign;
 import com.changgou.user.feign.AddressFeign;
 import com.changgou.user.feign.UserFeign;
 import com.changgou.user.pojo.Address;
-import com.changgou.user.pojo.User;
-import com.changgou.web.center.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Date;
+import javax.websocket.server.PathParam;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -23,8 +19,6 @@ import java.util.Map;
 @RequestMapping("/wcenterAddress")
 public class WCenterAdressController {
 
-    @Autowired
-    private OrderFeign orderFeign;
 
     @Autowired
     private UserFeign userFeign;
@@ -39,11 +33,12 @@ public class WCenterAdressController {
 
         model.addAttribute("addressList", list.getData());
 
-        return "center-setting-address";
+        return "center-setting-addr";
     }
 
     /**
      * 删除地址信息
+     *
      * @param id
      * @param model
      * @return
@@ -58,25 +53,25 @@ public class WCenterAdressController {
         Result<List<Address>> list = addressFeign.list();
         model.addAttribute("addressList", list.getData());
 
-        return "center-setting-address";
+        return "center-setting-addr";
     }
 
     @GetMapping("/setDefault")
     @ResponseBody
-    public Result setDefault(String id, Model model) {
+    public Result setDefault(Integer id, Model model) {
 
         if (id != null) {
-            Integer integer = Integer.valueOf(id);
-            addressFeign.setDefault(integer);
+            addressFeign.setDefault(id);
+
+            return new Result(true, StatusCode.OK, "设置默认成功");
         }
-       /* Result<List<Address>> list = addressFeign.list();
-        model.addAttribute("addressList", list.getData());
-*/
-        return new Result(true,StatusCode.OK,"设置默认成功");
+        return new Result(false, StatusCode.ERROR, "设置默认失败");
+
     }
 
     /**
      * 添加地址信息
+     *
      * @param map
      * @param model
      * @return
@@ -86,35 +81,40 @@ public class WCenterAdressController {
     public Result addAddress(@RequestBody Map map, Model model) {
 
         addressFeign.addPush(map);
-        return new Result(true,StatusCode.OK,"添加");
+        return new Result(true, StatusCode.OK, "添加");
     }
 
     /**
      * 查询地址信息
+     *
      * @param id
      * @return
      */
-   @GetMapping("/queryAddress")
-   @ResponseBody
-    public Result queryAddress( String id ,Model model) {
+    @GetMapping("/queryAddress")
+    @ResponseBody
+    public Result queryAddress(@PathParam("id") Integer id, Model model) {
 
-       Address address = addressFeign.queryAddress(id).getData();
-       Map mapByMapId = addressFeign.findMapByMapId(address);
-       model.addAttribute("areaMap",mapByMapId);
-       model.addAttribute("address",address);
-       return new Result(true,StatusCode.OK,"");
+
+        Address address = addressFeign.queryAddress(id).getData();
+        Map mapByMapId = addressFeign.findMapByMapId(address);
+        Map map = new HashMap<>();
+        map.put("address",address);
+        map.put("areamap",mapByMapId);
+
+        return new Result(true, StatusCode.OK, "", map);
     }
 
 
     /**
      * 编辑地址信息
+     *
      * @param map
      * @return
      */
-   @PutMapping("/editAddress")
-   @ResponseBody
-    public Result editAddress( @RequestBody  Map map ) {
-       return  addressFeign.editAddress(map);
+    @PutMapping("/editAddress")
+    @ResponseBody
+    public Result editAddress(@RequestBody Map map) {
+        return addressFeign.editAddress(map);
 
     }
 }
