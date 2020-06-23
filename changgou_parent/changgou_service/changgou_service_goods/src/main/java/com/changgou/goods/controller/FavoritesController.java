@@ -23,10 +23,15 @@ public class FavoritesController {
     //新增收藏
     @PostMapping("/add")
     public Result add(@RequestBody Favorites favorites) {
-        String username = tokenDecode.getUserInfo().get("username");
-        favorites.setUsername(username);
-        favoritesService.add(favorites);
-        return new Result(true, StatusCode.OK, "收藏成功");
+        try {
+            String username = tokenDecode.getUserInfo().get("username");
+            favorites.setUsername(username);
+            favoritesService.add(favorites);
+            return new Result(true, StatusCode.OK, "收藏成功");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Result(false, StatusCode.ERROR, "收藏失败,请稍后重试!");
+        }
     }
 
 

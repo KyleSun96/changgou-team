@@ -8,6 +8,8 @@ import com.changgou.order.pojo.Order;
 import com.github.pagehelper.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 @RestController
@@ -169,5 +171,11 @@ public class OrderController {
         return new Result(true,StatusCode.OK,"发货成功");
     }
 
+
+    @RequestMapping("/statistics")
+    public Result<List<Map<String, Integer>>> findOrderStatisticsData(@RequestParam("start") Date start,@RequestParam("end") Date end){
+        List<Map<String, Integer>> data = orderService.findOrderStatisticsData(start, end);
+        return new Result<>(true,StatusCode.OK,"获取数据成功",data);
+    }
 
 }

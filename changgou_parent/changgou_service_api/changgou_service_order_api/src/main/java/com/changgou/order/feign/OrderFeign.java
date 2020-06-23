@@ -6,6 +6,7 @@ import com.changgou.order.pojo.Order;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 import java.util.Map;
@@ -45,5 +46,10 @@ public interface OrderFeign {
     //代发货
     @RequestMapping("/order/findNoConsignByUsername")
     public Result<List<Order>> findNoConsignByUsername();
+
+
+    //获取订单统计数据
+    @RequestMapping("/order/statistics")
+    public Result<List<Map<String, Integer>>> findOrderStatisticsData(@RequestParam("start") Date start, @RequestParam("end") Date end);
 
 }

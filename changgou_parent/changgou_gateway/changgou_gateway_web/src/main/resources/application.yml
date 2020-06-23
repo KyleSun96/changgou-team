@@ -103,6 +103,13 @@ spring:
             - Path=/api/wcenter/**
           filters:
             - StripPrefix=1
+        # 订单统计微服务
+        - id: changgou_order_statistics
+          uri: lb://statistics
+          predicates:
+            - Path=/api/statistics/**
+          filters:
+            - StripPrefix=1
   redis:
     host: 192.168.200.128
 server:

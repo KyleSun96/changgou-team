@@ -551,6 +551,14 @@ public class OrderServiceImpl implements OrderService {
 
     }
 
+
+    //查询订单统计数据
+    @Override
+    public List<Map<String, Integer>> findOrderStatisticsData(Date start, Date end) {
+        List<Map<String, Integer>> dataList = orderMapper.findOrderStatisticsData(start, end);
+        return dataList;
+    }
+
     /**
      * 构建查询对象
      *

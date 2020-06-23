@@ -3,7 +3,9 @@ package com.changgou.order.service;
 import com.changgou.order.pojo.Order;
 import com.changgou.order.pojo.OrderItem;
 import com.github.pagehelper.Page;
+import org.apache.ibatis.annotations.Param;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -92,4 +94,8 @@ public interface OrderService {
 
 
     void autoTack();
+
+
+    //查询订单统计数据
+    List<Map<String,Integer>> findOrderStatisticsData(Date start,Date end);
 }
