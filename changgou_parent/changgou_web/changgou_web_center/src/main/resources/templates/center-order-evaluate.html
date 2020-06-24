@@ -525,7 +525,7 @@
                 axios.post("/api/comment/addC", this.map).then((response) => {
                     if (response.data.flag){
                         /*this.$message.success(response.data.message);*/
-                        alert(response.data.flag);
+                        alert("评论成功! 页面即将跳转,请稍后...");
                         location.href="http://localhost:8001/api/page/toItem/10000001516600";
                     }
 

@@ -32,6 +32,7 @@ public class AliPayController {
             return "fail";
         }
 
+
         //2.根据订单的支付状态进行判断,如果不是未支付的订单,跳转到错误页面
         Order order = orderResult.getData();
         if (!"0".equals(order.getPayStatus())) {
